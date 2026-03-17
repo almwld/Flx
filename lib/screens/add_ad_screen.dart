@@ -1,8 +1,8 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import '../theme/app_theme.dart';
 import '../widgets/custom_app_bar.dart';
-import '../widgets/custom_button.dart';
-import '../widgets/custom_text_field.dart';
 
 class AddAdScreen extends StatefulWidget {
   const AddAdScreen({super.key});
@@ -12,134 +12,225 @@ class AddAdScreen extends StatefulWidget {
 }
 
 class _AddAdScreenState extends State<AddAdScreen> {
-  String _selectedCategory = 'إلكترونيات';
-  String _selectedCondition = 'new';
+  final _formKey = GlobalKey<FormState>();
+  final _titleController = TextEditingController();
+  final _descriptionController = TextEditingController();
+  final _priceController = TextEditingController();
+  
+  String? _selectedCategory;
+  String? _selectedCity;
+  List<File> _selectedImages = [];
+  bool _isLoading = false;
+
+  final List<String> _categories = [
+    'سيارات', 'عقارات', 'إلكترونيات', 'أثاث', 'ملابس', 'مطاعم', 'خدمات', 'أخرى'
+  ];
+
+  final List<String> _cities = [
+    'صنعاء', 'عدن', 'تعز', 'الحديدة', 'المكلا', 'إب', 'سيئون', 'ذمار'
+  ];
+
+  Future<void> _pickImages() async {
+    final picker = ImagePicker();
+    final pickedFiles = await picker.pickMultiImage();
+    if (pickedFiles.isNotEmpty) {
+      setState(() {
+        _selectedImages = pickedFiles.map((file) => File(file.path)).toList();
+      });
+    }
+  }
+
+  Future<void> _takePhoto() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.camera);
+    if (pickedFile != null) {
+      setState(() {
+        _selectedImages.add(File(pickedFile.path));
+      });
+    }
+  }
+
+  Future<void> _submitAd() async {
+    if (_selectedImages.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('الرجاء إضافة صورة'), backgroundColor: AppTheme.error),
+      );
+      return;
+    }
+    
+    setState(() => _isLoading = true);
+    await Future.delayed(const Duration(seconds: 2));
+    
+    if (mounted) {
+      setState(() => _isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('تم نشر الإعلان'), backgroundColor: AppTheme.success),
+      );
+      Navigator.of(context).pop();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? AppTheme.darkBackground : AppTheme.lightBackground,
-      appBar: const CustomAppBar(title: 'إضافة إعلان جديد'),
+      appBar: const CustomAppBar(title: 'إضافة إعلان'),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // صور المنتج
-            Container(
-              height: 150,
-              decoration: BoxDecoration(
-                color: isDark ? AppTheme.darkCard : AppTheme.lightCard,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: AppTheme.goldColor.withOpacity(0.3),
-                  style: BorderStyle.solid,
-                ),
-              ),
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.add_photo_alternate, size: 50, color: AppTheme.goldColor),
-                    const SizedBox(height: 8),
-                    Text(
-                      'أضف صور للمنتج',
-                      style: TextStyle(
-                        fontFamily: 'Changa',
-                        color: isDark ? AppTheme.darkTextSecondary : AppTheme.lightTextSecondary,
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              Container(
+                height: 120,
+                child: _selectedImages.isEmpty
+                    ? Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          _buildImageButton(Icons.photo_library, 'المعرض', _pickImages),
+                          const SizedBox(width: 24),
+                          _buildImageButton(Icons.camera_alt, 'الكاميرا', _takePhoto),
+                        ],
+                      )
+                    : ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: _selectedImages.length + 1,
+                        itemBuilder: (context, index) {
+                          if (index == _selectedImages.length) {
+                            return _buildAddMoreButton();
+                          }
+                          return _buildImagePreview(_selectedImages[index], index);
+                        },
                       ),
-                    ),
-                  ],
+              ),
+              const SizedBox(height: 24),
+              TextFormField(
+                controller: _titleController,
+                decoration: InputDecoration(
+                  labelText: 'عنوان الإعلان',
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+                validator: (v) => v!.isEmpty ? 'مطلوب' : null,
+              ),
+              const SizedBox(height: 16),
+              DropdownButtonFormField<String>(
+                value: _selectedCategory,
+                hint: const Text('اختر الفئة'),
+                decoration: InputDecoration(border: OutlineInputBorder(borderRadius: BorderRadius.circular(12))),
+                items: _categories.map((c) => DropdownMenuItem(value: c, child: Text(c))).toList(),
+                onChanged: (v) => setState(() => _selectedCategory = v),
+                validator: (v) => v == null ? 'مطلوب' : null,
+              ),
+              const SizedBox(height: 16),
+              DropdownButtonFormField<String>(
+                value: _selectedCity,
+                hint: const Text('اختر المدينة'),
+                decoration: InputDecoration(border: OutlineInputBorder(borderRadius: BorderRadius.circular(12))),
+                items: _cities.map((c) => DropdownMenuItem(value: c, child: Text(c))).toList(),
+                onChanged: (v) => setState(() => _selectedCity = v),
+                validator: (v) => v == null ? 'مطلوب' : null,
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _priceController,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  labelText: 'السعر',
+                  suffixText: 'ر.ي',
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+                validator: (v) => v!.isEmpty ? 'مطلوب' : null,
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _descriptionController,
+                maxLines: 5,
+                decoration: InputDecoration(
+                  labelText: 'الوصف',
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+                validator: (v) => v!.isEmpty ? 'مطلوب' : null,
+              ),
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                height: 55,
+                child: ElevatedButton(
+                  onPressed: _isLoading ? null : _submitAd,
+                  child: _isLoading 
+                      ? const CircularProgressIndicator() 
+                      : const Text('نشر الإعلان', style: TextStyle(fontFamily: 'Changa', fontSize: 16)),
                 ),
               ),
-            ),
-            const SizedBox(height: 24),
-            const CustomTextField(
-              label: 'عنوان الإعلان',
-              hint: 'مثال: آيفون 15 برو ماكس 256GB',
-              prefixIcon: Icon(Icons.title),
-            ),
-            const SizedBox(height: 16),
-            const CustomTextField(
-              label: 'السعر',
-              hint: 'أدخل السعر',
-              keyboardType: TextInputType.number,
-              prefixIcon: Icon(Icons.attach_money),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'الفئة',
-              style: TextStyle(
-                fontFamily: 'Changa',
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: isDark ? AppTheme.darkText : AppTheme.lightText,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Wrap(
-              spacing: 8,
-              children: ['إلكترونيات', 'سيارات', 'عقارات', 'أثاث', 'ملابس'].map((cat) {
-                final isSelected = _selectedCategory == cat;
-                return ChoiceChip(
-                  label: Text(cat, style: const TextStyle(fontFamily: 'Changa')),
-                  selected: isSelected,
-                  onSelected: (_) => setState(() => _selectedCategory = cat),
-                  selectedColor: AppTheme.goldColor,
-                );
-              }).toList(),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'حالة المنتج',
-              style: TextStyle(
-                fontFamily: 'Changa',
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: isDark ? AppTheme.darkText : AppTheme.lightText,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                Expanded(
-                  child: RadioListTile(
-                    title: const Text('جديد', style: TextStyle(fontFamily: 'Changa')),
-                    value: 'new',
-                    groupValue: _selectedCondition,
-                    onChanged: (v) => setState(() => _selectedCondition = v!),
-                    activeColor: AppTheme.goldColor,
-                  ),
-                ),
-                Expanded(
-                  child: RadioListTile(
-                    title: const Text('مستعمل', style: TextStyle(fontFamily: 'Changa')),
-                    value: 'used',
-                    groupValue: _selectedCondition,
-                    onChanged: (v) => setState(() => _selectedCondition = v!),
-                    activeColor: AppTheme.goldColor,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            const CustomTextField(
-              label: 'الوصف',
-              hint: 'أضف وصفاً تفصيلياً للمنتج',
-              maxLines: 5,
-              prefixIcon: Icon(Icons.description_outlined),
-            ),
-            const SizedBox(height: 32),
-            CustomButton(
-              text: 'نشر الإعلان',
-              onPressed: () {},
-              width: double.infinity,
-            ),
-          ],
+            ],
+          ),
         ),
       ),
+    );
+  }
+
+  Widget _buildImageButton(IconData icon, String label, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: AppTheme.goldColor.withOpacity(0.2),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, size: 32, color: AppTheme.goldColor),
+          ),
+          const SizedBox(height: 8),
+          Text(label, style: const TextStyle(fontFamily: 'Changa')),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAddMoreButton() {
+    return GestureDetector(
+      onTap: _pickImages,
+      child: Container(
+        width: 100,
+        margin: const EdgeInsets.only(right: 8),
+        decoration: BoxDecoration(
+          color: Colors.grey[300],
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: const Icon(Icons.add_photo_alternate, size: 40, color: Colors.grey),
+      ),
+    );
+  }
+
+  Widget _buildImagePreview(File image, int index) {
+    return Stack(
+      children: [
+        Container(
+          width: 100,
+          margin: const EdgeInsets.only(right: 8),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            image: DecorationImage(image: FileImage(image), fit: BoxFit.cover),
+          ),
+        ),
+        Positioned(
+          top: 4,
+          right: 4,
+          child: GestureDetector(
+            onTap: () {
+              setState(() => _selectedImages.removeAt(index));
+            },
+            child: Container(
+              padding: const EdgeInsets.all(4),
+              decoration: const BoxDecoration(color: Colors.red, shape: BoxShape.circle),
+              child: const Icon(Icons.close, size: 16, color: Colors.white),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
