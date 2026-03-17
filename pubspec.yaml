@@ -65,3 +65,7 @@ flutter:
     - assets/icons/
     - assets/icons/svg/
     - assets/animations/
+  file_picker: ^8.0.0+1
+  record: ^5.1.2
+  audioplayers: ^6.0.0
+  permission_handler: ^11.3.1
