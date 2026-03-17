@@ -121,7 +121,7 @@ class _HomeScreenState extends State<HomeScreen> {
     {'title': 'أحذية رياضية', 'price': '12,000 ر.ي', 'location': 'تعز', 'image': Icons.sports_handball, 'color': Colors.red},
     {'title': 'ساعة رجالية', 'price': '8,000 ر.ي', 'location': 'صنعاء', 'image': Icons.watch, 'color': Colors.amber},
     {'title': 'نظارة شمسية', 'price': '5,000 ر.ي', 'location': 'عدن', 'image': Icons.sunny, 'color': Colors.black},
-    {'title': 'حقيبة جلدية', 'price': '18,000 ر.ي', 'location': 'صنعاء', 'image': Icons.bag, 'color': Colors.brown},
+    {'title': 'حقيبة جلدية', 'price': '18,000 ر.ي', 'location': 'صنعاء', 'image': Icons.shopping_bag, 'color': Colors.brown},
   ];
 
   @override

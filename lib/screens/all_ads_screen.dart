@@ -12,8 +12,14 @@ class AllAdsScreen extends StatelessWidget {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        appBar: CustomAppBar(
-          title: 'جميع الأقسام',
+        appBar: AppBar(
+          title: const Text(
+            'جميع الأقسام',
+            style: TextStyle(
+              color: AppTheme.goldColor,
+              fontFamily: 'Changa',
+            ),
+          ),
           bottom: const TabBar(
             tabs: [
               Tab(text: 'الجزء الأول'),
@@ -23,6 +29,9 @@ class AllAdsScreen extends StatelessWidget {
             labelColor: AppTheme.goldColor,
             unselectedLabelColor: Colors.grey,
           ),
+          backgroundColor: Theme.of(context).brightness == Brightness.dark
+              ? AppTheme.darkSurface
+              : AppTheme.lightSurface,
         ),
         body: const TabBarView(
           children: [
