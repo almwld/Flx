@@ -138,3 +138,8 @@ class AllCategoriesScreen extends StatelessWidget {
     {'name': 'المكسرات', 'screen': NutsDriedFruitsScreen, 'color': Colors.green},
     {'name': 'الأغذية المعلبة', 'screen': CannedFoodScreen, 'color': Colors.blue},
     {'name': 'التوابل والبهارات', 'screen': SpicesScreen, 'color': Colors.orange},
+    {'name': 'الأرز والحبوب', 'screen': RiceGrainsScreen, 'color': Colors.brown},
+    {'name': 'الزيوت والدهون', 'screen': OilsFatsScreen, 'color': Colors.yellow},
+    {'name': 'السكر والحلويات', 'screen': SugarSweetsScreen, 'color': Colors.pink},
+    {'name': 'المشروبات الساخنة', 'screen': HotDrinksScreen, 'color': Colors.brown},
+    {'name': 'المشروبات الباردة', 'screen': ColdDrinksScreen, 'color': Colors.orange},
