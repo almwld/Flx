@@ -5,19 +5,6 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import '../theme/app_theme.dart';
 import '../widgets/custom_app_bar.dart';
 import 'all_ads_screen.dart';
-import 'categories/electronics_screen.dart';
-import 'categories/cars_screen.dart';
-import 'categories/realestate_screen.dart';
-import 'categories/furniture_screen.dart';
-import 'categories/clothing_screen.dart';
-import 'categories/restaurants_screen.dart';
-import 'categories/services_screen.dart';
-import 'categories/pets_screen.dart';
-import 'categories/sports_screen.dart';
-import 'categories/health_screen.dart';
-import 'categories/games_screen.dart';
-import 'categories/beauty_screen.dart';
-import 'categories/kitchen_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -73,20 +60,20 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
 
   final List<Map<String, dynamic>> _quickCategories = [
-    {'name': 'إلكترونيات', 'icon': Icons.phone_android, 'color': Colors.blue, 'screen': null},
-    {'name': 'سيارات', 'icon': Icons.directions_car, 'color': Colors.red, 'screen': null},
-    {'name': 'عقارات', 'icon': Icons.home, 'color': Colors.green, 'screen': null},
-    {'name': 'أثاث', 'icon': Icons.chair, 'color': Colors.brown, 'screen': null},
-    {'name': 'ملابس', 'icon': Icons.checkroom, 'color': Colors.purple, 'screen': null},
-    {'name': 'مطاعم', 'icon': Icons.restaurant, 'color': Colors.orange, 'screen': null},
-    {'name': 'خدمات', 'icon': Icons.build, 'color': Colors.teal, 'screen': null},
-    {'name': 'حيوانات', 'icon': Icons.pets, 'color': Colors.pink, 'screen': null},
-    {'name': 'رياضة', 'icon': Icons.sports, 'color': Colors.green, 'screen': null},
-    {'name': 'صحة', 'icon': Icons.health_and_safety, 'color': Colors.red, 'screen': null},
-    {'name': 'ألعاب', 'icon': Icons.sports_esports, 'color': Colors.blue, 'screen': null},
-    {'name': 'جمال', 'icon': Icons.face, 'color': Colors.pink, 'screen': null},
-    {'name': 'مطبخ', 'icon': Icons.kitchen, 'color': Colors.orange, 'screen': null},
-    {'name': 'كتب', 'icon': Icons.book, 'color': Colors.brown, 'screen': null},
+    {'name': 'إلكترونيات', 'icon': Icons.phone_android, 'color': Colors.blue},
+    {'name': 'سيارات', 'icon': Icons.directions_car, 'color': Colors.red},
+    {'name': 'عقارات', 'icon': Icons.home, 'color': Colors.green},
+    {'name': 'أثاث', 'icon': Icons.chair, 'color': Colors.brown},
+    {'name': 'ملابس', 'icon': Icons.checkroom, 'color': Colors.purple},
+    {'name': 'مطاعم', 'icon': Icons.restaurant, 'color': Colors.orange},
+    {'name': 'خدمات', 'icon': Icons.build, 'color': Colors.teal},
+    {'name': 'حيوانات', 'icon': Icons.pets, 'color': Colors.pink},
+    {'name': 'رياضة', 'icon': Icons.sports, 'color': Colors.green},
+    {'name': 'صحة', 'icon': Icons.health_and_safety, 'color': Colors.red},
+    {'name': 'ألعاب', 'icon': Icons.sports_esports, 'color': Colors.blue},
+    {'name': 'جمال', 'icon': Icons.face, 'color': Colors.pink},
+    {'name': 'مطبخ', 'icon': Icons.kitchen, 'color': Colors.orange},
+    {'name': 'كتب', 'icon': Icons.book, 'color': Colors.brown},
   ];
 
   final List<Map<String, dynamic>> _randomAds = [
@@ -281,7 +268,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   TextButton(
                     onPressed: () {
-                      // TODO: فتح صفحة جميع الأقسام
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => const AllAdsScreen()),
+                      );
                     },
                     child: const Text(
                       'عرض الكل',
@@ -310,7 +299,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   final cat = _quickCategories[index];
                   return GestureDetector(
                     onTap: () {
-                      // TODO: فتح القسم
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => const AllAdsScreen()),
+                      );
                     },
                     child: Container(
                       width: 80,
@@ -363,7 +354,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
 
-          // الإعلانات العشوائية (شبكة 2 عمود)
+          // الإعلانات العشوائية
           SliverPadding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             sliver: SliverGrid(
