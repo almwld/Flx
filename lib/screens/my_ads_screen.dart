@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
-import '../models/ad_model.dart';
-import '../widgets/ad_card.dart';
+import '../widgets/custom_app_bar.dart';
 import 'ad_detail_screen.dart';
 
 class MyAdsScreen extends StatefulWidget {
@@ -13,53 +12,17 @@ class MyAdsScreen extends StatefulWidget {
 
 class _MyAdsScreenState extends State<MyAdsScreen> {
   String _selectedFilter = 'الكل';
-  final List<String> _filters = ['الكل', 'نشط', 'منتهي', 'محجوز'];
+  final List<String> _filters = ['الكل', 'نشط', 'منتهي'];
 
-  final List<AdModel> _myAds = [
-    AdModel(
-      id: '1',
-      title: 'آيفون 15 برو ماكس',
-      description: 'جديد بالكامل مع الضمان',
-      price: 450000,
-      currency: 'YER',
-      images: ['https://via.placeholder.com/300x200'],
-      category: 'إلكترونيات',
-      subCategory: 'هواتف',
-      city: 'صنعاء',
-      sellerId: 's1',
-      sellerName: 'متجري',
-      sellerRating: 4.8,
-      createdAt: DateTime.now(),
-      views: 120,
-      status: 'active',
-    ),
-    AdModel(
-      id: '2',
-      title: 'لابتوب ديل',
-      description: 'مستعمل بحالة جيدة',
-      price: 200000,
-      currency: 'YER',
-      images: ['https://via.placeholder.com/300x200'],
-      category: 'إلكترونيات',
-      subCategory: 'لابتوب',
-      city: 'صنعاء',
-      sellerId: 's1',
-      sellerName: 'متجري',
-      sellerRating: 4.8,
-      createdAt: DateTime.now(),
-      views: 45,
-      status: 'sold',
-    ),
+  final List<Map<String, dynamic>> _myAds = [
+    {'id': '1', 'title': 'آيفون 15 برو ماكس', 'price': '450,000 ر.ي', 'views': 120, 'status': 'نشط', 'image': 'https://via.placeholder.com/100', 'date': '15/03/2026'},
+    {'id': '2', 'title': 'سيارة تويوتا كامري', 'price': '8,500,000 ر.ي', 'views': 85, 'status': 'نشط', 'image': 'https://via.placeholder.com/100', 'date': '10/03/2026'},
+    {'id': '3', 'title': 'شقة في حدة', 'price': '35,000,000 ر.ي', 'views': 200, 'status': 'منتهي', 'image': 'https://via.placeholder.com/100', 'date': '01/02/2026'},
   ];
 
-  List<AdModel> get _filteredAds {
+  List<Map<String, dynamic>> get _filteredAds {
     if (_selectedFilter == 'الكل') return _myAds;
-    return _myAds.where((ad) {
-      if (_selectedFilter == 'نشط') return ad.status == 'active';
-      if (_selectedFilter == 'منتهي') return ad.status == 'sold' || ad.status == 'expired';
-      if (_selectedFilter == 'محجوز') return ad.status == 'reserved';
-      return false;
-    }).toList();
+    return _myAds.where((ad) => ad['status'] == _selectedFilter).toList();
   }
 
   @override
@@ -67,9 +30,7 @@ class _MyAdsScreenState extends State<MyAdsScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('إعلاناتي'),
-      ),
+      appBar: const CustomAppBar(title: 'إعلاناتي'),
       body: Column(
         children: [
           Container(
@@ -90,16 +51,12 @@ class _MyAdsScreenState extends State<MyAdsScreen> {
                     decoration: BoxDecoration(
                       color: isSelected ? AppTheme.goldColor : (isDark ? AppTheme.darkCard : AppTheme.lightCard),
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                        color: isSelected ? AppTheme.goldColor : (isDark ? Colors.grey[800]! : Colors.grey[300]!),
-                      ),
                     ),
                     child: Center(
                       child: Text(
                         filter,
                         style: TextStyle(
                           color: isSelected ? Colors.black : (isDark ? Colors.white : Colors.black87),
-                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                           fontFamily: 'Changa',
                         ),
                       ),
@@ -110,33 +67,72 @@ class _MyAdsScreenState extends State<MyAdsScreen> {
             ),
           ),
           Expanded(
-            child: _filteredAds.isEmpty
-                ? Center(
+            child: ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: _filteredAds.length,
+              itemBuilder: (context, index) {
+                final ad = _filteredAds[index];
+                return GestureDetector(
+                  onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => AdDetailScreen(ad: null))),
+                  child: Container(
+                    margin: const EdgeInsets.only(bottom: 12),
+                    decoration: BoxDecoration(
+                      color: isDark ? AppTheme.darkCard : AppTheme.lightCard,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.inbox, size: 80, color: Colors.grey[400]),
-                        const SizedBox(height: 16),
-                        const Text('لا توجد إعلانات', style: TextStyle(fontFamily: 'Changa', fontSize: 18)),
+                        ClipRRect(
+                          borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                          child: Container(
+                            height: 120,
+                            width: double.infinity,
+                            color: Colors.grey[300],
+                            child: const Icon(Icons.image, color: Colors.grey),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(12),
+                          child: Column(
+                            children: [
+                              Row(
+                                children: [
+                                  Expanded(child: Text(ad['title'], style: const TextStyle(fontWeight: FontWeight.bold))),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      color: ad['status'] == 'نشط' ? Colors.green.withOpacity(0.2) : Colors.red.withOpacity(0.2),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Text(
+                                      ad['status'],
+                                      style: TextStyle(
+                                        color: ad['status'] == 'نشط' ? Colors.green : Colors.red,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              Row(
+                                children: [
+                                  Text(ad['price'], style: const TextStyle(color: AppTheme.goldColor)),
+                                  const Spacer(),
+                                  const Icon(Icons.visibility, size: 16, color: Colors.grey),
+                                  const SizedBox(width: 4),
+                                  Text('${ad['views']}'),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
                       ],
                     ),
-                  )
-                : ListView.builder(
-                    padding: const EdgeInsets.all(16),
-                    itemCount: _filteredAds.length,
-                    itemBuilder: (context, index) {
-                      return AdCard(
-                        ad: _filteredAds[index],
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => AdDetailScreen(ad: _filteredAds[index]),
-                            ),
-                          );
-                        },
-                      );
-                    },
                   ),
+                );
+              },
+            ),
           ),
         ],
       ),
