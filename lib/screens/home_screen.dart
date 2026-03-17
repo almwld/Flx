@@ -428,7 +428,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ],
               ),
-            ).animate().fadeIn(delay: Duration(milliseconds: index * 100));
+            ).animate().fadeIn(duration: 500.ms).fadeIn(delay: Duration(milliseconds: index * 100));
           },
           options: CarouselOptions(
             height: 180,

@@ -4,9 +4,9 @@ class AppTheme {
   // Brand Colors
   static const Color goldColor = Color(0xFFD4AF37);
   static const Color goldLight = Color(0xFFF4E4BC);
-  static const Color goldPrimary = Color(0xFFD4AF37);
-  static const Color goldAccent = Color(0xFFB8860B);
-  static const Color goldDark = Color(0xFFB8860B); // اللون الذهبي الداكن
+  static const Color goldPrimary = Color(0xFFC6A700);
+  static const Color goldAccent = Color(0xFFE5C100);
+  static const Color goldDark = Color(0xFFB8860B);
 
   // Gradients
   static const LinearGradient goldGradient = LinearGradient(
@@ -21,6 +21,12 @@ class AppTheme {
     end: Alignment.bottomRight,
   );
 
+  static const LinearGradient primaryGradient = LinearGradient(
+    colors: [goldColor, goldAccent],
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+  );
+
   // Status Colors
   static const Color success = Color(0xFF4CAF50);
   static const Color error = Color(0xFFE53935);
@@ -28,18 +34,33 @@ class AppTheme {
   static const Color info = Color(0xFF2196F3);
 
   // Dark Theme Colors
-  static const Color darkBackground = Color(0xFF1A1A2E);
-  static const Color darkSurface = Color(0xFF16213E);
-  static const Color darkCard = Color(0xFF0F3460);
+  static const Color darkBackground = Color(0xFF0A0A0F);
+  static const Color darkSurface = Color(0xFF1A1A2E);
+  static const Color darkCard = Color(0xFF16213E);
   static const Color darkText = Colors.white;
   static const Color darkTextSecondary = Colors.white70;
+  static const Color darkDivider = Color(0xFF2A2A3A);
 
   // Light Theme Colors
-  static const Color lightBackground = Color(0xFFF5F5F5);
+  static const Color lightBackground = Color(0xFFF8F9FA);
   static const Color lightSurface = Color(0xFFFFFFFF);
   static const Color lightCard = Color(0xFFFFFFFF);
-  static const Color lightText = Colors.black87;
-  static const Color lightTextSecondary = Colors.black54;
+  static const Color lightText = Color(0xFF2C3E50);
+  static const Color lightTextSecondary = Color(0xFF7F8C8D);
+  static const Color lightDivider = Color(0xFFE0E0E0);
+
+  // Shadow
+  static BoxShadow cardShadow = BoxShadow(
+    color: Colors.black.withOpacity(0.1),
+    blurRadius: 10,
+    offset: const Offset(0, 4),
+  );
+
+  static BoxShadow cardShadowDark = BoxShadow(
+    color: Colors.black.withOpacity(0.3),
+    blurRadius: 15,
+    offset: const Offset(0, 5),
+  );
 
   // Theme Data
   static ThemeData get darkTheme {
@@ -60,10 +81,52 @@ class AppTheme {
         backgroundColor: darkSurface,
         foregroundColor: Colors.white,
       ),
-      cardTheme: const CardThemeData(
+      cardTheme: CardThemeData(
         color: darkCard,
         elevation: 2,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(16))),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shadowColor: Colors.black.withOpacity(0.3),
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: darkCard,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide.none,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.grey.shade800),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: goldColor, width: 2),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: error),
+        ),
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: goldColor,
+          foregroundColor: Colors.black,
+          elevation: 2,
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+      ),
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          foregroundColor: goldColor,
+        ),
+      ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: goldColor,
+          side: const BorderSide(color: goldColor),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
       ),
       fontFamily: 'Changa',
     );
@@ -85,12 +148,54 @@ class AppTheme {
         centerTitle: true,
         elevation: 0,
         backgroundColor: lightSurface,
-        foregroundColor: Colors.black87,
+        foregroundColor: lightText,
       ),
-      cardTheme: const CardThemeData(
+      cardTheme: CardThemeData(
         color: lightCard,
         elevation: 2,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(16))),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shadowColor: Colors.grey.withOpacity(0.2),
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: lightCard,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide.none,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.grey.shade300),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: goldColor, width: 2),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: error),
+        ),
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: goldColor,
+          foregroundColor: Colors.black,
+          elevation: 2,
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+      ),
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          foregroundColor: goldColor,
+        ),
+      ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: goldColor,
+          side: const BorderSide(color: goldColor),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
       ),
       fontFamily: 'Changa',
     );
