@@ -7,11 +7,16 @@ environment:
   sdk: ">=3.0.0 <4.0.0"
 
 dependencies:
+  flutter_dotenv: ^5.1.0
   flutter:
+  assets:
+    - .env
     sdk: flutter
   cupertino_icons: ^1.0.6
   provider: ^6.1.1
   supabase_flutter: ^2.0.0
+  assets:
+    - .env
   carousel_slider: ^5.1.2
   flutter_animate: ^4.3.0
   flutter_svg: ^2.0.17
@@ -22,17 +27,22 @@ dependencies:
   url_launcher: ^6.2.2
   hive: ^2.2.3
   hive_flutter: ^1.1.0
+  assets:
+    - .env
   path_provider: ^2.1.5
   shimmer: ^3.0.0
   smooth_page_indicator: ^1.1.0
 
 dev_dependencies:
+  flutter_dotenv: ^5.1.0
   flutter_launcher_icons: ^0.13.1
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.1
 
 flutter:
+  assets:
+    - .env
   uses-material-design: true
   fonts:
     - family: Changa

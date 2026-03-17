@@ -1,3 +1,4 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SupabaseService {
@@ -31,47 +32,43 @@ class SupabaseService {
     await client.auth.signOut();
   }
 
-  static Future<void> resetPassword(String email) async {
-    await client.auth.resetPasswordForEmail(email);
-  }
+  // ==================== الإعلانات (products) ====================
 
-  // ==================== الإعلانات ====================
-
-  static Future<List<Map<String, dynamic>>> getAds() async {
+  static Future<List<Map<String, dynamic>>> getProducts() async {
     final response = await client
-        .from('ads')
-        .select('*, profiles:user_id(*)')
+        .from('products')
+        .select('*, profiles(*)')
         .order('created_at', ascending: false);
     return List<Map<String, dynamic>>.from(response);
   }
 
-  static Future<Map<String, dynamic>?> getAd(String id) async {
+  static Future<Map<String, dynamic>?> getProduct(String id) async {
     final response = await client
-        .from('ads')
-        .select('*, profiles:user_id(*)')
+        .from('products')
+        .select('*, profiles(*)')
         .eq('id', id)
         .single();
     return response;
   }
 
-  static Future<void> addAd(Map<String, dynamic> adData) async {
-    await client.from('ads').insert({
-      ...adData,
+  static Future<void> addProduct(Map<String, dynamic> productData) async {
+    await client.from('products').insert({
+      ...productData,
       'user_id': currentUser!.id,
     });
   }
 
-  static Future<void> updateAd(String id, Map<String, dynamic> adData) async {
-    await client.from('ads').update(adData).eq('id', id);
+  static Future<void> updateProduct(String id, Map<String, dynamic> productData) async {
+    await client.from('products').update(productData).eq('id', id);
   }
 
-  static Future<void> deleteAd(String id) async {
-    await client.from('ads').delete().eq('id', id);
+  static Future<void> deleteProduct(String id) async {
+    await client.from('products').delete().eq('id', id);
   }
 
-  static Future<List<Map<String, dynamic>>> getUserAds() async {
+  static Future<List<Map<String, dynamic>>> getUserProducts() async {
     final response = await client
-        .from('ads')
+        .from('products')
         .select('*')
         .eq('user_id', currentUser!.id)
         .order('created_at', ascending: false);
@@ -83,35 +80,25 @@ class SupabaseService {
   static Future<List<Map<String, dynamic>>> getFavorites() async {
     final response = await client
         .from('favorites')
-        .select('*, ads(*)')
+        .select('*, products(*)')
         .eq('user_id', currentUser!.id)
         .order('created_at', ascending: false);
     return List<Map<String, dynamic>>.from(response);
   }
 
-  static Future<void> addToFavorites(String adId) async {
+  static Future<void> addToFavorites(String productId) async {
     await client.from('favorites').insert({
       'user_id': currentUser!.id,
-      'ad_id': adId,
+      'product_id': productId,
     });
   }
 
-  static Future<void> removeFromFavorites(String adId) async {
+  static Future<void> removeFromFavorites(String productId) async {
     await client
         .from('favorites')
         .delete()
         .eq('user_id', currentUser!.id)
-        .eq('ad_id', adId);
-  }
-
-  static Future<bool> isFavorite(String adId) async {
-    final response = await client
-        .from('favorites')
-        .select('id')
-        .eq('user_id', currentUser!.id)
-        .eq('ad_id', adId)
-        .maybeSingle();
-    return response != null;
+        .eq('product_id', productId);
   }
 
   // ==================== المحفظة ====================
@@ -135,11 +122,9 @@ class SupabaseService {
   }
 
   static Future<void> updateBalance(String currency, double amount) async {
-    await client.rpc('update_balance', params: {
-      'p_user_id': currentUser!.id,
-      'p_currency': currency,
-      'p_amount': amount,
-    });
+    await client.from('wallets').update({
+      '${currency.toLowerCase()}_balance': amount,
+    }).eq('user_id', currentUser!.id);
   }
 
   static Future<List<Map<String, dynamic>>> getTransactions() async {
@@ -155,6 +140,66 @@ class SupabaseService {
     await client.from('transactions').insert({
       ...transactionData,
       'user_id': currentUser!.id,
+    });
+  }
+
+  // ==================== الرسائل ====================
+
+  static Future<List<Map<String, dynamic>>> getMessages(String userId) async {
+    final response = await client
+        .from('internal_messages')
+        .select('*')
+        .or('sender_id.eq.$userId,receiver_id.eq.$userId')
+        .order('created_at', ascending: false);
+    return List<Map<String, dynamic>>.from(response);
+  }
+
+  static Future<void> sendMessage(String receiverId, String messageText, {String? productContextId}) async {
+    await client.from('internal_messages').insert({
+      'sender_id': currentUser!.id,
+      'receiver_id': receiverId,
+      'message_text': messageText,
+      'product_context_id': productContextId,
+    });
+  }
+
+  // ==================== التقييمات ====================
+
+  static Future<List<Map<String, dynamic>>> getRatings(String productId) async {
+    final response = await client
+        .from('ratings')
+        .select('*')
+        .eq('product_id', productId)
+        .order('created_at', ascending: false);
+    return List<Map<String, dynamic>>.from(response);
+  }
+
+  static Future<void> addRating(String productId, int stars, {String? comment}) async {
+    await client.from('ratings').insert({
+      'user_id': currentUser!.id,
+      'product_id': productId,
+      'stars': stars,
+      'comment': comment,
+    });
+  }
+
+  // ==================== طلبات السحب ====================
+
+  static Future<List<Map<String, dynamic>>> getWithdrawalRequests() async {
+    final response = await client
+        .from('withdrawal_requests')
+        .select('*')
+        .eq('user_id', currentUser!.id)
+        .order('created_at', ascending: false);
+    return List<Map<String, dynamic>>.from(response);
+  }
+
+  static Future<void> requestWithdrawal(double amount, String method, String accountDetails) async {
+    await client.from('withdrawal_requests').insert({
+      'user_id': currentUser!.id,
+      'amount': amount,
+      'method': method,
+      'account_details': accountDetails,
     });
   }
 }
