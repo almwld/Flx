@@ -5,42 +5,40 @@ import '../../widgets/custom_app_bar.dart';
 class GamesScreen extends StatelessWidget {
   const GamesScreen({super.key});
 
+  final List<String> _games = const [
+    'بيجي', 'فري فاير', 'بوبجي', 'فورتنايت', 'كول أوف ديوتي', 'ماينكرافت', 'جينشين', 'ريد ديد'
+  ];
+
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    
     return Scaffold(
-      appBar: const CustomAppBar(title: 'ألعاب'),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.construction,
-              size: 80,
-              color: isDark ? AppTheme.goldColor.withOpacity(0.5) : AppTheme.goldColor.withOpacity(0.7),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'قيد التطوير',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'Changa',
-                color: isDark ? AppTheme.darkText : AppTheme.lightText,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'سيتم إضافة هذه الخدمة قريباً',
-              style: TextStyle(
-                fontSize: 14,
-                fontFamily: 'Changa',
-                color: isDark ? Colors.grey[400] : Colors.grey[600],
-              ),
-            ),
-          ],
+      appBar: const CustomAppBar(title: 'الألعاب'),
+      body: GridView.builder(
+        padding: const EdgeInsets.all(16),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 3,
+          childAspectRatio: 0.9,
+          crossAxisSpacing: 12,
+          mainAxisSpacing: 12,
         ),
+        itemCount: _games.length,
+        itemBuilder: (context, index) {
+          return Column(
+            children: [
+              Container(
+                width: 60,
+                height: 60,
+                decoration: BoxDecoration(
+                  color: AppTheme.goldColor.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: const Icon(Icons.sports_esports, color: AppTheme.goldColor, size: 30),
+              ),
+              const SizedBox(height: 8),
+              Text(_games[index], style: const TextStyle(fontFamily: 'Changa', fontSize: 12), textAlign: TextAlign.center),
+            ],
+          );
+        },
       ),
     );
   }

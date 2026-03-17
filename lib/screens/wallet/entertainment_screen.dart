@@ -2,17 +2,17 @@ import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/custom_app_bar.dart';
 
-class TransferNetworkScreen extends StatelessWidget {
-  const TransferNetworkScreen({super.key});
+class EntertainmentScreen extends StatelessWidget {
+  const EntertainmentScreen({super.key});
 
-  final List<String> _networks = const [
-    'ويسترن يونيون', 'موني غرام', 'حوالة', 'كاش يو', 'ريت', 'إكسبرس'
+  final List<String> _services = const [
+    'نتفلكس', 'شاهد', 'يوتيوب', 'سبوتيفاي', 'أنغامي', 'شاهد VIP'
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppBar(title: 'شبكة تحويل'),
+      appBar: const CustomAppBar(title: 'خدمات ترفيه'),
       body: GridView.builder(
         padding: const EdgeInsets.all(16),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -21,7 +21,7 @@ class TransferNetworkScreen extends StatelessWidget {
           crossAxisSpacing: 12,
           mainAxisSpacing: 12,
         ),
-        itemCount: _networks.length,
+        itemCount: _services.length,
         itemBuilder: (context, index) {
           return Column(
             children: [
@@ -32,10 +32,10 @@ class TransferNetworkScreen extends StatelessWidget {
                   color: AppTheme.goldColor.withOpacity(0.2),
                   borderRadius: BorderRadius.circular(16),
                 ),
-                child: const Icon(Icons.settings_ethernet, color: AppTheme.goldColor, size: 30),
+                child: const Icon(Icons.movie, color: AppTheme.goldColor, size: 30),
               ),
               const SizedBox(height: 8),
-              Text(_networks[index], style: const TextStyle(fontFamily: 'Changa', fontSize: 12), textAlign: TextAlign.center),
+              Text(_services[index], style: const TextStyle(fontFamily: 'Changa', fontSize: 12), textAlign: TextAlign.center),
             ],
           );
         },
