@@ -35,23 +35,23 @@ dev_dependencies:
 flutter_launcher_icons:
   android: true
   ios: true
-  image_path: "assets/images/icon.png"
+  image_path: "assets/icons/icon.png"
   adaptive_icon_background: "#D4AF37"
-  adaptive_icon_foreground: "assets/images/icon.png"
+  adaptive_icon_foreground: "assets/icons/icon.png"
   min_sdk_android: 21
   remove_alpha_ios: true
   web:
     generate: true
-    image_path: "assets/images/icon.png"
+    image_path: "assets/icons/icon.png"
     background_color: "#D4AF37"
     theme_color: "#D4AF37"
   windows:
     generate: true
-    image_path: "assets/images/icon.png"
+    image_path: "assets/icons/icon.png"
     icon_size: 48
   macos:
     generate: true
-    image_path: "assets/images/icon.png"
+    image_path: "assets/icons/icon.png"
 
 flutter:
   uses-material-design: true
@@ -62,5 +62,6 @@ flutter:
           weight: 600
   assets:
     - assets/images/
+    - assets/icons/
     - assets/icons/svg/
     - assets/animations/
