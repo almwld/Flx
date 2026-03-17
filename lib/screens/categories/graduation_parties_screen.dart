@@ -11,7 +11,7 @@ class GraduationPartiesScreen extends StatelessWidget {
     {'name': 'بوكسات ورد', 'icon': Icons.local_florist, 'color': Colors.red, 'count': '123'},
     {'name': 'توزيعات', 'icon': Icons.card_giftcard, 'color': Colors.pink, 'count': '98'},
     {'name': 'بالونات', 'icon': Icons.circle, 'color': Colors.purple, 'count': '87'},
-    {'name': 'ديكور حفلات', 'icon': Icons.decorations, 'color': Colors.orange, 'count': '76'},
+    {'name': 'ديكور حفلات', 'icon': Icons.category, 'color': Colors.orange, 'count': '76'},
     {'name': 'تصوير', 'icon': Icons.camera_alt, 'color': Colors.blue, 'count': '65'},
     {'name': 'كوشة تصوير', 'icon': Icons.photo_camera, 'color': Colors.pink, 'count': '54'},
   ];

@@ -11,7 +11,7 @@ class BirthdaySuppliesScreen extends StatelessWidget {
     {'name': 'بالونات', 'icon': Icons.circle, 'color': Colors.purple, 'count': '189'},
     {'name': 'قبعات', 'icon': Icons.emoji_events, 'color': Colors.red, 'count': '156'},
     {'name': 'هدايا', 'icon': Icons.card_giftcard, 'color': Colors.blue, 'count': '123'},
-    {'name': 'ديكور', 'icon': Icons.decorations, 'color': Colors.orange, 'count': '98'},
+    {'name': 'ديكور', 'icon': Icons.category, 'color': Colors.orange, 'count': '98'},
     {'name': 'مفرقعات', 'icon': Icons.celebration, 'color': Colors.red, 'count': '87'},
     {'name': 'ألعاب أطفال', 'icon': Icons.toys, 'color': Colors.green, 'count': '76'},
   ];
