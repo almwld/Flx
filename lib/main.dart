@@ -5,16 +5,20 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'providers/theme_manager.dart';
 import 'theme/app_theme.dart';
 import 'screens/splash_screen.dart';
+import 'config/app_config.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  // تحميل ملف .env
+  // Load environment variables
   await dotenv.load(fileName: ".env");
   
+  // Print config status (optional)
+  AppConfig.printConfigStatus();
+  
   await Supabase.initialize(
-    url: dotenv.env['SUPABASE_URL']!,
-    anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
+    url: AppConfig.supabaseUrl,
+    anonKey: AppConfig.supabaseAnonKey,
   );
   
   runApp(
