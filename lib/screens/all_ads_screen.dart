@@ -7,11 +7,11 @@ import 'ad_detail_screen.dart';
 class AllAdsScreen extends StatelessWidget {
   const AllAdsScreen({super.key});
 
-  final List<AdModel> _ads = const [
-    AdModel(id: '1', title: 'آيفون 15 برو ماكس', description: 'جديد', price: 450000, currency: 'YER', images: ['https://via.placeholder.com/300'], category: 'إلكترونيات', subCategory: 'هواتف', city: 'صنعاء', sellerId: '1', sellerName: 'متجر التقنية', sellerRating: 4.8, createdAt: null),
-    AdModel(id: '2', title: 'سيارة تويوتا', description: '2020', price: 8500000, currency: 'YER', images: ['https://via.placeholder.com/300'], category: 'سيارات', subCategory: 'تويوتا', city: 'عدن', sellerId: '2', sellerName: 'معرض السيارات', sellerRating: 4.5, createdAt: null),
-    AdModel(id: '3', title: 'شقة للبيع', description: '3 غرف', price: 35000000, currency: 'YER', images: ['https://via.placeholder.com/300'], category: 'عقارات', subCategory: 'شقق', city: 'صنعاء', sellerId: '3', sellerName: 'مكتب العقارات', sellerRating: 4.9, createdAt: null),
-    AdModel(id: '4', title: 'لابتوب ماك بوك', description: 'M1', price: 1200000, currency: 'YER', images: ['https://via.placeholder.com/300'], category: 'إلكترونيات', subCategory: 'لابتوب', city: 'تعز', sellerId: '4', sellerName: 'Apple Store', sellerRating: 5.0, createdAt: null),
+  final List<AdModel> _ads = [
+    AdModel(id: '1', title: 'آيفون 15 برو ماكس', description: 'جديد', price: 450000, currency: 'YER', images: ['https://via.placeholder.com/300'], category: 'إلكترونيات', subCategory: 'هواتف', city: 'صنعاء', sellerId: '1', sellerName: 'متجر التقنية', sellerRating: 4.8, createdAt: DateTime.now()),
+    AdModel(id: '2', title: 'سيارة تويوتا', description: '2020', price: 8500000, currency: 'YER', images: ['https://via.placeholder.com/300'], category: 'سيارات', subCategory: 'تويوتا', city: 'عدن', sellerId: '2', sellerName: 'معرض السيارات', sellerRating: 4.5, createdAt: DateTime.now()),
+    AdModel(id: '3', title: 'شقة للبيع', description: '3 غرف', price: 35000000, currency: 'YER', images: ['https://via.placeholder.com/300'], category: 'عقارات', subCategory: 'شقق', city: 'صنعاء', sellerId: '3', sellerName: 'مكتب العقارات', sellerRating: 4.9, createdAt: DateTime.now()),
+    AdModel(id: '4', title: 'لابتوب ماك بوك', description: 'M1', price: 1200000, currency: 'YER', images: ['https://via.placeholder.com/300'], category: 'إلكترونيات', subCategory: 'لابتوب', city: 'تعز', sellerId: '4', sellerName: 'Apple Store', sellerRating: 5.0, createdAt: DateTime.now()),
   ];
 
   @override
