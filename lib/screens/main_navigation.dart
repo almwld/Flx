@@ -8,6 +8,7 @@ import 'add_ad_screen.dart';
 import 'chat_screen.dart';
 import 'profile_screen.dart';
 import 'all_ads_screen.dart';
+import 'map_screen.dart';
 
 class MainNavigation extends StatefulWidget {
   final bool isGuest;
@@ -36,8 +37,8 @@ class _MainNavigationState extends State<MainNavigation> with TickerProviderStat
       const ChatScreen(),         // 1: المحادثات
       const HomeScreen(),         // 2: الرئيسية
       const WalletScreen(),       // 3: المحفظة
-      const AllAdsScreen(),       // 4: المتجر (بدون const)
-      const AddAdScreen(),        // 5: إضافة إعلان
+      const AllAdsScreen(),       // 4: المتجر
+      const MapScreen(),          // 5: الخريطة
     ];
   }
 
@@ -81,13 +82,13 @@ class _MainNavigationState extends State<MainNavigation> with TickerProviderStat
             _buildNavItem(1, 'chat.svg', 'المحادثات'),
             _buildNavItem(3, 'wallet.svg', 'المحفظة'),
             
-            // الزر الذهبي المركزي (رفع الإعلانات)
+            // الزر الذهبي المركزي (الإضافة)
             _buildCenterButton(),
             
             // الأزرار اليمنى (3)
             _buildNavItem(4, 'search.svg', 'المتجر'),
             _buildNavItem(2, 'home.svg', 'الرئيسية'),
-            _buildNavItem(5, 'add.svg', 'إضافة'),
+            _buildNavItem(5, 'location.svg', 'الخريطة'),
           ],
         ),
       ),
@@ -146,7 +147,12 @@ class _MainNavigationState extends State<MainNavigation> with TickerProviderStat
 
   Widget _buildCenterButton() {
     return GestureDetector(
-      onTap: () => _onItemTapped(5), // الذهاب إلى شاشة إضافة إعلان
+      onTap: () {
+        // فتح شاشة إضافة إعلان
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => const AddAdScreen()),
+        );
+      },
       child: Container(
         width: 70,
         height: 70,
