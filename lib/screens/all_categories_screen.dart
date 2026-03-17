@@ -117,3 +117,8 @@ class AllCategoriesScreen extends StatelessWidget {
     {'name': 'أدوات السباكة', 'screen': PlumbingToolsScreen, 'color': Colors.blue},
     {'name': 'أدوات النجارة', 'screen': CarpentryToolsScreen, 'color': Colors.orange},
     {'name': 'أدوات الحدادة', 'screen': BlacksmithToolsScreen, 'color': Colors.brown},
+    {'name': 'الخدمات المنزلية', 'screen': HomeServicesScreen, 'color': Colors.blue},
+    {'name': 'خدمات السيارات', 'screen': CarServicesScreen, 'color': Colors.red},
+    {'name': 'خدمات المقاولات', 'screen': ContractingServicesScreen, 'color': Colors.green},
+    {'name': 'خدمات النقل والتوصيل', 'screen': DeliveryServicesScreen, 'color': Colors.orange},
+    {'name': 'خدمات التعليم والتدريب', 'screen': TrainingServicesScreen, 'color': Colors.purple},
