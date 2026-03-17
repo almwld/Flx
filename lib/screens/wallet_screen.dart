@@ -25,10 +25,10 @@ class _WalletScreenState extends State<WalletScreen> {
   int _currentCard = 0;
   bool _isHidden = false;
 
+  // حذف الدولار من البطاقات (بقاء اليمني والسعودي فقط)
   final List<Map<String, dynamic>> _cards = [
     {'name': 'الريال اليمني', 'balance': 125000, 'currency': 'YER', 'flag': '🇾🇪', 'color': AppTheme.goldColor},
     {'name': 'الريال السعودي', 'balance': 5000, 'currency': 'SAR', 'flag': '🇸🇦', 'color': Colors.green[700]!},
-    {'name': 'الدولار الأمريكي', 'balance': 1250, 'currency': 'USD', 'flag': '🇺🇸', 'color': Colors.blue[700]!},
   ];
 
   final List<Map<String, dynamic>> _services = [
@@ -51,7 +51,21 @@ class _WalletScreenState extends State<WalletScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      appBar: const CustomAppBar(title: 'المحفظة'),
+      appBar: CustomAppBar(
+        title: 'المحفظة',
+        actions: [
+          // زر إخفاء/إظهار الرصيد
+          IconButton(
+            icon: Icon(_isHidden ? Icons.visibility_off : Icons.visibility),
+            onPressed: () {
+              setState(() {
+                _isHidden = !_isHidden;
+              });
+            },
+            color: AppTheme.goldColor,
+          ),
+        ],
+      ),
       body: CustomScrollView(
         slivers: [
           // بطاقات الرصيد
