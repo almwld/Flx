@@ -22,6 +22,8 @@ class AdModel {
   final DateTime? auctionEndTime;
   final double? currentBid;
   final int? bidCount;
+  final int views;           // عدد المشاهدات
+  final String status;       // حالة الإعلان (active, sold, expired)
 
   AdModel({
     required this.id,
@@ -45,6 +47,8 @@ class AdModel {
     this.auctionEndTime,
     this.currentBid,
     this.bidCount,
+    this.views = 0,          // القيمة الافتراضية
+    this.status = 'active',   // القيمة الافتراضية
   });
 
   String get formattedPrice {
