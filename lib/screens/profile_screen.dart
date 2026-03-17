@@ -1,287 +1,202 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../widgets/custom_app_bar.dart';
-import 'account_info_screen.dart';
 import 'my_ads_screen.dart';
 import 'favorites_screen.dart';
-import 'my_orders_screen.dart';
-import 'settings/settings_screen.dart';
+import 'settings_screen.dart';
+import 'account_info_screen.dart';
 import 'login_screen.dart';
-import '../services/supabase_service.dart';
 
-class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
+class ProfileScreen extends StatefulWidget {
+  final bool isGuest;
+  const ProfileScreen({super.key, this.isGuest = false});
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  final List<Map<String, dynamic>> _menuItems = [
+    {'title': 'إعلاناتي', 'icon': Icons.campaign, 'color': Colors.blue, 'screen': const MyAdsScreen()},
+    {'title': 'المفضلة', 'icon': Icons.favorite, 'color': Colors.red, 'screen': const FavoritesScreen()},
+    {'title': 'معلومات الحساب', 'icon': Icons.person, 'color': Colors.green, 'screen': const AccountInfoScreen()},
+    {'title': 'الإعدادات', 'icon': Icons.settings, 'color': Colors.purple, 'screen': const SettingsScreen()},
+    {'title': 'المساعدة والدعم', 'icon': Icons.help_outline, 'color': Colors.orange, 'screen': null},
+    {'title': 'عن التطبيق', 'icon': Icons.info_outline, 'color': Colors.teal, 'screen': null},
+  ];
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? AppTheme.darkBackground : AppTheme.lightBackground,
+      appBar: const CustomAppBar(title: 'حسابي'),
       body: CustomScrollView(
         slivers: [
+          // معلومات المستخدم
           SliverToBoxAdapter(
-            child: CustomAppBar(
-              title: 'حسابي',
-              actions: [
-                IconButton(
-                  icon: const Icon(Icons.settings_outlined),
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => const SettingsScreen()),
-                    );
-                  },
-                ),
-              ],
+            child: Container(
+              padding: const EdgeInsets.all(20),
+              child: Row(
+                children: [
+                  Container(
+                    width: 70,
+                    height: 70,
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [AppTheme.goldColor, AppTheme.goldLight],
+                      ),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(Icons.person, size: 40, color: Colors.black),
+                  ),
+                  const SizedBox(width: 20),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          widget.isGuest ? 'ضيف' : 'أحمد محمد',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: isDark ? AppTheme.darkText : AppTheme.lightText,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          widget.isGuest 
+                              ? 'سجل دخول للاستفادة من جميع الميزات'
+                              : 'ahmed@example.com',
+                          style: TextStyle(
+                            color: isDark ? Colors.grey[400] : Colors.grey[600],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-          SliverToBoxAdapter(
-            child: Column(
-              children: [
-                // الصورة والمعلومات
-                Container(
-                  margin: const EdgeInsets.all(16),
-                  padding: const EdgeInsets.all(24),
-                  decoration: BoxDecoration(
-                    gradient: AppTheme.goldGradient,
-                    borderRadius: BorderRadius.circular(24),
-                  ),
-                  child: Column(
-                    children: [
-                      Stack(
-                        children: [
-                          Container(
-                            width: 100,
-                            height: 100,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(50),
-                              border: Border.all(color: Colors.white, width: 4),
-                            ),
-                            child: const Icon(
-                              Icons.person,
-                              size: 50,
-                              color: AppTheme.goldColor,
-                            ),
-                          ),
-                          Positioned(
-                            bottom: 0,
-                            right: 0,
-                            child: Container(
-                              padding: const EdgeInsets.all(6),
-                              decoration: const BoxDecoration(
-                                color: Colors.black,
-                                shape: BoxShape.circle,
-                              ),
-                              child: const Icon(
-                                Icons.camera_alt,
-                                size: 16,
-                                color: AppTheme.goldColor,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-                      const Text(
-                        'محمد أحمد',
-                        style: TextStyle(
-                          fontFamily: 'Changa',
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'mohammed@email.com',
-                        style: TextStyle(
-                          fontFamily: 'Changa',
-                          fontSize: 14,
-                          color: Colors.black.withOpacity(0.7),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          _buildStat('الإعلانات', '12'),
-                          Container(
-                            width: 1,
-                            height: 30,
-                            color: Colors.black.withOpacity(0.2),
-                            margin: const EdgeInsets.symmetric(horizontal: 24),
-                          ),
-                          _buildStat('المتابعين', '156'),
-                          Container(
-                            width: 1,
-                            height: 30,
-                            color: Colors.black.withOpacity(0.2),
-                            margin: const EdgeInsets.symmetric(horizontal: 24),
-                          ),
-                          _buildStat('التقييم', '4.8'),
-                        ],
-                      ),
-                    ],
-                  ),
+          
+          // إحصائيات
+          if (!widget.isGuest)
+            SliverToBoxAdapter(
+              child: Container(
+                margin: const EdgeInsets.symmetric(horizontal: 16),
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: isDark ? AppTheme.darkCard : AppTheme.lightCard,
+                  borderRadius: BorderRadius.circular(16),
                 ),
-
-                // القائمة
-                _buildMenuItem(
-                  context,
-                  icon: Icons.person_outline,
-                  title: 'معلومات الحساب',
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => const AccountInfoScreen()),
-                    );
-                  },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    _buildStatItem('الإعلانات', '12'),
+                    Container(width: 1, height: 40, color: Colors.grey[700]),
+                    _buildStatItem('المفضلة', '45'),
+                    Container(width: 1, height: 40, color: Colors.grey[700]),
+                    _buildStatItem('المشاهدات', '1.2K'),
+                  ],
                 ),
-                _buildMenuItem(
-                  context,
-                  icon: Icons.post_add_outlined,
-                  title: 'إعلاناتي',
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => const MyAdsScreen()),
-                    );
-                  },
-                ),
-                _buildMenuItem(
-                  context,
-                  icon: Icons.favorite_outline,
-                  title: 'المفضلة',
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => const FavoritesScreen()),
-                    );
-                  },
-                ),
-                _buildMenuItem(
-                  context,
-                  icon: Icons.shopping_bag_outlined,
-                  title: 'طلباتي',
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => const MyOrdersScreen()),
-                    );
-                  },
-                ),
-                _buildMenuItem(
-                  context,
-                  icon: Icons.settings_outlined,
-                  title: 'الإعدادات',
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => const SettingsScreen()),
-                    );
-                  },
-                ),
-                _buildMenuItem(
-                  context,
-                  icon: Icons.help_outline,
-                  title: 'المساعدة والدعم',
-                  onTap: () {},
-                ),
-
-                const SizedBox(height: 24),
-
-                // زر تسجيل الخروج
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: ElevatedButton.icon(
-                    onPressed: () async {
-                      await SupabaseService.signOut();
-                      if (context.mounted) {
-                        Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(builder: (_) => const LoginScreen()),
+              ),
+            ),
+          
+          // قائمة الخيارات
+          SliverPadding(
+            padding: const EdgeInsets.all(16),
+            sliver: SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  final item = _menuItems[index];
+                  return GestureDetector(
+                    onTap: () {
+                      if (item['screen'] != null) {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => item['screen']),
                         );
                       }
                     },
-                    icon: const Icon(Icons.logout, color: AppTheme.error),
-                    label: const Text(
-                      'تسجيل الخروج',
-                      style: TextStyle(
-                        fontFamily: 'Changa',
-                        color: AppTheme.error,
+                    child: Container(
+                      margin: const EdgeInsets.only(bottom: 12),
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: isDark ? AppTheme.darkCard : AppTheme.lightCard,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: (item['color'] as Color).withOpacity(0.2),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(item['icon'] as IconData, color: item['color']),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Text(
+                              item['title'],
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                                color: isDark ? Colors.white : Colors.black87,
+                              ),
+                            ),
+                          ),
+                          Icon(Icons.arrow_forward_ios, size: 16, color: isDark ? Colors.grey[600] : Colors.grey[400]),
+                        ],
                       ),
                     ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.error.withOpacity(0.1),
-                      foregroundColor: AppTheme.error,
-                      minimumSize: const Size(double.infinity, 50),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 24),
-              ],
+                  );
+                },
+                childCount: _menuItems.length,
+              ),
             ),
           ),
+          
+          // زر تسجيل الخروج
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: SizedBox(
+                height: 55,
+                child: ElevatedButton.icon(
+                  onPressed: widget.isGuest
+                      ? () {
+                          Navigator.of(context).pushReplacement(
+                            MaterialPageRoute(builder: (_) => const LoginScreen()),
+                          );
+                        }
+                      : () {},
+                  icon: Icon(widget.isGuest ? Icons.login : Icons.logout, color: Colors.white),
+                  label: Text(
+                    widget.isGuest ? 'تسجيل الدخول' : 'تسجيل الخروج',
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppTheme.error,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          const SliverToBoxAdapter(child: SizedBox(height: 100)),
         ],
       ),
     );
   }
 
-  Widget _buildStat(String label, String value) {
+  Widget _buildStatItem(String label, String value) {
     return Column(
       children: [
-        Text(
-          value,
-          style: const TextStyle(
-            fontFamily: 'Changa',
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
-          ),
-        ),
+        Text(value, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppTheme.goldColor)),
         const SizedBox(height: 4),
-        Text(
-          label,
-          style: TextStyle(
-            fontFamily: 'Changa',
-            fontSize: 12,
-            color: Colors.black.withOpacity(0.7),
-          ),
-        ),
+        Text(label, style: const TextStyle(fontSize: 12, color: Colors.grey)),
       ],
-    );
-  }
-
-  Widget _buildMenuItem(
-    BuildContext context, {
-    required IconData icon,
-    required String title,
-    required VoidCallback onTap,
-  }) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    return ListTile(
-      leading: Container(
-        padding: const EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          color: AppTheme.goldColor.withOpacity(0.2),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Icon(icon, color: AppTheme.goldColor),
-      ),
-      title: Text(
-        title,
-        style: TextStyle(
-          fontFamily: 'Changa',
-          fontSize: 16,
-          color: isDark ? AppTheme.darkText : AppTheme.lightText,
-        ),
-      ),
-      trailing: Icon(
-        Icons.arrow_back_ios,
-        size: 16,
-        color: isDark ? AppTheme.darkTextSecondary : AppTheme.lightTextSecondary,
-      ),
-      onTap: onTap,
     );
   }
 }
