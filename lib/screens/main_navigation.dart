@@ -5,6 +5,7 @@ import 'wallet_screen.dart';
 import 'add_ad_screen.dart';
 import 'chat_screen.dart';
 import 'profile_screen.dart';
+import 'all_ads_screen.dart';
 
 class MainNavigation extends StatefulWidget {
   final bool isGuest;
@@ -52,7 +53,7 @@ class _MainNavigationState extends State<MainNavigation> {
             _buildNavItem(Icons.account_balance_wallet_outlined, 'المحفظة', 1),
             _buildCenterButton(),
             _buildNavItem(Icons.home_outlined, 'الرئيسية', 0),
-            _buildNavItem(Icons.shopping_bag_outlined, 'المتجر', 0), // يفتح all_ads
+            _buildNavItem(Icons.shopping_bag_outlined, 'المتجر', 0),
             _buildNavItem(Icons.add_circle_outline, 'إضافة', 2),
           ],
         ),
