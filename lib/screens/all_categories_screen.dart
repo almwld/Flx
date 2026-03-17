@@ -143,3 +143,8 @@ class AllCategoriesScreen extends StatelessWidget {
     {'name': 'السكر والحلويات', 'screen': SugarSweetsScreen, 'color': Colors.pink},
     {'name': 'المشروبات الساخنة', 'screen': HotDrinksScreen, 'color': Colors.brown},
     {'name': 'المشروبات الباردة', 'screen': ColdDrinksScreen, 'color': Colors.orange},
+    {'name': 'تجهيزات الأعراس', 'screen': WeddingSuppliesScreen, 'color': Colors.pink},
+    {'name': 'حفلات وتخرج', 'screen': GraduationPartiesScreen, 'color': Colors.blue},
+    {'name': 'أعياد الميلاد', 'screen': BirthdaySuppliesScreen, 'color': Colors.red},
+    {'name': 'تجهيزات الحفلات', 'screen': EventsSuppliesScreen, 'color': Colors.green},
+    {'name': 'المأكولات الشعبية', 'screen': TraditionalFoodScreen, 'color': Colors.orange},
