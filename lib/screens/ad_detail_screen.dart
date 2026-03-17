@@ -20,13 +20,37 @@ class AdDetailScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // صورة الإعلان
-            CachedNetworkImage(
-              imageUrl: imageUrl,
-              height: 250,
-              width: double.infinity,
-              fit: BoxFit.cover,
-              placeholder: (context, url) => Container(height: 250, color: Colors.grey[300]),
-              errorWidget: (context, url, error) => Container(height: 250, color: Colors.grey[300], child: const Icon(Icons.error)),
+            Stack(
+              children: [
+                CachedNetworkImage(
+                  imageUrl: imageUrl,
+                  height: 300,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                  placeholder: (context, url) => Container(
+                    height: 300,
+                    color: isDark ? AppTheme.darkCard : Colors.grey[300],
+                    child: const Center(child: CircularProgressIndicator()),
+                  ),
+                  errorWidget: (context, url, error) => Container(
+                    height: 300,
+                    color: isDark ? AppTheme.darkCard : Colors.grey[300],
+                    child: const Center(child: Icon(Icons.error, size: 50)),
+                  ),
+                ),
+                Positioned(
+                  top: 16,
+                  right: 16,
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.9),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(Icons.favorite_border, color: Colors.red),
+                  ),
+                ),
+              ],
             ),
             
             Padding(
@@ -36,42 +60,73 @@ class AdDetailScreen extends StatelessWidget {
                 children: [
                   // العنوان والسعر
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Expanded(
                         child: Text(
                           ad.title,
-                          style: TextStyle(fontFamily: 'Changa', fontSize: 24, fontWeight: FontWeight.bold),
+                          style: const TextStyle(
+                            fontFamily: 'Changa',
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
+                      const SizedBox(width: 16),
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                        decoration: BoxDecoration(color: AppTheme.goldColor.withOpacity(0.2), borderRadius: BorderRadius.circular(8)),
+                        decoration: BoxDecoration(
+                          color: AppTheme.goldColor.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                         child: Text(
                           '${ad.formattedPrice} ${ad.currencySymbol}',
-                          style: const TextStyle(color: AppTheme.goldColor, fontWeight: FontWeight.bold),
+                          style: const TextStyle(
+                            color: AppTheme.goldColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
                         ),
                       ),
                     ],
                   ),
                   
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 12),
                   
-                  // الموقع
+                  // الموقع والوقت
                   Row(
                     children: [
                       const Icon(Icons.location_on, size: 16, color: Colors.grey),
                       const SizedBox(width: 4),
-                      Text(ad.city, style: TextStyle(color: Colors.grey[500])),
+                      Text(
+                        ad.city,
+                        style: TextStyle(color: Colors.grey[500]),
+                      ),
                       const SizedBox(width: 16),
                       const Icon(Icons.access_time, size: 16, color: Colors.grey),
                       const SizedBox(width: 4),
-                      Text(ad.timeAgo, style: TextStyle(color: Colors.grey[500])),
+                      Text(
+                        ad.timeAgo,
+                        style: TextStyle(color: Colors.grey[500]),
+                      ),
+                      const Spacer(),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: Colors.blue.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          'مشاهدة ${ad.views}',
+                          style: const TextStyle(fontSize: 12, color: Colors.blue),
+                        ),
+                      ),
                     ],
                   ),
                   
                   const SizedBox(height: 24),
                   
-                  // البائع
+                  // معلومات البائع
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
@@ -81,15 +136,23 @@ class AdDetailScreen extends StatelessWidget {
                     child: Row(
                       children: [
                         CircleAvatar(
+                          radius: 30,
                           backgroundColor: AppTheme.goldColor.withOpacity(0.2),
-                          child: const Icon(Icons.person, color: AppTheme.goldColor),
+                          child: const Icon(Icons.person, color: AppTheme.goldColor, size: 30),
                         ),
-                        const SizedBox(width: 12),
+                        const SizedBox(width: 16),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(ad.sellerName, style: const TextStyle(fontWeight: FontWeight.bold)),
+                              Text(
+                                ad.sellerName,
+                                style: const TextStyle(
+                                  fontFamily: 'Changa',
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                              ),
                               const SizedBox(height: 4),
                               Row(
                                 children: [
@@ -103,8 +166,14 @@ class AdDetailScreen extends StatelessWidget {
                         ),
                         Row(
                           children: [
-                            IconButton(icon: const Icon(Icons.chat), onPressed: () {}),
-                            IconButton(icon: const Icon(Icons.phone), onPressed: () {}),
+                            IconButton(
+                              icon: const Icon(Icons.chat, color: AppTheme.goldColor),
+                              onPressed: () {},
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.phone, color: AppTheme.goldColor),
+                              onPressed: () {},
+                            ),
                           ],
                         ),
                       ],
@@ -114,13 +183,23 @@ class AdDetailScreen extends StatelessWidget {
                   const SizedBox(height: 24),
                   
                   // الوصف
-                  const Text('الوصف', style: TextStyle(fontFamily: 'Changa', fontSize: 18, fontWeight: FontWeight.bold)),
+                  const Text(
+                    'الوصف',
+                    style: TextStyle(
+                      fontFamily: 'Changa',
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   const SizedBox(height: 8),
-                  Text(ad.description, style: const TextStyle(height: 1.5)),
+                  Text(
+                    ad.description,
+                    style: const TextStyle(fontSize: 14, height: 1.5),
+                  ),
                   
                   const SizedBox(height: 24),
                   
-                  // أزرار الإجراء
+                  // أزرار التواصل
                   Row(
                     children: [
                       Expanded(
@@ -131,6 +210,7 @@ class AdDetailScreen extends StatelessWidget {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppTheme.goldColor,
                             foregroundColor: Colors.black,
+                            padding: const EdgeInsets.symmetric(vertical: 12),
                           ),
                         ),
                       ),
@@ -143,6 +223,7 @@ class AdDetailScreen extends StatelessWidget {
                           style: OutlinedButton.styleFrom(
                             foregroundColor: AppTheme.goldColor,
                             side: const BorderSide(color: AppTheme.goldColor),
+                            padding: const EdgeInsets.symmetric(vertical: 12),
                           ),
                         ),
                       ),
@@ -151,11 +232,15 @@ class AdDetailScreen extends StatelessWidget {
                   
                   const SizedBox(height: 16),
                   
+                  // الإبلاغ
                   Center(
                     child: TextButton.icon(
                       onPressed: () {},
                       icon: const Icon(Icons.flag, color: Colors.red),
-                      label: const Text('الإبلاغ عن الإعلان', style: TextStyle(color: Colors.red)),
+                      label: const Text(
+                        'الإبلاغ عن الإعلان',
+                        style: TextStyle(color: Colors.red, fontFamily: 'Changa'),
+                      ),
                     ),
                   ),
                 ],
