@@ -12,66 +12,114 @@ import 'help_support_screen.dart';
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
-  final List<Map<String, dynamic>> _settings = const [
-    {'title': 'الإشعارات', 'icon': Icons.notifications, 'color': Colors.blue, 'screen': NotificationsSettingsScreen},
-    {'title': 'الأمان والخصوصية', 'icon': Icons.security, 'color': Colors.green, 'screen': SecuritySettingsScreen},
-    {'title': 'اللغة', 'icon': Icons.language, 'color': Colors.orange, 'screen': LanguageScreen},
-    {'title': 'طرق الدفع', 'icon': Icons.payment, 'color': Colors.purple, 'screen': PaymentMethodsScreen},
-    {'title': 'المساعدة والدعم', 'icon': Icons.help, 'color': Colors.teal, 'screen': HelpSupportScreen},
-    {'title': 'عن التطبيق', 'icon': Icons.info, 'color': Colors.red, 'screen': AboutScreen},
-    {'title': 'سياسة الخصوصية', 'icon': Icons.privacy_tip, 'color': Colors.indigo, 'screen': PrivacyPolicyScreen},
-  ];
-
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
       appBar: const CustomAppBar(title: 'الإعدادات'),
-      body: ListView.builder(
+      body: ListView(
         padding: const EdgeInsets.all(16),
-        itemCount: _settings.length,
-        itemBuilder: (context, index) {
-          final item = _settings[index];
-          return GestureDetector(
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => item['screen']()),
-              );
-            },
-            child: Container(
-              margin: const EdgeInsets.only(bottom: 8),
-              padding: const EdgeInsets.all(16),
+        children: [
+          _buildMenuItem(
+            context,
+            'الإشعارات',
+            Icons.notifications,
+            Colors.blue,
+            const NotificationsSettingsScreen(),
+          ),
+          _buildMenuItem(
+            context,
+            'الأمان والخصوصية',
+            Icons.security,
+            Colors.green,
+            const SecuritySettingsScreen(),
+          ),
+          _buildMenuItem(
+            context,
+            'اللغة',
+            Icons.language,
+            Colors.orange,
+            const LanguageScreen(),
+          ),
+          _buildMenuItem(
+            context,
+            'طرق الدفع',
+            Icons.payment,
+            Colors.purple,
+            const PaymentMethodsScreen(),
+          ),
+          _buildMenuItem(
+            context,
+            'المساعدة والدعم',
+            Icons.help,
+            Colors.teal,
+            const HelpSupportScreen(),
+          ),
+          _buildMenuItem(
+            context,
+            'عن التطبيق',
+            Icons.info,
+            Colors.red,
+            const AboutScreen(),
+          ),
+          _buildMenuItem(
+            context,
+            'سياسة الخصوصية',
+            Icons.privacy_tip,
+            Colors.indigo,
+            const PrivacyPolicyScreen(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMenuItem(
+    BuildContext context,
+    String title,
+    IconData icon,
+    Color color,
+    Widget screen,
+  ) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => screen),
+        );
+      },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 8),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: isDark ? AppTheme.darkCard : AppTheme.lightCard,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: isDark ? AppTheme.darkCard : AppTheme.lightCard,
-                borderRadius: BorderRadius.circular(12),
+                color: color.withOpacity(0.2),
+                shape: BoxShape.circle,
               ),
-              child: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: (item['color'] as Color).withOpacity(0.2),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(item['icon'] as IconData, color: item['color']),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Text(
-                      item['title'],
-                      style: const TextStyle(
-                        fontFamily: 'Changa',
-                        fontSize: 16,
-                      ),
-                    ),
-                  ),
-                  const Icon(Icons.arrow_forward_ios, size: 16),
-                ],
+              child: Icon(icon, color: color),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Text(
+                title,
+                style: const TextStyle(
+                  fontFamily: 'Changa',
+                  fontSize: 16,
+                ),
               ),
             ),
-          );
-        },
+            const Icon(Icons.arrow_forward_ios, size: 16),
+          ],
+        ),
       ),
     );
   }
