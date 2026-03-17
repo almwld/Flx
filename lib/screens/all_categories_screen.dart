@@ -6,6 +6,13 @@ import 'categories/home_appliances_screen.dart';
 import 'categories/kitchen_food_screen.dart';
 import 'categories/handicrafts_antiques_screen.dart';
 import 'categories/construction_materials_screen.dart';
+import 'categories/agriculture_screen.dart';
+import 'categories/education_screen.dart';
+import 'categories/travel_tourism_screen.dart';
+import 'categories/auctions_category_screen.dart';
+import 'categories/donations_screen.dart';
+import 'categories/luxury_items_screen.dart';
+import 'categories/heavy_equipment_screen.dart';
 
 class AllCategoriesScreen extends StatelessWidget {
   const AllCategoriesScreen({super.key});
@@ -16,6 +23,13 @@ class AllCategoriesScreen extends StatelessWidget {
     {'name': 'المطبخ والطعام', 'screen': KitchenFoodScreen, 'color': Colors.amber},
     {'name': 'الحرف والتحف', 'screen': HandicraftsAntiquesScreen, 'color': Colors.brown},
     {'name': 'مواد البناء', 'screen': ConstructionMaterialsScreen, 'color': Colors.grey},
+    {'name': 'الزراعة', 'screen': AgricultureScreen, 'color': Colors.green},
+    {'name': 'التعليم', 'screen': EducationScreen, 'color': Colors.blue},
+    {'name': 'السفر والسياحة', 'screen': TravelTourismScreen, 'color': Colors.orange},
+    {'name': 'المزادات', 'screen': AuctionsCategoryScreen, 'color': Colors.red},
+    {'name': 'التبرعات', 'screen': DonationsScreen, 'color': Colors.teal},
+    {'name': 'الكماليات', 'screen': LuxuryItemsScreen, 'color': Colors.purple},
+    {'name': 'المعدات الثقيلة', 'screen': HeavyEquipmentScreen, 'color': Colors.yellow},
   ];
 
   @override
