@@ -47,7 +47,7 @@ class AboutScreen extends StatelessWidget {
             const SizedBox(height: 24),
             _buildInfoCard(
               title: 'من نحن',
-              content: 'فلكس اليمن هي منصة إلكترونية متكاملة تهدف إلى تسهيل عملية البيع والشراء في اليمن.',
+              content: 'فلكس اليمن هي منصة إلكترونية متكاملة تهدف إلى تسهيل عملية البيع والشراء في اليمن. نحن نقدم منصة آمنة وموثوقة للتجار والعملاء.',
             ),
             const SizedBox(height: 16),
             _buildInfoCard(
@@ -62,7 +62,11 @@ class AboutScreen extends StatelessWidget {
             const SizedBox(height: 32),
             const Text(
               '© 2024 Flex Yemen. جميع الحقوق محفوظة.',
-              style: TextStyle(fontFamily: 'Changa', fontSize: 12, color: Colors.grey),
+              style: TextStyle(
+                fontFamily: 'Changa',
+                fontSize: 12,
+                color: Colors.grey,
+              ),
             ),
           ],
         ),
@@ -82,9 +86,23 @@ class AboutScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: const TextStyle(fontFamily: 'Changa', fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.goldColor)),
+          Text(
+            title,
+            style: const TextStyle(
+              fontFamily: 'Changa',
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: AppTheme.goldColor,
+            ),
+          ),
           const SizedBox(height: 12),
-          Text(content, style: const TextStyle(fontFamily: 'Changa', height: 1.6)),
+          Text(
+            content,
+            style: const TextStyle(
+              fontFamily: 'Changa',
+              height: 1.6,
+            ),
+          ),
         ],
       ),
     );

@@ -13,7 +13,6 @@ class _SecuritySettingsScreenState extends State<SecuritySettingsScreen> {
   bool _biometricEnabled = true;
   bool _twoFactorEnabled = false;
   bool _loginNotifications = true;
-  bool _saveLoginInfo = true;
 
   @override
   Widget build(BuildContext context) {
@@ -62,13 +61,6 @@ class _SecuritySettingsScreenState extends State<SecuritySettingsScreen> {
                     onChanged: (value) => setState(() => _loginNotifications = value),
                     secondary: const Icon(Icons.notifications, color: AppTheme.goldColor),
                   ),
-                  const Divider(),
-                  SwitchListTile(
-                    title: const Text('حفظ معلومات تسجيل الدخول'),
-                    value: _saveLoginInfo,
-                    onChanged: (value) => setState(() => _saveLoginInfo = value),
-                    secondary: const Icon(Icons.save, color: AppTheme.goldColor),
-                  ),
                 ],
               ),
             ),
@@ -80,7 +72,7 @@ class _SecuritySettingsScreenState extends State<SecuritySettingsScreen> {
                   ListTile(
                     leading: const Icon(Icons.phone_android, color: AppTheme.goldColor),
                     title: const Text('هاتفي الحالي'),
-                    subtitle: const Text('صنعاء، اليمن • نشط الآن'),
+                    subtitle: const Text('نشط الآن'),
                     trailing: const Icon(Icons.check_circle, color: Colors.green),
                   ),
                   const Divider(),

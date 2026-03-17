@@ -59,11 +59,11 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(method['name'], style: const TextStyle(fontWeight: FontWeight.bold)),
-                      if (method['type'] == 'wallet')
+                      if (method.containsKey('balance'))
                         Text('الرصيد: ${method['balance']}', style: TextStyle(fontSize: 12, color: Colors.grey[500])),
-                      if (method['type'] == 'card')
+                      if (method.containsKey('expiry'))
                         Text('تنتهي: ${method['expiry']}', style: TextStyle(fontSize: 12, color: Colors.grey[500])),
-                      if (method['type'] == 'bank')
+                      if (method.containsKey('account'))
                         Text(method['account'], style: TextStyle(fontSize: 12, color: Colors.grey[500])),
                     ],
                   ),

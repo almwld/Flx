@@ -25,6 +25,7 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       appBar: const CustomAppBar(title: 'الإعدادات'),
       body: ListView.builder(
@@ -33,14 +34,40 @@ class SettingsScreen extends StatelessWidget {
         itemBuilder: (context, index) {
           final item = _settings[index];
           return GestureDetector(
-            onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => item['screen']())),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => item['screen']()),
+              );
+            },
             child: Container(
               margin: const EdgeInsets.only(bottom: 8),
-              decoration: BoxDecoration(color: isDark ? AppTheme.darkCard : AppTheme.lightCard, borderRadius: BorderRadius.circular(12)),
-              child: ListTile(
-                leading: Container(padding: const EdgeInsets.all(8), decoration: BoxDecoration(color: (item['color'] as Color).withOpacity(0.2), shape: BoxShape.circle), child: Icon(item['icon'] as IconData, color: item['color'])),
-                title: Text(item['title'], style: const TextStyle(fontFamily: 'Changa')),
-                trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: isDark ? AppTheme.darkCard : AppTheme.lightCard,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: (item['color'] as Color).withOpacity(0.2),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(item['icon'] as IconData, color: item['color']),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Text(
+                      item['title'],
+                      style: const TextStyle(
+                        fontFamily: 'Changa',
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                  const Icon(Icons.arrow_forward_ios, size: 16),
+                ],
               ),
             ),
           );
