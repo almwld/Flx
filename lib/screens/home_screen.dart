@@ -90,48 +90,51 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
 
   final List<Map<String, dynamic>> _randomAds = [
-    {
-      'title': 'آيفون 15 برو ماكس',
-      'price': '450,000 ر.ي',
-      'location': 'صنعاء',
-      'image': Icons.phone_iphone,
-      'color': Colors.blue,
-    },
-    {
-      'title': 'تويوتا كامري 2020',
-      'price': '8,500,000 ر.ي',
-      'location': 'عدن',
-      'image': Icons.directions_car,
-      'color': Colors.red,
-    },
-    {
-      'title': 'شقة في حدة',
-      'price': '35,000,000 ر.ي',
-      'location': 'صنعاء',
-      'image': Icons.home,
-      'color': Colors.green,
-    },
-    {
-      'title': 'ماك بوك برو M1',
-      'price': '1,200,000 ر.ي',
-      'location': 'تعز',
-      'image': Icons.laptop,
-      'color': Colors.grey,
-    },
-    {
-      'title': 'ساعة أبل الترا',
-      'price': '95,000 ر.ي',
-      'location': 'صنعاء',
-      'image': Icons.watch,
-      'color': Colors.amber,
-    },
-    {
-      'title': 'لاند كروزر 2023',
-      'price': '22,000,000 ر.ي',
-      'location': 'المكلا',
-      'image': Icons.directions_car,
-      'color': Colors.orange,
-    },
+    // الإلكترونيات (8 إعلانات)
+    {'title': 'آيفون 15 برو ماكس', 'price': '450,000 ر.ي', 'location': 'صنعاء', 'image': Icons.phone_iphone, 'color': Colors.blue},
+    {'title': 'سامسونج S24 الترا', 'price': '380,000 ر.ي', 'location': 'عدن', 'image': Icons.phone_android, 'color': Colors.purple},
+    {'title': 'ماك بوك برو M3', 'price': '1,800,000 ر.ي', 'location': 'صنعاء', 'image': Icons.laptop, 'color': Colors.grey},
+    {'title': 'آيباد برو 12.9', 'price': '350,000 ر.ي', 'location': 'تعز', 'image': Icons.tablet, 'color': Colors.cyan},
+    {'title': 'ساعة أبل الترا 2', 'price': '95,000 ر.ي', 'location': 'صنعاء', 'image': Icons.watch, 'color': Colors.amber},
+    {'title': 'سماعات ايربودز برو', 'price': '45,000 ر.ي', 'location': 'عدن', 'image': Icons.headphones, 'color': Colors.red},
+    {'title': 'بلاي ستيشن 5', 'price': '250,000 ر.ي', 'location': 'صنعاء', 'image': Icons.sports_esports, 'color': Colors.blue},
+    {'title': 'كاميرا كانون', 'price': '320,000 ر.ي', 'location': 'المكلا', 'image': Icons.camera_alt, 'color': Colors.brown},
+    
+    // السيارات (8 إعلانات)
+    {'title': 'تويوتا كامري 2020', 'price': '8,500,000 ر.ي', 'location': 'عدن', 'image': Icons.directions_car, 'color': Colors.red},
+    {'title': 'شاص 2024', 'price': '12,500,000 ر.ي', 'location': 'صنعاء', 'image': Icons.directions_car, 'color': Colors.orange},
+    {'title': 'مرسيدس E300', 'price': '15,000,000 ر.ي', 'location': 'صنعاء', 'image': Icons.directions_car, 'color': Colors.grey},
+    {'title': 'هونداي النترا', 'price': '5,500,000 ر.ي', 'location': 'الحديدة', 'image': Icons.directions_car, 'color': Colors.blue},
+    {'title': 'لاند كروزر 2023', 'price': '22,000,000 ر.ي', 'location': 'المكلا', 'image': Icons.directions_car, 'color': Colors.orange},
+    {'title': 'باترول 2022', 'price': '18,000,000 ر.ي', 'location': 'صنعاء', 'image': Icons.directions_car, 'color': Colors.green},
+    {'title': 'لكزس LX600', 'price': '25,000,000 ر.ي', 'location': 'عدن', 'image': Icons.directions_car, 'color': Colors.black},
+    {'title': 'بي إم دبليو X5', 'price': '16,500,000 ر.ي', 'location': 'صنعاء', 'image': Icons.directions_car, 'color': Colors.blue},
+    
+    // العقارات (8 إعلانات)
+    {'title': 'شقة في حدة', 'price': '35,000,000 ر.ي', 'location': 'صنعاء', 'image': Icons.home, 'color': Colors.green},
+    {'title': 'فيلا في المكلا', 'price': '65,000,000 ر.ي', 'location': 'المكلا', 'image': Icons.villa, 'color': Colors.amber},
+    {'title': 'أرض في مأرب', 'price': '25,000,000 ر.ي', 'location': 'مأرب', 'image': Icons.landscape, 'color': Colors.brown},
+    {'title': 'محل تجاري', 'price': '12,000,000 ر.ي', 'location': 'عدن', 'image': Icons.store, 'color': Colors.purple},
+    {'title': 'مكتب في تعز', 'price': '8,500,000 ر.ي', 'location': 'تعز', 'image': Icons.business, 'color': Colors.blue},
+    {'title': 'مستودع', 'price': '15,000,000 ر.ي', 'location': 'الحديدة', 'image': Icons.warehouse, 'color': Colors.grey},
+    {'title': 'شقة في عدن', 'price': '28,000,000 ر.ي', 'location': 'عدن', 'image': Icons.apartment, 'color': Colors.cyan},
+    {'title': 'بيت في إب', 'price': '18,000,000 ر.ي', 'location': 'إب', 'image': Icons.house, 'color': Colors.orange},
+    
+    // الأثاث (6 إعلانات)
+    {'title': 'غرفة نوم كاملة', 'price': '650,000 ر.ي', 'location': 'صنعاء', 'image': Icons.bed, 'color': Colors.brown},
+    {'title': 'مجلس عربي', 'price': '450,000 ر.ي', 'location': 'صنعاء', 'image': Icons.chair, 'color': Colors.orange},
+    {'title': 'طاولة طعام', 'price': '120,000 ر.ي', 'location': 'عدن', 'image': Icons.dining, 'color': Colors.green},
+    {'title': 'كنب مودرن', 'price': '280,000 ر.ي', 'location': 'تعز', 'image': Icons.weekend, 'color': Colors.purple},
+    {'title': 'مكتبة', 'price': '85,000 ر.ي', 'location': 'صنعاء', 'image': Icons.book, 'color': Colors.brown},
+    {'title': 'غرفة جلوس', 'price': '320,000 ر.ي', 'location': 'عدن', 'image': Icons.chair, 'color': Colors.amber},
+    
+    // الملابس (6 إعلانات)
+    {'title': 'ثوب رجالي', 'price': '15,000 ر.ي', 'location': 'صنعاء', 'image': Icons.man, 'color': Colors.blue},
+    {'title': 'عباية نسائية', 'price': '25,000 ر.ي', 'location': 'عدن', 'image': Icons.woman, 'color': Colors.pink},
+    {'title': 'أحذية رياضية', 'price': '12,000 ر.ي', 'location': 'تعز', 'image': Icons.sports_handball, 'color': Colors.red},
+    {'title': 'ساعة رجالية', 'price': '8,000 ر.ي', 'location': 'صنعاء', 'image': Icons.watch, 'color': Colors.amber},
+    {'title': 'نظارة شمسية', 'price': '5,000 ر.ي', 'location': 'عدن', 'image': Icons.sunny, 'color': Colors.black},
+    {'title': 'حقيبة جلدية', 'price': '18,000 ر.ي', 'location': 'صنعاء', 'image': Icons.bag, 'color': Colors.brown},
   ];
 
   @override
@@ -142,7 +145,7 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: const CustomAppBar(),
       body: CustomScrollView(
         slivers: [
-          // السلايدر المتحرك - بحجم موحد ومتناسق
+          // السلايدر المتحرك
           SliverToBoxAdapter(
             child: Column(
               children: [
@@ -261,7 +264,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
 
-          // شريط الأقسام المتحرك (بدلاً من الجدول)
+          // شريط الأقسام المتحرك
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
@@ -294,7 +297,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
 
-          // شريط الأقسام المتحرك (أفقي)
+          // شريط الأقسام الأفقي
           SliverToBoxAdapter(
             child: Container(
               height: 100,
@@ -345,14 +348,14 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
 
-          // عنوان الإعلانات العشوائية
+          // عنوان الإعلانات المميزة
           const SliverToBoxAdapter(
             child: Padding(
               padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
               child: Text(
                 'إعلانات مميزة',
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 20,
                   fontWeight: FontWeight.bold,
                   fontFamily: 'Changa',
                 ),
@@ -383,6 +386,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       decoration: BoxDecoration(
                         color: isDark ? AppTheme.darkCard : AppTheme.lightCard,
                         borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: (ad['color'] as Color).withOpacity(0.3),
+                          width: 1,
+                        ),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -392,7 +399,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: Container(
                               width: double.infinity,
                               decoration: BoxDecoration(
-                                color: (ad['color'] as Color).withOpacity(0.3),
+                                color: (ad['color'] as Color).withOpacity(0.2),
                                 borderRadius: const BorderRadius.vertical(
                                   top: Radius.circular(12),
                                 ),
@@ -439,7 +446,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                       Expanded(
                                         child: Text(
                                           ad['location'],
-                                          style: const TextStyle(fontSize: 9, color: Colors.grey),
+                                          style: const TextStyle(
+                                            fontSize: 9,
+                                            color: Colors.grey,
+                                            fontFamily: 'Changa',
+                                          ),
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
                                         ),
