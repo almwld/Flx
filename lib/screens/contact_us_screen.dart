@@ -48,7 +48,7 @@ class ContactUsScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 IconButton(icon: const Icon(Icons.facebook, size: 40), onPressed: () {}),
-                IconButton(icon: const Icon(Icons.whatsapp, size: 40), onPressed: () {}),
+                IconButton(icon: const Icon(Icons.message, size: 40), onPressed: () {}),
                 IconButton(icon: const Icon(Icons.telegram, size: 40), onPressed: () {}),
               ],
             ),
