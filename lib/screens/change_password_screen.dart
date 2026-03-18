@@ -1,8 +1,6 @@
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../widgets/custom_app_bar.dart';
-import '../widgets/custom_text_field.dart';
 import '../widgets/custom_button.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
@@ -29,38 +27,47 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
           key: _formKey,
           child: Column(
             children: [
-              CustomTextField(
+              TextFormField(
                 controller: _oldController,
-                label: 'كلمة المرور الحالية',
-                prefixIcon: Icons.lock_outline,
                 obscureText: _obscureOld,
-                suffixIcon: IconButton(
-                  icon: Icon(_obscureOld ? Icons.visibility_off : Icons.visibility),
-                  onPressed: () => setState(() => _obscureOld = !_obscureOld),
+                decoration: InputDecoration(
+                  labelText: 'كلمة المرور الحالية',
+                  prefixIcon: const Icon(Icons.lock_outline),
+                  suffixIcon: IconButton(
+                    icon: Icon(_obscureOld ? Icons.visibility_off : Icons.visibility),
+                    onPressed: () => setState(() => _obscureOld = !_obscureOld),
+                  ),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                 ),
                 validator: (v) => v?.isEmpty ?? true ? 'الحقل مطلوب' : null,
               ),
               const SizedBox(height: 16),
-              CustomTextField(
+              TextFormField(
                 controller: _newController,
-                label: 'كلمة المرور الجديدة',
-                prefixIcon: Icons.lock_outline,
                 obscureText: _obscureNew,
-                suffixIcon: IconButton(
-                  icon: Icon(_obscureNew ? Icons.visibility_off : Icons.visibility),
-                  onPressed: () => setState(() => _obscureNew = !_obscureNew),
+                decoration: InputDecoration(
+                  labelText: 'كلمة المرور الجديدة',
+                  prefixIcon: const Icon(Icons.lock_outline),
+                  suffixIcon: IconButton(
+                    icon: Icon(_obscureNew ? Icons.visibility_off : Icons.visibility),
+                    onPressed: () => setState(() => _obscureNew = !_obscureNew),
+                  ),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                 ),
                 validator: (v) => v?.length != null && v!.length < 6 ? '6 أحرف على الأقل' : null,
               ),
               const SizedBox(height: 16),
-              CustomTextField(
+              TextFormField(
                 controller: _confirmController,
-                label: 'تأكيد كلمة المرور',
-                prefixIcon: Icons.lock_outline,
                 obscureText: _obscureConfirm,
-                suffixIcon: IconButton(
-                  icon: Icon(_obscureConfirm ? Icons.visibility_off : Icons.visibility),
-                  onPressed: () => setState(() => _obscureConfirm = !_obscureConfirm),
+                decoration: InputDecoration(
+                  labelText: 'تأكيد كلمة المرور',
+                  prefixIcon: const Icon(Icons.lock_outline),
+                  suffixIcon: IconButton(
+                    icon: Icon(_obscureConfirm ? Icons.visibility_off : Icons.visibility),
+                    onPressed: () => setState(() => _obscureConfirm = !_obscureConfirm),
+                  ),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                 ),
                 validator: (v) => v != _newController.text ? 'غير متطابقة' : null,
               ),

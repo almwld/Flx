@@ -58,8 +58,6 @@ class _SecuritySettingsScreenState extends State<SecuritySettingsScreen> {
             title: const Text('تغيير كلمة المرور'),
             leading: const Icon(Icons.password, color: AppTheme.goldColor),
             trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-            onTap: () {
-              );
             },
           ),
         ],
