@@ -1,3 +1,4 @@
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../widgets/custom_app_bar.dart';
@@ -37,7 +38,7 @@ class InteractiveMapScreen extends StatelessWidget {
             left: 16,
             right: 16,
             child: Container(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16).animate().slideY(begin: 0.5, end: 0, duration: 600.ms).fadeIn(),
               decoration: BoxDecoration(
                 color: Theme.of(context).brightness == Brightness.dark
                     ? AppTheme.darkCard

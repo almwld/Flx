@@ -1,3 +1,4 @@
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../widgets/custom_app_bar.dart';
@@ -26,7 +27,7 @@ class RewardsScreen extends StatelessWidget {
               gradient: const LinearGradient(
                 colors: [AppTheme.goldColor, AppTheme.goldLight],
               ),
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(16).animate().scale(duration: 600.ms).then().shake(duration: 400.ms),
             ),
             child: Row(
               children: [
@@ -64,7 +65,7 @@ class RewardsScreen extends StatelessWidget {
                       width: 40,
                       height: 40,
                       decoration: BoxDecoration(
-                        color: r['status'] == 'مكتمل' ? Colors.green.withOpacity(0.2) : Colors.orange.withOpacity(0.2),
+                        color: r['status'] == 'مكتمل' ? Colors.green.withOpacity(0.2).animate().fadeIn(duration: 300.ms).slideX(begin: 0.1, end: 0) : Colors.orange.withOpacity(0.2),
                         shape: BoxShape.circle,
                       ),
                       child: Icon(

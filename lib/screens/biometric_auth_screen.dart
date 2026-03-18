@@ -1,3 +1,4 @@
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../widgets/custom_app_bar.dart';
@@ -34,7 +35,7 @@ class _BiometricAuthScreenState extends State<BiometricAuthScreen> {
                 width: 120,
                 height: 120,
                 decoration: BoxDecoration(
-                  color: AppTheme.goldColor.withOpacity(0.2),
+                  color: AppTheme.goldColor.withOpacity(0.2).animate().pulse(duration: 2000.ms),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(Icons.fingerprint, size: 60, color: AppTheme.goldColor),
