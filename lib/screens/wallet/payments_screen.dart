@@ -1,14 +1,36 @@
 import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/custom_app_bar.dart';
+import '../../widgets/custom_button.dart';
+import '../../widgets/custom_text_field.dart';
 
-class PaymentsScreen extends StatelessWidget {
+class PaymentsScreen extends StatefulWidget {
   const PaymentsScreen({super.key});
+
+  @override
+  State<PaymentsScreen> createState() => _PaymentsScreenState();
+}
+
+class _PaymentsScreenState extends State<PaymentsScreen> {
+  final _billNumberController = TextEditingController();
+  final _amountController = TextEditingController();
+  String? _selectedService;
+  bool _isLoading = false;
+
+  final List<Map<String, dynamic>> _services = [
+    {'name': 'كهرباء', 'icon': Icons.electrical_services},
+    {'name': 'ماء', 'icon': Icons.water_drop},
+    {'name': 'إنترنت', 'icon': Icons.wifi},
+    {'name': 'هاتف', 'icon': Icons.phone},
+    {'name': 'تلفزيون', 'icon': Icons.tv},
+    {'name': 'غاز', 'icon': Icons.fire_extinguisher},
+  ];
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+    final balance = 125000;
+
     return Scaffold(
       appBar: const CustomAppBar(title: 'دفع فواتير'),
       body: SingleChildScrollView(
@@ -21,17 +43,15 @@ class PaymentsScreen extends StatelessWidget {
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
                   colors: [AppTheme.goldColor, AppTheme.goldLight],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
                 ),
                 borderRadius: BorderRadius.circular(20),
               ),
-              child: const Column(
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('الرصيد المتاح', style: TextStyle(fontFamily: 'Changa', fontSize: 14, color: Colors.black87)),
-                  SizedBox(height: 8),
-                  Text('125,000 ر.ي', style: TextStyle(fontFamily: 'Changa', fontSize: 28, fontWeight: FontWeight.bold, color: Colors.black)),
+                  const Text('الرصيد المتاح', style: TextStyle(fontSize: 14, color: Colors.black87)),
+                  const SizedBox(height: 8),
+                  Text('$balance ر.ي', style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.black)),
                 ],
               ),
             ),
@@ -42,62 +62,70 @@ class PaymentsScreen extends StatelessWidget {
               crossAxisCount: 3,
               mainAxisSpacing: 12,
               crossAxisSpacing: 12,
-              children: [
-                _buildServiceItem(Icons.electric_bolt, 'كهرباء'),
-                _buildServiceItem(Icons.water_drop, 'ماء'),
-                _buildServiceItem(Icons.wifi, 'إنترنت'),
-                _buildServiceItem(Icons.phone_android, 'هاتف'),
-                _buildServiceItem(Icons.tv, 'تلفزيون'),
-                _buildServiceItem(Icons.school, 'تعليم'),
-              ],
-            ),
-            const SizedBox(height: 24),
-            TextField(
-              decoration: InputDecoration(
-                labelText: 'رقم الاشتراك',
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-              ),
-              keyboardType: TextInputType.number,
+              children: _services.map((s) {
+                return GestureDetector(
+                  onTap: () => setState(() => _selectedService = s['name']),
+                  child: Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: _selectedService == s['name']
+                          ? AppTheme.goldColor
+                          : (isDark ? AppTheme.darkCard : AppTheme.lightCard),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: _selectedService == s['name']
+                            ? Colors.transparent
+                            : AppTheme.goldColor.withOpacity(0.3),
+                      ),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(s['icon'], color: _selectedService == s['name'] ? Colors.black : AppTheme.goldColor),
+                        const SizedBox(height: 4),
+                        Text(s['name'], style: TextStyle(fontSize: 12, color: _selectedService == s['name'] ? Colors.black : null)),
+                      ],
+                    ),
+                  ),
+                );
+              }).toList(),
             ),
             const SizedBox(height: 16),
-            TextField(
-              decoration: InputDecoration(
-                labelText: 'المبلغ',
-                suffixText: 'ر.ي',
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+            if (_selectedService != null) ...[
+              CustomTextField(
+                controller: _billNumberController,
+                label: 'رقم الاشتراك',
+                prefixIcon: Icons.confirmation_number,
+                keyboardType: TextInputType.number,
               ),
-              keyboardType: TextInputType.number,
-            ),
-            const SizedBox(height: 24),
-            SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: ElevatedButton(
-                onPressed: () {},
-                child: const Text('دفع', style: TextStyle(fontFamily: 'Changa', fontSize: 16)),
+              const SizedBox(height: 16),
+              CustomTextField(
+                controller: _amountController,
+                label: 'المبلغ',
+                prefixIcon: Icons.attach_money,
+                keyboardType: TextInputType.number,
               ),
-            ),
+              const SizedBox(height: 24),
+              CustomButton(
+                text: 'دفع',
+                onPressed: (_billNumberController.text.isEmpty || _amountController.text.isEmpty)
+                    ? null
+                    : () {
+                        setState(() => _isLoading = true);
+                        Future.delayed(const Duration(seconds: 2), () {
+                          setState(() => _isLoading = false);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('تم دفع الفاتورة بنجاح')),
+                          );
+                          Navigator.pop(context);
+                        });
+                      },
+                isLoading: _isLoading,
+              ),
+            ],
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildServiceItem(IconData icon, String label) {
-    return Column(
-      children: [
-        Container(
-          width: 50,
-          height: 50,
-          decoration: BoxDecoration(
-            color: AppTheme.goldColor.withOpacity(0.2),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Icon(icon, color: AppTheme.goldColor),
-        ),
-        const SizedBox(height: 4),
-        Text(label, style: const TextStyle(fontFamily: 'Changa', fontSize: 11)),
-      ],
     );
   }
 }

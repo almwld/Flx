@@ -5,38 +5,50 @@ import '../../widgets/custom_app_bar.dart';
 class GamesScreen extends StatelessWidget {
   const GamesScreen({super.key});
 
-  final List<String> _games = const [
-    'بيجي', 'فري فاير', 'بوبجي', 'فورتنايت', 'كول أوف ديوتي', 'ماينكرافت', 'جينشين', 'ريد ديد'
+  final List<Map<String, dynamic>> _games = const [
+    {'name': 'بيجي', 'price': '25,000', 'icon': Icons.sports_esports},
+    {'name': 'فري فاير', 'price': '30,000', 'icon': Icons.games},
+    {'name': 'بوبجي', 'price': '35,000', 'icon': Icons.games},
+    {'name': 'فورتنايت', 'price': '40,000', 'icon': Icons.sports_esports},
+    {'name': 'كول أوف ديوتي', 'price': '45,000', 'icon': Icons.games},
+    {'name': 'ماينكرافت', 'price': '20,000', 'icon': Icons.games},
   ];
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       appBar: const CustomAppBar(title: 'الألعاب'),
-      body: GridView.builder(
+      body: ListView.builder(
         padding: const EdgeInsets.all(16),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
-          childAspectRatio: 0.9,
-          crossAxisSpacing: 12,
-          mainAxisSpacing: 12,
-        ),
         itemCount: _games.length,
-        itemBuilder: (context, index) {
-          return Column(
-            children: [
-              Container(
-                width: 60,
-                height: 60,
+        itemBuilder: (ctx, i) {
+          final game = _games[i];
+          return Card(
+            margin: const EdgeInsets.only(bottom: 12),
+            color: isDark ? AppTheme.darkCard : AppTheme.lightCard,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            child: ListTile(
+              leading: Container(
+                padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   color: AppTheme.goldColor.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(16),
+                  shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.sports_esports, color: AppTheme.goldColor, size: 30),
+                child: Icon(game['icon'] as IconData, color: AppTheme.goldColor),
               ),
-              const SizedBox(height: 8),
-              Text(_games[index], style: const TextStyle(fontFamily: 'Changa', fontSize: 12), textAlign: TextAlign.center),
-            ],
+              title: Text(game['name']),
+              subtitle: Text('السعر: ${game['price']} ر.ي'),
+              trailing: ElevatedButton(
+                onPressed: () {},
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppTheme.goldColor,
+                  foregroundColor: Colors.black,
+                ),
+                child: const Text('شراء'),
+              ),
+            ),
           );
         },
       ),

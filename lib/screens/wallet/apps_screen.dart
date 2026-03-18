@@ -6,43 +6,49 @@ class AppsScreen extends StatelessWidget {
   const AppsScreen({super.key});
 
   final List<Map<String, dynamic>> _apps = const [
-    {'name': 'NordVPN', 'icon': Icons.vpn_lock, 'color': Colors.blue},
-    {'name': 'McAfee', 'icon': Icons.security, 'color': Colors.red},
-    {'name': 'كاسبر', 'icon': Icons.shield, 'color': Colors.green},
-    {'name': 'ويندوز', 'icon': Icons.window, 'color': Colors.amber},
-    {'name': 'أوفيس', 'icon': Icons.description, 'color': Colors.purple},
-    {'name': 'IDM', 'icon': Icons.download, 'color': Colors.teal},
+    {'name': 'NordVPN', 'price': '50,000', 'icon': Icons.vpn_lock},
+    {'name': 'McAfee', 'price': '45,000', 'icon': Icons.security},
+    {'name': 'كاسبر', 'price': '55,000', 'icon': Icons.shield},
+    {'name': 'ويندوز', 'price': '120,000', 'icon': Icons.window},
+    {'name': 'أوفيس', 'price': '80,000', 'icon': Icons.description},
+    {'name': 'IDM', 'price': '15,000', 'icon': Icons.download},
   ];
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       appBar: const CustomAppBar(title: 'التطبيقات'),
-      body: GridView.builder(
+      body: ListView.builder(
         padding: const EdgeInsets.all(16),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
-          childAspectRatio: 0.9,
-          crossAxisSpacing: 12,
-          mainAxisSpacing: 12,
-        ),
         itemCount: _apps.length,
-        itemBuilder: (context, index) {
-          final app = _apps[index];
-          return Column(
-            children: [
-              Container(
-                width: 60,
-                height: 60,
+        itemBuilder: (ctx, i) {
+          final app = _apps[i];
+          return Card(
+            margin: const EdgeInsets.only(bottom: 12),
+            color: isDark ? AppTheme.darkCard : AppTheme.lightCard,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            child: ListTile(
+              leading: Container(
+                padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: (app['color'] as Color).withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(16),
+                  color: AppTheme.goldColor.withOpacity(0.2),
+                  shape: BoxShape.circle,
                 ),
-                child: Icon(app['icon'] as IconData, color: app['color'], size: 30),
+                child: Icon(app['icon'] as IconData, color: AppTheme.goldColor),
               ),
-              const SizedBox(height: 8),
-              Text(app['name'], style: const TextStyle(fontFamily: 'Changa', fontSize: 12), textAlign: TextAlign.center),
-            ],
+              title: Text(app['name']),
+              subtitle: Text('السعر: ${app['price']} ر.ي'),
+              trailing: ElevatedButton(
+                onPressed: () {},
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppTheme.goldColor,
+                  foregroundColor: Colors.black,
+                ),
+                child: const Text('شراء'),
+              ),
+            ),
           );
         },
       ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/custom_app_bar.dart';
+import '../../widgets/custom_button.dart';
 
 class AmazonScreen extends StatefulWidget {
   const AmazonScreen({super.key});
@@ -22,8 +23,12 @@ class _AmazonScreenState extends State<AmazonScreen> {
     {'value': '100', 'price': '62,310'},
   ];
 
+  bool _isLoading = false;
+
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       appBar: const CustomAppBar(title: 'بطاقات أمازون'),
       body: SingleChildScrollView(
@@ -34,7 +39,7 @@ class _AmazonScreenState extends State<AmazonScreen> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Theme.of(context).brightness == Brightness.dark ? AppTheme.darkCard : AppTheme.lightCard,
+                color: isDark ? AppTheme.darkCard : AppTheme.lightCard,
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Column(
@@ -78,7 +83,7 @@ class _AmazonScreenState extends State<AmazonScreen> {
               margin: const EdgeInsets.only(bottom: 8),
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Theme.of(context).brightness == Brightness.dark ? AppTheme.darkCard : AppTheme.lightCard,
+                color: isDark ? AppTheme.darkCard : AppTheme.lightCard,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
@@ -94,12 +99,20 @@ class _AmazonScreenState extends State<AmazonScreen> {
                     ),
                   ),
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      setState(() => _isLoading = true);
+                      Future.delayed(const Duration(seconds: 1), () {
+                        setState(() => _isLoading = false);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('تم شراء البطاقة بنجاح، تحقق من بريدك الإلكتروني')),
+                        );
+                      });
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppTheme.goldColor,
                       foregroundColor: Colors.black,
                     ),
-                    child: const Text('شراء'),
+                    child: _isLoading ? const CircularProgressIndicator() : const Text('شراء'),
                   ),
                 ],
               ),

@@ -1,44 +1,121 @@
 import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/custom_app_bar.dart';
+import '../../widgets/custom_button.dart';
 
-class AmazonGiftCardsScreen extends StatelessWidget {
+class AmazonGiftCardsScreen extends StatefulWidget {
   const AmazonGiftCardsScreen({super.key});
+
+  @override
+  State<AmazonGiftCardsScreen> createState() => _AmazonGiftCardsScreenState();
+}
+
+class _AmazonGiftCardsScreenState extends State<AmazonGiftCardsScreen> {
+  String _selectedRegion = 'امريكي';
+  final List<String> _regions = ['امريكي', 'سعودي', 'اماراتي'];
+  
+  final List<Map<String, String>> _cards = const [
+    {'value': '10', 'price': '6,240'},
+    {'value': '15', 'price': '9,910'},
+    {'value': '20', 'price': '12,870'},
+    {'value': '25', 'price': '15,730'},
+    {'value': '50', 'price': '31,150'},
+    {'value': '100', 'price': '62,310'},
+  ];
+
+  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return Scaffold(
-      appBar: const CustomAppBar(title: 'أمازون'),
-      body: Center(
+      appBar: const CustomAppBar(title: 'بطاقات أمازون'),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(
-              Icons.construction,
-              size: 80,
-              color: isDark ? AppTheme.goldColor.withOpacity(0.5) : AppTheme.goldColor.withOpacity(0.7),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'قيد التطوير',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'Changa',
-                color: isDark ? AppTheme.darkText : AppTheme.lightText,
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: isDark ? AppTheme.darkCard : AppTheme.lightCard,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Column(
+                children: [
+                  const Text('اختر المنطقة', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: _regions.map((region) {
+                      final isSelected = _selectedRegion == region;
+                      return Expanded(
+                        child: GestureDetector(
+                          onTap: () => setState(() => _selectedRegion = region),
+                          child: Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 4),
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            decoration: BoxDecoration(
+                              color: isSelected ? AppTheme.goldColor : Colors.transparent,
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: isSelected ? AppTheme.goldColor : Colors.grey),
+                            ),
+                            child: Text(
+                              region,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: isSelected ? Colors.black : null,
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 8),
-            Text(
-              'سيتم إضافة هذه الخدمة قريباً',
-              style: TextStyle(
-                fontSize: 14,
-                fontFamily: 'Changa',
-                color: isDark ? Colors.grey[400] : Colors.grey[600],
+            const SizedBox(height: 24),
+            const Text('اختر الباقة', style: TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 12),
+            ..._cards.map((card) => Container(
+              margin: const EdgeInsets.only(bottom: 8),
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: isDark ? AppTheme.darkCard : AppTheme.lightCard,
+                borderRadius: BorderRadius.circular(12),
               ),
-            ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('أمازون ${card['value']} دولار', style: const TextStyle(fontWeight: FontWeight.bold)),
+                        const SizedBox(height: 4),
+                        Text('${card['price']} ريال', style: const TextStyle(color: AppTheme.goldColor)),
+                      ],
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      setState(() => _isLoading = true);
+                      Future.delayed(const Duration(seconds: 1), () {
+                        setState(() => _isLoading = false);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('تم شراء البطاقة بنجاح')),
+                        );
+                      });
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppTheme.goldColor,
+                      foregroundColor: Colors.black,
+                    ),
+                    child: _isLoading ? const CircularProgressIndicator() : const Text('شراء'),
+                  ),
+                ],
+              ),
+            )),
           ],
         ),
       ),
