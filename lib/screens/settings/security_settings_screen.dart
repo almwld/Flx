@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../change_password_screen.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/custom_app_bar.dart';
 
@@ -58,7 +59,7 @@ class _SecuritySettingsScreenState extends State<SecuritySettingsScreen> {
             leading: const Icon(Icons.password, color: AppTheme.goldColor),
             trailing: const Icon(Icons.arrow_forward_ios, size: 16),
             onTap: () {
-              Navigator.of(context).push(
+                Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ChangePasswordScreen()));
               );
             },
           ),
