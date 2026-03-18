@@ -6,8 +6,8 @@ import 'home_screen.dart';
 import 'wallet_screen.dart';
 import 'add_ad_screen.dart';
 import 'chat_screen.dart';
-import .profile_screen.dart
-import .settings/settings_screen.dart';
+import 'profile_screen.dart';
+import 'settings/settings_screen.dart';
 import 'all_ads_screen.dart';
 import 'map_screen.dart';
 
