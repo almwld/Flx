@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'rate_app_screen.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/custom_app_bar.dart';
 import 'notifications_settings_screen.dart';
@@ -21,7 +20,6 @@ class SettingsScreen extends StatelessWidget {
     {'title': 'المساعدة والدعم', 'icon': Icons.help, 'color': Colors.teal, 'screen': HelpSupportScreen},
     {'title': 'عن التطبيق', 'icon': Icons.info, 'color': Colors.red, 'screen': AboutScreen},
     {'title': 'سياسة الخصوصية', 'icon': Icons.privacy_tip, 'color': Colors.indigo, 'screen': PrivacyPolicyScreen},
-    {'title': 'تقييم التطبيق', 'icon': Icons.star, 'color': Colors.amber, 'screen': RateAppScreen},
   ];
 
   @override
@@ -33,7 +31,6 @@ class SettingsScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         itemCount: _settings.length,
         itemBuilder: (context, index) {
-    {'title': 'تقييم التطبيق', 'icon': Icons.star, 'color': Colors.amber, 'screen': RateAppScreen},
           final item = _settings[index];
           return Card(
             margin: const EdgeInsets.only(bottom: 8),

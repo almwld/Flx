@@ -4,7 +4,7 @@ import '../widgets/custom_app_bar.dart';
 import 'my_ads_screen.dart';
 import 'favorites_screen.dart';
 import 'my_orders_screen.dart';
-import 'settings_screen.dart';
+import 'settings/settings_screen.dart';
 import 'account_info_screen.dart';
 import 'login_screen.dart';
 
