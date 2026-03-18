@@ -66,7 +66,7 @@ class _DepositScreenState extends State<DepositScreen> {
               decoration: InputDecoration(
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               ),
-              items: _paymentMethods.map((m) {
+              items: _paymentMethods.map<DropdownMenuItem<String>>((m) {
                 return DropdownMenuItem(
                   value: m['name'],
                   child: Row(
