@@ -36,6 +36,10 @@ workflows:
         script: |
           flutter pub get
       
+      - name: Generate launcher icons
+        script: |
+          flutter pub run flutter_launcher_icons
+      
       - name: Build APK
         script: |
           flutter build apk --release --split-per-abi
