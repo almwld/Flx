@@ -33,7 +33,6 @@ class SettingsScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         itemCount: _settings.length,
         itemBuilder: (context, index) {
-    {'title': 'تقييم التطبيق', 'icon': Icons.star, 'color': Colors.amber, 'screen': RateAppScreen},
           final item = _settings[index];
           return Card(
             margin: const EdgeInsets.only(bottom: 8),
