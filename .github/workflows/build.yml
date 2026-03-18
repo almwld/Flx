@@ -9,17 +9,42 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: subosito/flutter-action@v2
+      
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-      - name: Clean and get packages
+          cache: false
+      
+      - name: Clean project
         run: |
           rm -rf build .dart_tool
           flutter clean
-          flutter pub get
-      - name: Build APK (verbose)
-        run: flutter build apk --release --split-per-abi --verbose
-      - uses: actions/upload-artifact@v4
+      
+      - name: Create fresh Android project
+        run: |
+          # إنشاء مشروع Flutter جديد في مجلد مؤقت
+          mkdir -p /tmp/fresh_project
+          cd /tmp/fresh_project
+          flutter create --org com.flexyemen --project-name flx_temp .
+          
+          # العودة إلى المشروع الأصلي ونسخ ملفات android الجديدة
+          cd $GITHUB_WORKSPACE
+          rm -rf android ios
+          cp -r /tmp/fresh_project/android .
+          cp -r /tmp/fresh_project/ios .
+          
+          # تنظيف الملفات المؤقتة
+          rm -rf /tmp/fresh_project
+      
+      - name: Get dependencies
+        run: flutter pub get
+      
+      - name: Build APK
+        run: flutter build apk --release --split-per-abi
+      
+      - name: Upload APKs
+        uses: actions/upload-artifact@v4
         with:
           name: app-release
           path: build/app/outputs/flutter-apk/*.apk
