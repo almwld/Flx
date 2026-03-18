@@ -59,7 +59,6 @@ class _SecuritySettingsScreenState extends State<SecuritySettingsScreen> {
             leading: const Icon(Icons.password, color: AppTheme.goldColor),
             trailing: const Icon(Icons.arrow_forward_ios, size: 16),
             onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ChangePasswordScreen()));
               );
             },
           ),
