@@ -7,19 +7,28 @@ import 'theme/app_theme.dart';
 import 'screens/splash_screen.dart';
 import 'config/app_config.dart';
 
-void main() async {
+Future<void> initializeSupabase() async {
+  try {
+    await dotenv.load(fileName: ".env");
+  } catch (e) {
+    debugPrint('⚠️ .env file not found, using default values');
+  }
+  try {
+    await Supabase.initialize(
+      url: AppConfig.supabaseUrl,
+      anonKey: AppConfig.supabaseAnonKey,
+    );
+    debugPrint('✅ Supabase initialized in background');
+  } catch (e) {
+    debugPrint('❌ Supabase initialization failed: $e');
+  }
+}
+
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
   
-  // Load environment variables
-  await dotenv.load(fileName: ".env");
-  
-  // Print config status (optional)
-  AppConfig.printConfigStatus();
-  
-  await Supabase.initialize(
-    url: AppConfig.supabaseUrl,
-    anonKey: AppConfig.supabaseAnonKey,
-  );
+  // Initialize Supabase in background without blocking UI
+  initializeSupabase();
   
   runApp(
     ChangeNotifierProvider(
