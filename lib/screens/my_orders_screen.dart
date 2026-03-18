@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
-import 'order_details_screen.dart';
+import 'order_detail_screen.dart';
 
 class MyOrdersScreen extends StatefulWidget {
   const MyOrdersScreen({super.key});
@@ -118,7 +118,7 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> with SingleTickerProvid
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => OrderDetailsScreen(orderId: order['id'])),
+                MaterialPageRoute(builder: (_) => OrderDetailScreen(orderId: order['id'])),
               );
             },
             borderRadius: BorderRadius.circular(16),

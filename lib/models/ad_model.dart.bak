@@ -13,7 +13,6 @@ class AdModel {
   final String sellerId;
   final String sellerName;
   final double sellerRating;
-  final String? sellerPhone;
   final DateTime createdAt;
   final bool isOffer;
   final bool isFeatured;
@@ -39,7 +38,6 @@ class AdModel {
     required this.sellerId,
     required this.sellerName,
     required this.sellerRating,
-  this.sellerPhone,
     required this.createdAt,
     this.isOffer = false,
     this.isFeatured = false,
