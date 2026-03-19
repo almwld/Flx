@@ -1,0 +1,108 @@
+.
+├── README.md
+├── analysis_options.yaml
+├── assets
+│   ├── animations
+│   ├── fonts
+│   │   └── Changa-SemiBold.ttf
+│   ├── icons
+│   │   ├── icon.png
+│   │   └── svg
+│   ├── images
+│   └── {fonts,icons
+│       └── svg,images,animations}
+├── codemagic.yaml
+├── lib
+│   ├── config
+│   │   └── app_config.dart
+│   ├── main.dart
+│   ├── models
+│   │   ├── ad_model.dart
+│   │   ├── ad_model.dart.bak
+│   │   ├── user_model.dart
+│   │   └── wallet_model.dart
+│   ├── providers
+│   │   └── theme_manager.dart
+│   ├── screens
+│   │   ├── account_info_screen.dart
+│   │   ├── ad_detail_screen.dart
+│   │   ├── ad_stats_screen.dart
+│   │   ├── add_ad_screen.dart
+│   │   ├── advanced_search_screen.dart
+│   │   ├── all_ads_screen.dart
+│   │   ├── all_ads_screen_part1.dart
+│   │   ├── all_ads_screen_part2.dart
+│   │   ├── all_categories_screen.dart
+│   │   ├── auctions_screen.dart
+│   │   ├── biometric_auth_screen.dart
+│   │   ├── cart_screen.dart
+│   │   ├── categories
+│   │   ├── change_password_screen.dart
+│   │   ├── chat_detail_screen.dart
+│   │   ├── chat_screen.dart
+│   │   ├── checkout_screen.dart
+│   │   ├── connected_devices_screen.dart
+│   │   ├── contact_us_screen.dart
+│   │   ├── edit_profile_screen.dart
+│   │   ├── faq_screen.dart
+│   │   ├── favorites_screen.dart
+│   │   ├── followers_screen.dart
+│   │   ├── home_screen.dart
+│   │   ├── interactive_map_screen.dart
+│   │   ├── invite_friends_screen.dart
+│   │   ├── live_chat_screen.dart
+│   │   ├── login_history_screen.dart
+│   │   ├── login_screen.dart
+│   │   ├── main_navigation.dart
+│   │   ├── manage_ads_screen.dart
+│   │   ├── map_screen.dart
+│   │   ├── my_ads_screen.dart
+│   │   ├── my_orders_screen.dart
+│   │   ├── nearby_stores_screen.dart
+│   │   ├── notification_history_screen.dart
+│   │   ├── notifications_screen.dart
+│   │   ├── offers_screen.dart
+│   │   ├── order_detail_screen.dart
+│   │   ├── pick_location_screen.dart
+│   │   ├── privacy_settings_screen.dart
+│   │   ├── profile_screen.dart
+│   │   ├── promote_ad_screen.dart
+│   │   ├── register_screen.dart
+│   │   ├── rewards_screen.dart
+│   │   ├── saved_searches_screen.dart
+│   │   ├── search_screen.dart
+│   │   ├── settings
+│   │   ├── settings_screen.dart
+│   │   ├── share_app_screen.dart
+│   │   ├── splash_screen.dart
+│   │   ├── subcategories_screen.dart
+│   │   ├── support_tickets_screen.dart
+│   │   ├── terms_screen.dart
+│   │   ├── theme_screen.dart
+│   │   ├── two_factor_screen.dart
+│   │   ├── upload_document_screen.dart
+│   │   ├── voice_recording_screen.dart.bak
+│   │   ├── wallet
+│   │   └── wallet_screen.dart
+│   ├── services
+│   │   ├── cache
+│   │   ├── location_service.dart
+│   │   ├── map_service.dart
+│   │   └── supabase_service.dart
+│   ├── theme
+│   │   └── app_theme.dart
+│   ├── widgets
+│   │   ├── ad_card.dart
+│   │   ├── animated_button.dart
+│   │   ├── custom_app_bar.dart
+│   │   ├── custom_button.dart
+│   │   ├── custom_text_field.dart
+│   │   └── loading_widget.dart
+│   └── {models,providers,screens
+│       └── {settings,wallet,seller},services
+├── project_structure.txt
+├── pubspec.yaml
+└── test
+    └── widget_test.dart
+
+24 directories, 82 files

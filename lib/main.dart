@@ -1,35 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'providers/theme_manager.dart';
-import 'theme/app_theme.dart';
 import 'screens/splash_screen.dart';
-import 'config/app_config.dart';
-
-Future<void> initializeSupabase() async {
-  try {
-    await dotenv.load(fileName: ".env");
-  } catch (e) {
-    debugPrint('⚠️ .env file not found, using default values');
-  }
-  try {
-    await Supabase.initialize(
-      url: AppConfig.supabaseUrl,
-      anonKey: AppConfig.supabaseAnonKey,
-    );
-    debugPrint('✅ Supabase initialized in background');
-  } catch (e) {
-    debugPrint('❌ Supabase initialization failed: $e');
-  }
-}
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  
-  // Initialize Supabase in background without blocking UI
-  initializeSupabase();
-  
   runApp(
     ChangeNotifierProvider(
       create: (_) => ThemeManager(),
@@ -48,8 +23,32 @@ class MyApp extends StatelessWidget {
         return MaterialApp(
           title: 'Flex Yemen',
           debugShowCheckedModeBanner: false,
-          theme: AppTheme.lightTheme,
-          darkTheme: AppTheme.darkTheme,
+          theme: ThemeData(
+            brightness: Brightness.light,
+            primaryColor: const Color(0xFFD4AF37),
+            colorScheme: const ColorScheme.light(
+              primary: Color(0xFFD4AF37),
+              secondary: Color(0xFFF4E4BC),
+            ),
+            fontFamily: 'Changa',
+            appBarTheme: const AppBarTheme(
+              centerTitle: true,
+              elevation: 0,
+            ),
+          ),
+          darkTheme: ThemeData(
+            brightness: Brightness.dark,
+            primaryColor: const Color(0xFFD4AF37),
+            colorScheme: const ColorScheme.dark(
+              primary: Color(0xFFD4AF37),
+              secondary: Color(0xFFF4E4BC),
+            ),
+            fontFamily: 'Changa',
+            appBarTheme: const AppBarTheme(
+              centerTitle: true,
+              elevation: 0,
+            ),
+          ),
           themeMode: themeManager.isDarkMode ? ThemeMode.dark : ThemeMode.light,
           home: const SplashScreen(),
         );
