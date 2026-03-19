@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
+import '../widgets/custom_app_bar.dart';
 import 'order_detail_screen.dart';
 
 class MyOrdersScreen extends StatefulWidget {
@@ -12,48 +13,12 @@ class MyOrdersScreen extends StatefulWidget {
 class _MyOrdersScreenState extends State<MyOrdersScreen> with SingleTickerProviderStateMixin {
   late TabController _tabController;
   
-  // قائمة الطلبات التجريبية
   final List<Map<String, dynamic>> _orders = [
-    {
-      'id': 'ORD-001',
-      'date': '15 مارس 2025',
-      'items': ['آيفون 14 برو ماكس', 'سماعة AirPods'],
-      'total': '850,000',
-      'status': 'completed',
-      'statusText': 'مكتمل',
-    },
-    {
-      'id': 'ORD-002',
-      'date': '10 مارس 2025',
-      'items': ['سامسونج S24 الترا'],
-      'total': '380,000',
-      'status': 'shipped',
-      'statusText': 'تم الشحن',
-    },
-    {
-      'id': 'ORD-003',
-      'date': '5 مارس 2025',
-      'items': ['لابتوب لينوفو', 'ماوس لاسلكي'],
-      'total': '720,000',
-      'status': 'processing',
-      'statusText': 'قيد المعالجة',
-    },
-    {
-      'id': 'ORD-004',
-      'date': '28 فبراير 2025',
-      'items': ['سماعة سوني'],
-      'total': '95,000',
-      'status': 'delivered',
-      'statusText': 'تم التوصيل',
-    },
-    {
-      'id': 'ORD-005',
-      'date': '20 فبراير 2025',
-      'items': ['ساعة أبل'],
-      'total': '250,000',
-      'status': 'cancelled',
-      'statusText': 'ملغي',
-    },
+    {'id': 'ORD-001', 'date': '15 مارس 2026', 'items': ['آيفون 14 برو ماكس', 'سماعة AirPods'], 'total': '850,000', 'status': 'completed', 'statusText': 'مكتمل'},
+    {'id': 'ORD-002', 'date': '10 مارس 2026', 'items': ['سامسونج S24 الترا'], 'total': '380,000', 'status': 'shipped', 'statusText': 'تم الشحن'},
+    {'id': 'ORD-003', 'date': '5 مارس 2026', 'items': ['لابتوب لينوفو'], 'total': '720,000', 'status': 'processing', 'statusText': 'قيد المعالجة'},
+    {'id': 'ORD-004', 'date': '28 فبراير 2026', 'items': ['سماعة سوني'], 'total': '95,000', 'status': 'delivered', 'statusText': 'تم التوصيل'},
+    {'id': 'ORD-005', 'date': '20 فبراير 2026', 'items': ['ساعة أبل'], 'total': '250,000', 'status': 'cancelled', 'statusText': 'ملغي'},
   ];
 
   @override
@@ -121,7 +86,6 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> with SingleTickerProvid
                 MaterialPageRoute(builder: (_) => OrderDetailScreen(orderId: order['id'])),
               );
             },
-            borderRadius: BorderRadius.circular(16),
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
@@ -129,10 +93,7 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> with SingleTickerProvid
                 children: [
                   Row(
                     children: [
-                      Text(
-                        'طلب رقم: ${order['id']}',
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                      ),
+                      Text('طلب رقم: ${order['id']}', style: const TextStyle(fontWeight: FontWeight.bold)),
                       const Spacer(),
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),

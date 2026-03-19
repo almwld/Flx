@@ -4,9 +4,12 @@ import '../widgets/custom_app_bar.dart';
 import 'my_ads_screen.dart';
 import 'favorites_screen.dart';
 import 'my_orders_screen.dart';
-import 'settings/settings_screen.dart';
 import 'account_info_screen.dart';
+import 'settings_screen.dart';
+import 'help_support_screen.dart';
+import 'about_screen.dart';
 import 'login_screen.dart';
+import '../services/supabase_service.dart';
 
 class ProfileScreen extends StatefulWidget {
   final bool isGuest;
@@ -17,15 +20,36 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  String _userName = 'محمد أحمد';
+  String _userEmail = 'mohammed@email.com';
+  String? _userAvatar;
+  double _userRating = 4.8;
+  int _followers = 156;
+  int _following = 89;
+  int _adsCount = 12;
+
   final List<Map<String, dynamic>> _menuItems = [
     {'title': 'إعلاناتي', 'icon': Icons.campaign, 'color': Colors.blue, 'screen': const MyAdsScreen()},
     {'title': 'المفضلة', 'icon': Icons.favorite, 'color': Colors.red, 'screen': const FavoritesScreen()},
     {'title': 'طلباتي', 'icon': Icons.shopping_bag, 'color': Colors.green, 'screen': const MyOrdersScreen()},
     {'title': 'معلومات الحساب', 'icon': Icons.person, 'color': Colors.orange, 'screen': const AccountInfoScreen()},
     {'title': 'الإعدادات', 'icon': Icons.settings, 'color': Colors.purple, 'screen': const SettingsScreen()},
-    {'title': 'المساعدة والدعم', 'icon': Icons.help_outline, 'color': Colors.teal, 'screen': null},
-    {'title': 'عن التطبيق', 'icon': Icons.info_outline, 'color': Colors.cyan, 'screen': null},
+    {'title': 'المساعدة والدعم', 'icon': Icons.help_outline, 'color': Colors.teal, 'screen': const HelpSupportScreen()},
+    {'title': 'عن التطبيق', 'icon': Icons.info_outline, 'color': Colors.cyan, 'screen': const AboutScreen()},
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    if (!widget.isGuest && SupabaseService.isAuthenticated) {
+      _loadUserData();
+    }
+  }
+
+  Future<void> _loadUserData() async {
+    // هنا سيتم جلب البيانات الحقيقية من Supabase
+    // حالياً نستخدم بيانات تجريبية
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,12 +59,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
       appBar: const CustomAppBar(title: 'حسابي'),
       body: CustomScrollView(
         slivers: [
+          // رأس الصفحة (للمستخدم المسجل)
           if (!widget.isGuest)
             SliverToBoxAdapter(
               child: Container(
                 padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: isDark ? AppTheme.darkCard : AppTheme.lightCard,
+                  borderRadius: const BorderRadius.vertical(bottom: Radius.circular(30)),
+                ),
                 child: Row(
                   children: [
+                    // الصورة الشخصية
                     Container(
                       width: 70,
                       height: 70,
@@ -50,29 +80,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(Icons.person, size: 40, color: Colors.black),
+                      child: _userAvatar != null
+                          ? ClipOval(child: Image.network(_userAvatar!, fit: BoxFit.cover))
+                          : const Icon(Icons.person, size: 40, color: Colors.black),
                     ),
                     const SizedBox(width: 20),
+                    // المعلومات
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            'محمد أحمد',
-                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, fontFamily: 'Changa'),
+                          Text(
+                            _userName,
+                            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                           ),
-                          const Text(
-                            'mohammed@email.com',
-                            style: TextStyle(color: Colors.grey, fontFamily: 'Changa'),
+                          Text(
+                            _userEmail,
+                            style: const TextStyle(color: Colors.grey),
                           ),
                           const SizedBox(height: 8),
                           Row(
                             children: [
-                              _buildStatItem('4.8', 'التقييم'),
+                              _buildStatItem(_userRating.toString(), 'التقييم'),
                               const SizedBox(width: 16),
-                              _buildStatItem('156', 'المتابعين'),
+                              _buildStatItem('$_followers', 'المتابعون'),
                               const SizedBox(width: 16),
-                              _buildStatItem('12', 'الإعلانات'),
+                              _buildStatItem('$_adsCount', 'الإعلانات'),
                             ],
                           ),
                         ],
@@ -82,6 +115,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ),
             ),
+          
+          // رأس الصفحة للمستخدم الضيف
           if (widget.isGuest)
             SliverToBoxAdapter(
               child: Container(
@@ -102,12 +137,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     const SizedBox(height: 12),
                     const Text(
                       'ضيف',
-                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, fontFamily: 'Changa'),
+                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       'سجل دخول للاستفادة من جميع الميزات',
-                      style: TextStyle(color: Colors.grey[500], fontFamily: 'Changa'),
+                      style: TextStyle(color: Colors.grey[500]),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 16),
@@ -119,13 +154,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             MaterialPageRoute(builder: (_) => const LoginScreen()),
                           );
                         },
-                        child: const Text('تسجيل الدخول', style: TextStyle(fontFamily: 'Changa')),
+                        child: const Text('تسجيل الدخول'),
                       ),
                     ),
                   ],
                 ),
               ),
             ),
+          
+          // قائمة العناصر
           SliverPadding(
             padding: const EdgeInsets.all(16),
             sliver: SliverList(
@@ -134,11 +171,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   final item = _menuItems[index];
                   return GestureDetector(
                     onTap: () {
-                      if (item['screen'] != null) {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(builder: (_) => item['screen']),
-                        );
-                      }
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => item['screen']),
+                      );
                     },
                     child: Container(
                       margin: const EdgeInsets.only(bottom: 12),
@@ -161,12 +196,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           Expanded(
                             child: Text(
                               item['title'],
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                                color: isDark ? Colors.white : Colors.black87,
-                                fontFamily: 'Changa',
-                              ),
+                              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                             ),
                           ),
                           Icon(Icons.arrow_forward_ios, size: 16, color: isDark ? Colors.grey[600] : Colors.grey[400]),
@@ -179,6 +209,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
           ),
+          
+          // زر تسجيل الخروج
           if (!widget.isGuest)
             SliverToBoxAdapter(
               child: Padding(
@@ -186,11 +218,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: SizedBox(
                   width: double.infinity,
                   child: OutlinedButton.icon(
-                    onPressed: () {},
+                    onPressed: () async {
+                      await SupabaseService.signOut();
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(builder: (_) => const ProfileScreen(isGuest: true)),
+                      );
+                    },
                     icon: const Icon(Icons.logout, color: AppTheme.error),
                     label: const Text(
                       'تسجيل الخروج',
-                      style: TextStyle(color: AppTheme.error, fontFamily: 'Changa'),
+                      style: TextStyle(color: AppTheme.error),
                     ),
                     style: OutlinedButton.styleFrom(
                       side: const BorderSide(color: AppTheme.error),
@@ -208,15 +245,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget _buildStatItem(String value, String label) {
     return Column(
       children: [
-        Text(
-          value,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'Changa'),
-        ),
+        Text(value, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
         const SizedBox(height: 2),
-        Text(
-          label,
-          style: TextStyle(fontSize: 12, color: Colors.grey[500], fontFamily: 'Changa'),
-        ),
+        Text(label, style: const TextStyle(fontSize: 12, color: Colors.grey)),
       ],
     );
   }

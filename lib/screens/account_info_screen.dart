@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_button.dart';
+import '../widgets/custom_text_field.dart';
 
 class AccountInfoScreen extends StatefulWidget {
   const AccountInfoScreen({super.key});
@@ -11,10 +12,12 @@ class AccountInfoScreen extends StatefulWidget {
 }
 
 class _AccountInfoScreenState extends State<AccountInfoScreen> {
+  bool _isEditing = false;
+  final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController(text: 'محمد أحمد');
   final _emailController = TextEditingController(text: 'mohammed@email.com');
   final _phoneController = TextEditingController(text: '777123456');
-  bool _isEditing = false;
+  final _addressController = TextEditingController(text: 'صنعاء - شارع حدة');
 
   @override
   Widget build(BuildContext context) {
@@ -27,11 +30,15 @@ class _AccountInfoScreenState extends State<AccountInfoScreen> {
           IconButton(
             icon: Icon(_isEditing ? Icons.check : Icons.edit),
             onPressed: () {
-              setState(() => _isEditing = !_isEditing);
-              if (!_isEditing) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('تم حفظ التغييرات')),
-                );
+              if (_isEditing) {
+                if (_formKey.currentState!.validate()) {
+                  setState(() => _isEditing = false);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('تم حفظ التغييرات')),
+                  );
+                }
+              } else {
+                setState(() => _isEditing = true);
               }
             },
           ),
@@ -39,72 +46,81 @@ class _AccountInfoScreenState extends State<AccountInfoScreen> {
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            Center(
-              child: Stack(
-                children: [
-                  Container(
-                    width: 100,
-                    height: 100,
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(colors: [AppTheme.goldColor, AppTheme.goldLight]),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(Icons.person, size: 50, color: Colors.black),
-                  ),
-                  if (_isEditing)
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: const BoxDecoration(color: AppTheme.goldColor, shape: BoxShape.circle),
-                        child: const Icon(Icons.camera_alt, size: 20, color: Colors.black),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              // الصورة الشخصية
+              Center(
+                child: Stack(
+                  children: [
+                    Container(
+                      width: 100,
+                      height: 100,
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(colors: [AppTheme.goldColor, AppTheme.goldLight]),
+                        shape: BoxShape.circle,
                       ),
+                      child: const Icon(Icons.person, size: 50, color: Colors.black),
                     ),
-                ],
+                    if (_isEditing)
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: const BoxDecoration(color: AppTheme.goldColor, shape: BoxShape.circle),
+                          child: const Icon(Icons.camera_alt, size: 20, color: Colors.black),
+                        ),
+                      ),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(height: 30),
-            TextField(
-              controller: _nameController,
-              enabled: _isEditing,
-              decoration: InputDecoration(
-                labelText: 'الاسم الكامل',
-                prefixIcon: const Icon(Icons.person),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-              ),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _emailController,
-              enabled: _isEditing,
-              decoration: InputDecoration(
-                labelText: 'البريد الإلكتروني',
-                prefixIcon: const Icon(Icons.email),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-              ),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _phoneController,
-              enabled: _isEditing,
-              decoration: InputDecoration(
-                labelText: 'رقم الهاتف',
-                prefixIcon: const Icon(Icons.phone),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-              ),
-            ),
-            if (_isEditing) ...[
               const SizedBox(height: 30),
-              CustomButton(
-                text: 'تغيير كلمة المرور',
-                onPressed: () {},
-                isOutlined: true,
+              
+              // الحقول
+              CustomTextField(
+                controller: _nameController,
+                label: 'الاسم الكامل',
+                prefixIcon: Icons.person_outline,
+                enabled: _isEditing,
+                validator: (v) => v!.isEmpty ? 'مطلوب' : null,
               ),
+              const SizedBox(height: 16),
+              CustomTextField(
+                controller: _emailController,
+                label: 'البريد الإلكتروني',
+                prefixIcon: Icons.email_outlined,
+                enabled: _isEditing,
+                validator: (v) => v!.isEmpty ? 'مطلوب' : null,
+              ),
+              const SizedBox(height: 16),
+              CustomTextField(
+                controller: _phoneController,
+                label: 'رقم الهاتف',
+                prefixIcon: Icons.phone_outlined,
+                enabled: _isEditing,
+                validator: (v) => v!.isEmpty ? 'مطلوب' : null,
+              ),
+              const SizedBox(height: 16),
+              CustomTextField(
+                controller: _addressController,
+                label: 'العنوان',
+                prefixIcon: Icons.location_on_outlined,
+                enabled: _isEditing,
+                validator: (v) => v!.isEmpty ? 'مطلوب' : null,
+              ),
+              
+              if (_isEditing) ...[
+                const SizedBox(height: 30),
+                CustomButton(
+                  text: 'تغيير كلمة المرور',
+                  onPressed: () {},
+                  isOutlined: true,
+                ),
+              ],
             ],
-          ],
+          ),
         ),
       ),
     );

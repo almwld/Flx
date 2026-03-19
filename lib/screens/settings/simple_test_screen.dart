@@ -1,3 +1,4 @@
+import '../models/rating_model.dart';
 import 'package:flutter/material.dart';
 
 class SimpleTestScreen extends StatelessWidget {
