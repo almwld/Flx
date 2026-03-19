@@ -42,13 +42,12 @@ class SupabaseService {
     bool ascending = false,
   }) async {
     try {
-      // بناء الاستعلام الأساسي
       var query = client
           .from('products')
           .select('*, profiles!products_seller_id_fkey(*)')
-          .order(sortBy!, ascending: ascending);
+          .order(sortBy, ascending: ascending);
 
-      // تطبيق الفلاتر
+      // تطبيق الفلاتر بشكل صحيح
       if (category != null && category.isNotEmpty && category != 'الكل') {
         query = query.eq('category', category);
       }
@@ -67,18 +66,15 @@ class SupabaseService {
 
       final response = await query;
 
-      // تحويل النتائج
-      final List<ProductModel> products = [];
-      for (var item in response) {
-        final sellerData = item['profiles'] ?? {};
-        products.add(ProductModel.fromJson({
-          ...item,
-          'seller_name': sellerData['full_name'],
-          'seller_rating': sellerData['rating'],
+      return (response as List).map((json) {
+        final sellerData = json['profiles'] ?? {};
+        return ProductModel.fromJson({
+          ...json,
+          'seller_name': sellerData['full_name'] ?? 'متجر غير معروف',
+          'seller_rating': sellerData['rating'] ?? 0.0,
           'seller_avatar': sellerData['avatar_url'],
-        }));
-      }
-      return products;
+        });
+      }).toList();
     } catch (e) {
       print('Error fetching products: $e');
       return [];
@@ -91,13 +87,16 @@ class SupabaseService {
           .from('products')
           .select('*, profiles!products_seller_id_fkey(*)')
           .eq('id', id)
-          .single();
+          .single()
+          .then((value) => value as Map<String, dynamic>?);
+
+      if (response == null) return null;
 
       final sellerData = response['profiles'] ?? {};
       return ProductModel.fromJson({
         ...response,
-        'seller_name': sellerData['full_name'],
-        'seller_rating': sellerData['rating'],
+        'seller_name': sellerData['full_name'] ?? 'متجر غير معروف',
+        'seller_rating': sellerData['rating'] ?? 0.0,
         'seller_avatar': sellerData['avatar_url'],
       });
     } catch (e) {
@@ -115,16 +114,14 @@ class SupabaseService {
           .order('created_at', ascending: false)
           .limit(limit);
 
-      final List<ProductModel> products = [];
-      for (var item in response) {
-        final sellerData = item['profiles'] ?? {};
-        products.add(ProductModel.fromJson({
-          ...item,
-          'seller_name': sellerData['full_name'],
-          'seller_rating': sellerData['rating'],
-        }));
-      }
-      return products;
+      return (response as List).map((json) {
+        final sellerData = json['profiles'] ?? {};
+        return ProductModel.fromJson({
+          ...json,
+          'seller_name': sellerData['full_name'] ?? 'متجر غير معروف',
+          'seller_rating': sellerData['rating'] ?? 0.0,
+        });
+      }).toList();
     } catch (e) {
       print('Error fetching featured products: $e');
       return [];
@@ -139,18 +136,92 @@ class SupabaseService {
           .order('created_at', ascending: false)
           .limit(limit);
 
-      final List<ProductModel> products = [];
-      for (var item in response) {
-        final sellerData = item['profiles'] ?? {};
-        products.add(ProductModel.fromJson({
-          ...item,
-          'seller_name': sellerData['full_name'],
-          'seller_rating': sellerData['rating'],
-        }));
-      }
-      return products;
+      return (response as List).map((json) {
+        final sellerData = json['profiles'] ?? {};
+        return ProductModel.fromJson({
+          ...json,
+          'seller_name': sellerData['full_name'] ?? 'متجر غير معروف',
+          'seller_rating': sellerData['rating'] ?? 0.0,
+        });
+      }).toList();
     } catch (e) {
       print('Error fetching latest products: $e');
+      return [];
+    }
+  }
+
+  static Future<List<ProductModel>> getSellerProducts(String sellerId) async {
+    try {
+      final response = await client
+          .from('products')
+          .select('*')
+          .eq('seller_id', sellerId)
+          .order('created_at', ascending: false);
+
+      return (response as List).map((json) => ProductModel.fromJson(json)).toList();
+    } catch (e) {
+      print('Error fetching seller products: $e');
+      return [];
+    }
+  }
+
+  static Future<void> addProduct(Map<String, dynamic> productData) async {
+    try {
+      await client.from('products').insert({
+        ...productData,
+        'seller_id': currentUser!.id,
+        'created_at': DateTime.now().toIso8601String(),
+      });
+    } catch (e) {
+      print('Error adding product: $e');
+      rethrow;
+    }
+  }
+
+  static Future<void> updateProduct(String id, Map<String, dynamic> productData) async {
+    try {
+      await client.from('products').update(productData).eq('id', id);
+    } catch (e) {
+      print('Error updating product: $e');
+      rethrow;
+    }
+  }
+
+  static Future<void> deleteProduct(String id) async {
+    try {
+      await client.from('products').delete().eq('id', id);
+    } catch (e) {
+      print('Error deleting product: $e');
+      rethrow;
+    }
+  }
+
+  // ==================== الطلبات ====================
+  static Future<void> createOrder(Map<String, dynamic> orderData) async {
+    try {
+      await client.from('orders').insert({
+        ...orderData,
+        'user_id': currentUser!.id,
+        'created_at': DateTime.now().toIso8601String(),
+        'status': 'pending',
+      });
+    } catch (e) {
+      print('Error creating order: $e');
+      rethrow;
+    }
+  }
+
+  static Future<List<Map<String, dynamic>>> getUserOrders() async {
+    try {
+      final response = await client
+          .from('orders')
+          .select('*, order_items(*)')
+          .eq('user_id', currentUser!.id)
+          .order('created_at', ascending: false);
+
+      return List<Map<String, dynamic>>.from(response);
+    } catch (e) {
+      print('Error fetching orders: $e');
       return [];
     }
   }
@@ -190,11 +261,9 @@ class SupabaseService {
           .eq('user_id', currentUser!.id)
           .order('created_at', ascending: false);
 
-      final List<ProductModel> products = [];
-      for (var item in response) {
-        products.add(ProductModel.fromJson(item['products'] ?? {}));
-      }
-      return products;
+      return (response as List).map((json) {
+        return ProductModel.fromJson(json['products'] ?? {});
+      }).toList();
     } catch (e) {
       print('Error fetching favorites: $e');
       return [];
