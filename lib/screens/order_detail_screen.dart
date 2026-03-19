@@ -3,7 +3,8 @@ import '../theme/app_theme.dart';
 import '../widgets/custom_app_bar.dart';
 
 class OrderDetailScreen extends StatelessWidget {
-  const OrderDetailScreen({super.key});
+  final String orderId;
+  const OrderDetailScreen({super.key, required this.orderId});
 
   @override
   Widget build(BuildContext context) {
@@ -16,80 +17,134 @@ class OrderDetailScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: isDark ? AppTheme.darkCard : AppTheme.lightCard,
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text('رقم الطلب', style: TextStyle(fontFamily: 'Changa')),
-                      const Text('ORD-001', style: TextStyle(fontWeight: FontWeight.bold, fontFamily: 'Changa')),
-                    ],
-                  ),
-                  const Divider(height: 24),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text('التاريخ', style: TextStyle(fontFamily: 'Changa')),
-                      const Text('15 مارس 2026', style: TextStyle(fontFamily: 'Changa')),
-                    ],
-                  ),
-                  const Divider(height: 24),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text('الحالة', style: TextStyle(fontFamily: 'Changa')),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(color: Colors.orange.withOpacity(0.2), borderRadius: BorderRadius.circular(8)),
-                        child: const Text('جاري التوصيل', style: TextStyle(color: Colors.orange, fontWeight: FontWeight.bold, fontFamily: 'Changa')),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
-            const Text('المنتجات', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'Changa')),
-            const SizedBox(height: 12),
-            ...List.generate(2, (index) => Container(
-              margin: const EdgeInsets.only(bottom: 8),
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(color: isDark ? AppTheme.darkCard : AppTheme.lightCard, borderRadius: BorderRadius.circular(12)),
-              child: Row(
-                children: [
-                  Container(width: 60, height: 60, color: Colors.grey[300]),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+            // حالة الطلب
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  children: [
+                    Row(
                       children: [
-                        Text('منتج ${index + 1}', style: const TextStyle(fontWeight: FontWeight.bold, fontFamily: 'Changa')),
-                        const Text('الكمية: 1', style: TextStyle(color: Colors.grey, fontFamily: 'Changa')),
+                        const Icon(Icons.check_circle, color: Colors.green),
+                        const SizedBox(width: 8),
+                        const Text('تم تأكيد الطلب', style: TextStyle(fontWeight: FontWeight.bold)),
+                        const Spacer(),
+                        Text('رقم: $orderId'),
                       ],
                     ),
-                  ),
-                  const Text('15,000 ر.ي', style: TextStyle(color: AppTheme.goldColor, fontWeight: FontWeight.bold, fontFamily: 'Changa')),
-                ],
+                    const SizedBox(height: 16),
+                    LinearProgressIndicator(
+                      value: 0.3,
+                      backgroundColor: Colors.grey[300],
+                      color: AppTheme.goldColor,
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: const [
+                        Text('قيد المعالجة', style: TextStyle(fontSize: 12)),
+                        Text('تم الشحن', style: TextStyle(fontSize: 12)),
+                        Text('تم التوصيل', style: TextStyle(fontSize: 12)),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            )),
+            ),
+            
             const SizedBox(height: 16),
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(color: isDark ? AppTheme.darkCard : AppTheme.lightCard, borderRadius: BorderRadius.circular(16)),
-              child: Column(
-                children: [
-                  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [const Text('المجموع', style: TextStyle(fontFamily: 'Changa')), const Text('30,000 ر.ي', style: TextStyle(fontFamily: 'Changa'))]),
-                  const Divider(height: 16),
-                  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [const Text('الشحن', style: TextStyle(fontFamily: 'Changa')), const Text('2,000 ر.ي', style: TextStyle(fontFamily: 'Changa'))]),
-                  const Divider(height: 16),
-                  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [const Text('الإجمالي', style: TextStyle(fontWeight: FontWeight.bold, fontFamily: 'Changa')), const Text('32,000 ر.ي', style: TextStyle(color: AppTheme.goldColor, fontWeight: FontWeight.bold, fontFamily: 'Changa'))]),
-                ],
+            
+            // معلومات التوصيل
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('معلومات التوصيل', style: TextStyle(fontWeight: FontWeight.bold)),
+                    const Divider(),
+                    ListTile(
+                      leading: const Icon(Icons.person, color: AppTheme.goldColor),
+                      title: const Text('محمد أحمد'),
+                      subtitle: const Text('المستلم'),
+                    ),
+                    ListTile(
+                      leading: const Icon(Icons.location_on, color: AppTheme.goldColor),
+                      title: const Text('صنعاء - شارع حدة'),
+                      subtitle: const Text('العنوان'),
+                    ),
+                    ListTile(
+                      leading: const Icon(Icons.phone, color: AppTheme.goldColor),
+                      title: const Text('777123456'),
+                      subtitle: const Text('رقم الهاتف'),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            
+            const SizedBox(height: 16),
+            
+            // المنتجات
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('المنتجات', style: TextStyle(fontWeight: FontWeight.bold)),
+                    const Divider(),
+                    ...List.generate(2, (i) => Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 50,
+                            height: 50,
+                            color: Colors.grey[300],
+                            child: const Icon(Icons.image),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('منتج ${i + 1}'),
+                                Text('الكمية: 1', style: const TextStyle(fontSize: 12)),
+                              ],
+                            ),
+                          ),
+                          const Text('15,000 ر.ي'),
+                        ],
+                      ),
+                    )),
+                    const Divider(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: const [
+                        Text('الإجمالي'),
+                        Text('32,000 ر.ي', style: TextStyle(color: AppTheme.goldColor)),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            
+            const SizedBox(height: 16),
+            
+            // زر تتبع الطلب
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () {},
+                icon: const Icon(Icons.location_on),
+                label: const Text('تتبع الطلب'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppTheme.goldColor,
+                  foregroundColor: Colors.black,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                ),
               ),
             ),
           ],

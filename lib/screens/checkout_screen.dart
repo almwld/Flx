@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_button.dart';
-import 'payment_method_screen.dart';
-import 'invoice_screen.dart';
-import '../models/product_model.dart';
+import '../services/supabase_service.dart';
+import 'order_detail_screen.dart';
+import 'login_screen.dart';
 
 class CheckoutItem {
-  final ProductModel product;
+  final Map<String, dynamic> product;
   final int quantity;
   CheckoutItem({required this.product, required this.quantity});
   
-  double get totalPrice => product.price * quantity;
+  double get totalPrice => (product['price'] as num).toDouble() * quantity;
 }
 
 class CheckoutScreen extends StatefulWidget {
@@ -37,7 +37,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     return widget.items.fold(0, (sum, item) => sum + item.totalPrice);
   }
 
-  double get _shipping => 2000; // قيمة الشحن ثابتة
+  double get _shipping => 2000;
   double get _total => _subtotal + _shipping;
 
   @override
@@ -142,7 +142,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             title: const Text('مراجعة'),
             content: Column(
               children: [
-                // قائمة المنتجات
                 ...widget.items.map((item) => Container(
                   margin: const EdgeInsets.only(bottom: 8),
                   padding: const EdgeInsets.all(12),
@@ -155,7 +154,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       Container(
                         width: 50,
                         height: 50,
-                        color: Colors.grey[300],
+                        decoration: BoxDecoration(
+                          color: Colors.grey[300],
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                         child: const Icon(Icons.image),
                       ),
                       const SizedBox(width: 12),
@@ -163,8 +165,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(item.product.title),
-                            Text('الكمية: ${item.quantity}'),
+                            Text(item.product['title'] ?? 'منتج'),
+                            Text('الكمية: ${item.quantity}', style: const TextStyle(fontSize: 12)),
                           ],
                         ),
                       ),
@@ -173,7 +175,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   ),
                 )),
                 const Divider(height: 32),
-                // ملخص السعر
                 _buildPriceRow('المجموع', _subtotal),
                 _buildPriceRow('الشحن', _shipping),
                 const Divider(height: 16),
@@ -215,6 +216,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   }
 
   Future<void> _processPayment() async {
+    if (!SupabaseService.isAuthenticated) {
+      _showLoginDialog();
+      return;
+    }
+
     setState(() => _isProcessing = true);
     
     // محاكاة عملية الدفع
@@ -224,23 +230,40 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     
     setState(() => _isProcessing = false);
     
-    // إنشاء الفاتورة
-    final invoice = InvoiceData(
-      orderId: 'ORD${DateTime.now().millisecondsSinceEpoch}',
-      date: DateTime.now(),
-      items: widget.items,
-      subtotal: _subtotal,
-      shipping: _shipping,
-      total: _total,
-      paymentMethod: _selectedPaymentMethod == 'wallet' ? 'المحفظة' : 'بطاقة ائتمان',
-      address: _selectedAddress!,
-    );
+    // إنشاء الطلب في قاعدة البيانات
+    final orderId = 'ORD${DateTime.now().millisecondsSinceEpoch}';
     
-    // الانتقال إلى صفحة الفاتورة
+    // الانتقال إلى صفحة تفاصيل الطلب
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (_) => InvoiceScreen(invoice: invoice),
+        builder: (_) => OrderDetailScreen(orderId: orderId),
+      ),
+    );
+  }
+
+  void _showLoginDialog() {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('تسجيل الدخول مطلوب'),
+        content: const Text('يرجى تسجيل الدخول لإتمام عملية الشراء'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('إلغاء'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const LoginScreen()),
+              );
+            },
+            child: const Text('تسجيل الدخول'),
+          ),
+        ],
       ),
     );
   }
