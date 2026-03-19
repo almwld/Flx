@@ -1,6 +1,7 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../config/app_config.dart';
 import '../models/product_model.dart';
+import '../models/rating_model.dart';
 
 class SupabaseService {
   static final SupabaseClient client = Supabase.instance.client;
@@ -42,10 +43,8 @@ class SupabaseService {
     bool ascending = false,
   }) async {
     try {
-      // نبدأ باستعلام الفلترة
       var filterQuery = client.from('products').select('*, profiles!products_seller_id_fkey(*)');
 
-      // تطبيق الفلاتر
       if (category != null && category.isNotEmpty && category != 'الكل') {
         filterQuery = filterQuery.eq('category', category);
       }
@@ -62,7 +61,6 @@ class SupabaseService {
         filterQuery = filterQuery.lte('price', maxPrice);
       }
 
-      // بعد الانتهاء من الفلاتر، نستخدم متغير جديد للترتيب
       final response = await filterQuery.order(sortBy, ascending: ascending);
 
       return (response as List).map((json) {
@@ -281,7 +279,6 @@ class SupabaseService {
       return false;
     }
   }
-}
 
   // ==================== التقييمات ====================
   static Future<List<RatingModel>> getProductRatings(String productId) async {
@@ -355,9 +352,7 @@ class SupabaseService {
         'created_at': DateTime.now().toIso8601String(),
       });
 
-      // تحديث متوسط التقييم في جدول المنتجات (اختياري)
       await _updateProductAverageRating(productId);
-      
       return true;
     } catch (e) {
       print('Error adding rating: $e');
@@ -435,3 +430,4 @@ class SupabaseService {
       print('Error updating product average rating: $e');
     }
   }
+}
