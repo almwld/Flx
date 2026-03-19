@@ -2,14 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'providers/theme_manager.dart';
 import 'screens/splash_screen.dart';
-import 'services/notification_service.dart';
+import 'theme/app_theme.dart';
 
-void main() async {
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  // تهيئة Firebase
-  await Firebase.initializeApp();
-  // تهيئة الإشعارات
-  
   runApp(
     ChangeNotifierProvider(
       create: (_) => ThemeManager(),
@@ -28,32 +24,8 @@ class MyApp extends StatelessWidget {
         return MaterialApp(
           title: 'Flex Yemen',
           debugShowCheckedModeBanner: false,
-          theme: ThemeData(
-            brightness: Brightness.light,
-            primaryColor: const Color(0xFFD4AF37),
-            colorScheme: const ColorScheme.light(
-              primary: Color(0xFFD4AF37),
-              secondary: Color(0xFFF4E4BC),
-            ),
-            fontFamily: 'Changa',
-            appBarTheme: const AppBarTheme(
-              centerTitle: true,
-              elevation: 0,
-            ),
-          ),
-          darkTheme: ThemeData(
-            brightness: Brightness.dark,
-            primaryColor: const Color(0xFFD4AF37),
-            colorScheme: const ColorScheme.dark(
-              primary: Color(0xFFD4AF37),
-              secondary: Color(0xFFF4E4BC),
-            ),
-            fontFamily: 'Changa',
-            appBarTheme: const AppBarTheme(
-              centerTitle: true,
-              elevation: 0,
-            ),
-          ),
+          theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
           themeMode: themeManager.isDarkMode ? ThemeMode.dark : ThemeMode.light,
           home: const SplashScreen(),
         );
