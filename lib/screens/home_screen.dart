@@ -357,3 +357,60 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
+
+// إضافة سلايدر بسيط قبل شريط الأقسام (حوالي السطر 50)
+          SliverToBoxAdapter(
+            child: Container(
+              height: 150,
+              margin: const EdgeInsets.symmetric(vertical: 8),
+              child: PageView(
+                children: [
+                  Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 16),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFFD4AF37), Color(0xFFF4E4BC)],
+                      ),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: const Center(
+                      child: Text(
+                        'عرض خاص ١',
+                        style: TextStyle(color: Colors.black, fontSize: 24),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 16),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF4CAF50), Color(0xFF8BC34A)],
+                      ),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: const Center(
+                      child: Text(
+                        'عرض خاص ٢',
+                        style: TextStyle(color: Colors.white, fontSize: 24),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 16),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF2196F3), Color(0xFF03A9F4)],
+                      ),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: const Center(
+                      child: Text(
+                        'عرض خاص ٣',
+                        style: TextStyle(color: Colors.white, fontSize: 24),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
