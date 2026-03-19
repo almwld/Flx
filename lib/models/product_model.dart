@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'package:flutter/material.dart';
+
 class ProductModel {
   final String id;
   final String title;
@@ -54,6 +57,7 @@ class ProductModel {
           final decoded = jsonDecode(json['images']);
           imagesList = List<String>.from(decoded);
         } catch (e) {
+          // إذا فشل التحويل، استخدم الرابط كمفرد
           imagesList = [json['images'].toString()];
         }
       }
@@ -71,7 +75,7 @@ class ProductModel {
 
     return ProductModel(
       id: json['id'] ?? '',
-      title: json['title'] ?? json['name'] ?? 'منتج غير معروف',  // تم التعديل هنا
+      title: json['title'] ?? json['name'] ?? 'منتج غير معروف',
       description: json['description'] ?? '',
       price: (json['price'] ?? 0).toDouble(),
       oldPrice: oldPrice,
