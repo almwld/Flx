@@ -1,9 +1,9 @@
-import '../models/rating_model.dart';
+import 'package:flex_yemen/models/rating_model.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../theme/app_theme.dart';
 import '../widgets/custom_app_bar.dart';
-import '../models/rating_model.dart';
+import 'package:flex_yemen/models/rating_model.dart';
 import '../services/supabase_service.dart';
 import 'add_rating_screen.dart';
 import 'login_screen.dart';

@@ -1,4 +1,4 @@
-import '../models/rating_model.dart';
+import 'package:flex_yemen/models/rating_model.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';

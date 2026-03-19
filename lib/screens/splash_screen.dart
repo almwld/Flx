@@ -1,4 +1,4 @@
-import '../models/rating_model.dart';
+import 'package:flex_yemen/models/rating_model.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'login_screen.dart';

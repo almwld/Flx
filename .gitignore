@@ -54,8 +54,6 @@ GoogleService-Info.plist
 google-services.json
 
 # Environment variables
-.env
-.env.local
 
 # IDE
 .vscode/
@@ -77,10 +75,5 @@ windows/flutter/ephemeral/
 linux/flutter/generated_plugin_registrant.cc
 linux/flutter/generated_plugin_registrant.h
 linux/flutter/ephemeral/
-.env
-.env
-.env.*
-.env
 
 # Environment variables
-.env

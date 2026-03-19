@@ -1,4 +1,4 @@
-import '../models/rating_model.dart';
+import 'package:flex_yemen/models/rating_model.dart';
 import 'package:flutter/material.dart';
 import 'rate_app_screen.dart';
 import '../../theme/app_theme.dart';
