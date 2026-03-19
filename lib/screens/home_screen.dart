@@ -1,3 +1,4 @@
+import '../models/rating_model.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -123,7 +124,7 @@ class _HomeScreenState extends State<HomeScreen> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (_) => const NotificationsScreen()),
+              MaterialPageRoute(builder: (_) => NotificationsScreen()),
             );
           },
           backgroundColor: Colors.transparent,
