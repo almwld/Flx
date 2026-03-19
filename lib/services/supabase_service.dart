@@ -38,16 +38,14 @@ class SupabaseService {
     String? searchQuery,
     double? minPrice,
     double? maxPrice,
-    String? sortBy = 'created_at',
+    String sortBy = 'created_at',
     bool ascending = false,
   }) async {
     try {
-      var query = client
-          .from('products')
-          .select('*, profiles!products_seller_id_fkey(*)')
-          .order(sortBy, ascending: ascending);
+      // بناء الاستعلام بشكل صحيح: الفلاتر أولاً ثم الترتيب
+      var query = client.from('products').select('*, profiles!products_seller_id_fkey(*)');
 
-      // تطبيق الفلاتر بشكل صحيح
+      // تطبيق الفلاتر أولاً
       if (category != null && category.isNotEmpty && category != 'الكل') {
         query = query.eq('category', category);
       }
@@ -63,6 +61,9 @@ class SupabaseService {
       if (maxPrice != null) {
         query = query.lte('price', maxPrice);
       }
+
+      // تطبيق الترتيب بعد الفلاتر
+      query = query.order(sortBy, ascending: ascending);
 
       final response = await query;
 
@@ -87,10 +88,7 @@ class SupabaseService {
           .from('products')
           .select('*, profiles!products_seller_id_fkey(*)')
           .eq('id', id)
-          .single()
-          .then((value) => value as Map<String, dynamic>?);
-
-      if (response == null) return null;
+          .single();
 
       final sellerData = response['profiles'] ?? {};
       return ProductModel.fromJson({
