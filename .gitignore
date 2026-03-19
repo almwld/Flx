@@ -81,3 +81,6 @@ linux/flutter/ephemeral/
 .env
 .env.*
 .env
+
+# Environment variables
+.env
