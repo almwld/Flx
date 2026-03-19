@@ -1,3 +1,5 @@
+import 'package:firebase_core/firebase_core.dart';
+import './services/notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'providers/theme_manager.dart';
@@ -5,6 +7,10 @@ import 'screens/splash_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  // تهيئة Firebase
+  await Firebase.initializeApp();
+  // تهيئة الإشعارات
+  await NotificationService.initialize();
   runApp(
     ChangeNotifierProvider(
       create: (_) => ThemeManager(),
