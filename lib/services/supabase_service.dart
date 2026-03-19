@@ -282,3 +282,156 @@ class SupabaseService {
     }
   }
 }
+
+  // ==================== التقييمات ====================
+  static Future<List<RatingModel>> getProductRatings(String productId) async {
+    try {
+      final response = await client
+          .from('ratings')
+          .select('*, profiles!ratings_user_id_fkey(*)')
+          .eq('product_id', productId)
+          .order('created_at', ascending: false);
+
+      return (response as List).map((json) {
+        return RatingModel.fromJson({
+          ...json,
+          'user_name': json['profiles']?['full_name'],
+          'user_avatar': json['profiles']?['avatar_url'],
+        });
+      }).toList();
+    } catch (e) {
+      print('Error fetching ratings: $e');
+      return [];
+    }
+  }
+
+  static Future<double> getProductAverageRating(String productId) async {
+    try {
+      final response = await client
+          .from('ratings')
+          .select('rating')
+          .eq('product_id', productId);
+
+      if (response.isEmpty) return 0.0;
+      
+      final ratings = (response as List).map((r) => (r['rating'] as num).toDouble()).toList();
+      final average = ratings.reduce((a, b) => a + b) / ratings.length;
+      return double.parse(average.toStringAsFixed(1));
+    } catch (e) {
+      print('Error calculating average rating: $e');
+      return 0.0;
+    }
+  }
+
+  static Future<int> getProductRatingsCount(String productId) async {
+    try {
+      final response = await client
+          .from('ratings')
+          .select('id', count: CountOption.exact)
+          .eq('product_id', productId);
+
+      return response.count ?? 0;
+    } catch (e) {
+      print('Error counting ratings: $e');
+      return 0;
+    }
+  }
+
+  static Future<bool> addRating({
+    required String productId,
+    required double rating,
+    String? comment,
+    List<String>? images,
+  }) async {
+    if (!isAuthenticated) return false;
+
+    try {
+      await client.from('ratings').insert({
+        'product_id': productId,
+        'user_id': currentUser!.id,
+        'rating': rating,
+        'comment': comment,
+        'images': images,
+        'created_at': DateTime.now().toIso8601String(),
+      });
+
+      // تحديث متوسط التقييم في جدول المنتجات (اختياري)
+      await _updateProductAverageRating(productId);
+      
+      return true;
+    } catch (e) {
+      print('Error adding rating: $e');
+      return false;
+    }
+  }
+
+  static Future<bool> updateRating(String ratingId, {
+    double? rating,
+    String? comment,
+    List<String>? images,
+  }) async {
+    try {
+      final updates = <String, dynamic>{};
+      if (rating != null) updates['rating'] = rating;
+      if (comment != null) updates['comment'] = comment;
+      if (images != null) updates['images'] = images;
+      updates['updated_at'] = DateTime.now().toIso8601String();
+
+      await client.from('ratings').update(updates).eq('id', ratingId);
+      return true;
+    } catch (e) {
+      print('Error updating rating: $e');
+      return false;
+    }
+  }
+
+  static Future<bool> deleteRating(String ratingId) async {
+    try {
+      await client.from('ratings').delete().eq('id', ratingId);
+      return true;
+    } catch (e) {
+      print('Error deleting rating: $e');
+      return false;
+    }
+  }
+
+  static Future<RatingModel?> getUserRatingForProduct(String productId) async {
+    if (!isAuthenticated) return null;
+
+    try {
+      final response = await client
+          .from('ratings')
+          .select('*, profiles!ratings_user_id_fkey(*)')
+          .eq('product_id', productId)
+          .eq('user_id', currentUser!.id)
+          .maybeSingle();
+
+      if (response == null) return null;
+
+      return RatingModel.fromJson({
+        ...response,
+        'user_name': response['profiles']?['full_name'],
+        'user_avatar': response['profiles']?['avatar_url'],
+      });
+    } catch (e) {
+      print('Error fetching user rating: $e');
+      return null;
+    }
+  }
+
+  static Future<void> _updateProductAverageRating(String productId) async {
+    try {
+      final avg = await getProductAverageRating(productId);
+      final count = await getProductRatingsCount(productId);
+      
+      await client
+          .from('products')
+          .update({
+            'rating': avg,
+            'review_count': count,
+          })
+          .eq('id', productId);
+    } catch (e) {
+      print('Error updating product average rating: $e');
+    }
+  }
