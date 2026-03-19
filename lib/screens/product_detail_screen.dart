@@ -5,7 +5,9 @@ import '../theme/app_theme.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_button.dart';
 import '../models/product_model.dart';
+import '../services/supabase_service.dart';
 import 'checkout_screen.dart';
+import 'login_screen.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   final ProductModel product;
@@ -19,6 +21,84 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   int _quantity = 1;
   int _currentImageIndex = 0;
   bool _isFavorite = false;
+  bool _isLoading = false;
+  List<ProductModel> _relatedProducts = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _checkIfFavorite();
+    _loadRelatedProducts();
+  }
+
+  Future<void> _checkIfFavorite() async {
+    if (SupabaseService.isAuthenticated) {
+      final isFav = await SupabaseService.isFavorite(widget.product.id);
+      setState(() => _isFavorite = isFav);
+    }
+  }
+
+  Future<void> _toggleFavorite() async {
+    if (!SupabaseService.isAuthenticated) {
+      _showLoginDialog();
+      return;
+    }
+
+    setState(() => _isLoading = true);
+    
+    try {
+      if (_isFavorite) {
+        await SupabaseService.removeFromFavorites(widget.product.id);
+      } else {
+        await SupabaseService.addToFavorites(widget.product.id);
+      }
+      setState(() => _isFavorite = !_isFavorite);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('حدث خطأ: $e')),
+      );
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
+
+  Future<void> _loadRelatedProducts() async {
+    final products = await SupabaseService.getProducts(
+      category: widget.product.category,
+    );
+    setState(() {
+      _relatedProducts = products
+          .where((p) => p.id != widget.product.id)
+          .take(5)
+          .toList();
+    });
+  }
+
+  void _showLoginDialog() {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('تسجيل الدخول مطلوب'),
+        content: const Text('يرجى تسجيل الدخول لإضافة المنتج إلى المفضلة'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('إلغاء'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const LoginScreen()),
+              );
+            },
+            child: const Text('تسجيل الدخول'),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,46 +115,48 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               background: Stack(
                 children: [
                   // صور المنتج
-                  CarouselSlider.builder(
-                    itemCount: p.images.length,
-                    options: CarouselOptions(
-                      height: 300,
-                      viewportFraction: 1.0,
-                      enableInfiniteScroll: p.images.length > 1,
-                      onPageChanged: (i, _) => setState(() => _currentImageIndex = i),
+                  if (p.images.isNotEmpty)
+                    CarouselSlider.builder(
+                      itemCount: p.images.length,
+                      options: CarouselOptions(
+                        height: 300,
+                        viewportFraction: 1.0,
+                        enableInfiniteScroll: p.images.length > 1,
+                        onPageChanged: (i, _) => setState(() => _currentImageIndex = i),
+                      ),
+                      itemBuilder: (_, i, __) {
+                        return CachedNetworkImage(
+                          imageUrl: p.images[i],
+                          fit: BoxFit.cover,
+                          placeholder: (_, __) => Container(color: Colors.grey[300]),
+                          errorWidget: (_, __, ___) => Container(
+                            color: Colors.grey[300],
+                            child: const Icon(Icons.broken_image),
+                          ),
+                        );
+                      },
                     ),
-                    itemBuilder: (_, i, __) {
-                      return CachedNetworkImage(
-                        imageUrl: p.images[i],
-                        fit: BoxFit.cover,
-                        placeholder: (_, __) => Container(color: Colors.grey[300]),
-                        errorWidget: (_, __, ___) => Container(
-                          color: Colors.grey[300],
-                          child: const Icon(Icons.broken_image),
-                        ),
-                      );
-                    },
-                  ),
                   // مؤشر الصفحات
-                  Positioned(
-                    bottom: 16,
-                    left: 0,
-                    right: 0,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: List.generate(p.images.length, (i) => Container(
-                        width: 8,
-                        height: 8,
-                        margin: const EdgeInsets.symmetric(horizontal: 4),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: _currentImageIndex == i
-                              ? AppTheme.goldColor
-                              : Colors.white.withOpacity(0.5),
-                        ),
-                      )),
+                  if (p.images.length > 1)
+                    Positioned(
+                      bottom: 16,
+                      left: 0,
+                      right: 0,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: List.generate(p.images.length, (i) => Container(
+                          width: 8,
+                          height: 8,
+                          margin: const EdgeInsets.symmetric(horizontal: 4),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: _currentImageIndex == i
+                                ? AppTheme.goldColor
+                                : Colors.white.withOpacity(0.5),
+                          ),
+                        )),
+                      ),
                     ),
-                  ),
                   // أزرار في الأعلى
                   Positioned(
                     top: 40,
@@ -86,7 +168,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                             _isFavorite ? Icons.favorite : Icons.favorite_border,
                             color: Colors.white,
                           ),
-                          onPressed: () => setState(() => _isFavorite = !_isFavorite),
+                          onPressed: _toggleFavorite,
                         ),
                         const SizedBox(width: 8),
                         IconButton(
@@ -149,10 +231,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         '${p.rating.toStringAsFixed(1)} (${p.reviewCount} تقييم)',
                         style: TextStyle(color: Colors.grey[600]),
                       ),
-                      const SizedBox(width: 16),
-                      const Icon(Icons.shopping_bag, size: 14, color: Colors.grey),
-                      const SizedBox(width: 4),
-                      Text('${p.reviewCount} مبيعات', style: TextStyle(color: Colors.grey[600])),
                     ],
                   ),
                   const SizedBox(height: 16),
@@ -166,8 +244,13 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     child: Row(
                       children: [
                         CircleAvatar(
+                          backgroundImage: p.sellerAvatar != null
+                              ? NetworkImage(p.sellerAvatar!)
+                              : null,
                           backgroundColor: AppTheme.goldColor.withOpacity(0.2),
-                          child: const Icon(Icons.store, color: AppTheme.goldColor),
+                          child: p.sellerAvatar == null
+                              ? const Icon(Icons.store, color: AppTheme.goldColor)
+                              : null,
                         ),
                         const SizedBox(width: 12),
                         Expanded(
@@ -227,58 +310,119 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   Text(p.description, style: const TextStyle(height: 1.5)),
                   const SizedBox(height: 16),
                   // الكمية
-                  Row(
-                    children: [
-                      const Text('الكمية:', style: TextStyle(fontWeight: FontWeight.bold)),
-                      const SizedBox(width: 16),
-                      Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey),
-                          borderRadius: BorderRadius.circular(8),
+                  if (p.inStock)
+                    Row(
+                      children: [
+                        const Text('الكمية:', style: TextStyle(fontWeight: FontWeight.bold)),
+                        const SizedBox(width: 16),
+                        Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.remove, size: 16),
+                                onPressed: _quantity > 1
+                                    ? () => setState(() => _quantity--)
+                                    : null,
+                              ),
+                              Container(
+                                width: 40,
+                                alignment: Alignment.center,
+                                child: Text('$_quantity'),
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.add, size: 16),
+                                onPressed: () => setState(() => _quantity++),
+                              ),
+                            ],
+                          ),
                         ),
-                        child: Row(
-                          children: [
-                            IconButton(
-                              icon: const Icon(Icons.remove, size: 16),
-                              onPressed: _quantity > 1
-                                  ? () => setState(() => _quantity--)
-                                  : null,
-                            ),
-                            Container(
-                              width: 40,
-                              alignment: Alignment.center,
-                              child: Text('$_quantity'),
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.add, size: 16),
-                              onPressed: () => setState(() => _quantity++),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+                      ],
+                    ),
                   const SizedBox(height: 24),
+                  // منتجات مشابهة
+                  if (_relatedProducts.isNotEmpty) ...[
+                    const Text('منتجات مشابهة', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 12),
+                    SizedBox(
+                      height: 150,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: _relatedProducts.length,
+                        itemBuilder: (_, i) {
+                          final rp = _relatedProducts[i];
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => ProductDetailScreen(product: rp),
+                                ),
+                              );
+                            },
+                            child: Container(
+                              width: 100,
+                              margin: const EdgeInsets.only(right: 12),
+                              decoration: BoxDecoration(
+                                color: isDark ? AppTheme.darkCard : AppTheme.lightCard,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Column(
+                                children: [
+                                  Expanded(
+                                    child: ClipRRect(
+                                      borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                                      child: CachedNetworkImage(
+                                        imageUrl: rp.images.isNotEmpty ? rp.images.first : '',
+                                        fit: BoxFit.cover,
+                                        width: double.infinity,
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(4),
+                                    child: Text(
+                                      rp.title,
+                                      style: const TextStyle(fontSize: 10),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
                 ],
               ),
             ),
           ),
         ],
       ),
-      bottomNavigationBar: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: isDark ? AppTheme.darkSurface : AppTheme.lightSurface,
-          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10)],
-        ),
-        child: SafeArea(
-          child: Row(
-            children: [
-              Expanded(
-                child: CustomButton(
-                  text: 'اشتر الآن',
-                  onPressed: p.inStock
-                      ? () {
+      bottomNavigationBar: p.inStock
+          ? Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: isDark ? AppTheme.darkSurface : AppTheme.lightSurface,
+                boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10)],
+              ),
+              child: SafeArea(
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: CustomButton(
+                        text: 'اشتر الآن',
+                        onPressed: () {
+                          if (!SupabaseService.isAuthenticated) {
+                            _showLoginDialog();
+                            return;
+                          }
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -287,28 +431,34 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                               ),
                             ),
                           );
-                        }
-                      : null,
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Container(
+                      width: 50,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: AppTheme.goldColor),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: IconButton(
+                        icon: _isLoading
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(strokeWidth: 2),
+                              )
+                            : Icon(_isFavorite ? Icons.favorite : Icons.favorite_border),
+                        onPressed: _toggleFavorite,
+                        color: AppTheme.goldColor,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(width: 12),
-              Container(
-                width: 50,
-                height: 50,
-                decoration: BoxDecoration(
-                  border: Border.all(color: AppTheme.goldColor),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: IconButton(
-                  icon: Icon(_isFavorite ? Icons.favorite : Icons.favorite_border),
-                  onPressed: () => setState(() => _isFavorite = !_isFavorite),
-                  color: AppTheme.goldColor,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
+            )
+          : null,
     );
   }
 }
