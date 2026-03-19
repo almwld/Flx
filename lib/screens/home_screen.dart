@@ -36,7 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
       description: 'وصف المنتج المميز',
       price: 1500.0 * (index + 1),
       currency: 'YER',
-      images: ['https://source.unsplash.com/random/300x300?sig=${index + 100}&product'],
+      images: ['https://picsum.photos/300/300?random=
       category: 'إلكترونيات',
       subCategory: 'هواتف',
       sellerId: 'seller_1',
@@ -55,7 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
       price: 800.0 * (index + 1),
       oldPrice: index % 2 == 0 ? 1000.0 * (index + 1) : null,
       currency: 'YER',
-      images: ['https://source.unsplash.com/random/300x300?sig=$index&product'],
+      images: ['https://picsum.photos/300/300?random=
       category: 'إلكترونيات',
       subCategory: 'هواتف',
       sellerId: 'seller_2',
