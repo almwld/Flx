@@ -18,35 +18,23 @@ class MainNavigation extends StatefulWidget {
   State<MainNavigation> createState() => _MainNavigationState();
 }
 
-class _MainNavigationState extends State<MainNavigation> with TickerProviderStateMixin {
-  int _currentIndex = 0; // الرئيسية هي default
-  late AnimationController _pulseController;
+class _MainNavigationState extends State<MainNavigation> {
+  int _currentIndex = 0;
   
   late List<Widget> _screens;
 
   @override
   void initState() {
     super.initState();
-    _pulseController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 2),
-    )..repeat(reverse: true);
     
-    // ترتيب الشاشات حسب الفهارس
     _screens = [
-      const HomeScreen(),         // 0: الرئيسية
-      const AllAdsScreen(),       // 1: المتجر
-      const MapScreen(),          // 2: الخريطة
-      const ChatScreen(),         // 3: الدردشة
-      const WalletScreen(),       // 4: المحفظة
-      ProfileScreen(isGuest: widget.isGuest), // 5: حسابي
+      const HomeScreen(),
+      const AllAdsScreen(),
+      const MapScreen(),
+      const ChatScreen(),
+      const WalletScreen(),
+      ProfileScreen(isGuest: widget.isGuest),
     ];
-  }
-
-  @override
-  void dispose() {
-    _pulseController.dispose();
-    super.dispose();
   }
 
   void _onItemTapped(int index) {
@@ -78,15 +66,10 @@ class _MainNavigationState extends State<MainNavigation> with TickerProviderStat
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            // الأزرار اليسرى (الرئيسية، المتجر، الخريطة)
             _buildNavItem(0, 'home.svg', 'الرئيسية'),
             _buildNavItem(1, 'search.svg', 'المتجر'),
             _buildNavItem(2, 'location.svg', 'الخريطة'),
-            
-            // الزر الذهبي المركزي (إضافة إعلان)
             _buildCenterButton(),
-            
-            // الأزرار اليمنى (دردشة، محفظة، حسابي)
             _buildNavItem(3, 'chat.svg', 'دردشة'),
             _buildNavItem(4, 'wallet.svg', 'محفظة'),
             _buildNavItem(5, 'profile.svg', 'حسابي'),
@@ -103,9 +86,7 @@ class _MainNavigationState extends State<MainNavigation> with TickerProviderStat
     return Expanded(
       child: GestureDetector(
         onTap: () => _onItemTapped(index),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          curve: Curves.easeInOut,
+        child: Container(
           padding: const EdgeInsets.symmetric(vertical: 8),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
@@ -115,29 +96,24 @@ class _MainNavigationState extends State<MainNavigation> with TickerProviderStat
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              AnimatedScale(
-                scale: isSelected ? 1.2 : 1.0,
-                duration: const Duration(milliseconds: 200),
-                child: SvgPicture.asset(
-                  'assets/icons/svg/$iconName',
-                  width: 24,
-                  height: 24,
-                  colorFilter: ColorFilter.mode(
-                    isSelected ? AppTheme.goldColor : (isDark ? Colors.grey[400]! : Colors.grey[600]!),
-                    BlendMode.srcIn,
-                  ),
+              SvgPicture.asset(
+                'assets/icons/svg/$iconName',
+                width: 24,
+                height: 24,
+                colorFilter: ColorFilter.mode(
+                  isSelected ? AppTheme.goldColor : (isDark ? Colors.grey[400]! : Colors.grey[600]!),
+                  BlendMode.srcIn,
                 ),
               ),
               const SizedBox(height: 2),
-              AnimatedDefaultTextStyle(
-                duration: const Duration(milliseconds: 200),
+              Text(
+                label,
                 style: TextStyle(
                   color: isSelected ? AppTheme.goldColor : (isDark ? Colors.grey[400] : Colors.grey[600]),
                   fontSize: 10,
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                   fontFamily: 'Changa',
                 ),
-                child: Text(label),
               ),
             ],
           ),
@@ -177,13 +153,6 @@ class _MainNavigationState extends State<MainNavigation> with TickerProviderStat
           color: Colors.black,
           size: 35,
         ),
-      ).animate(
-        controller: _pulseController,
-      ).scale(
-        begin: const Offset(1, 1),
-        end: const Offset(1.1, 1.1),
-        duration: 1500.ms,
-        curve: Curves.easeInOut,
       ),
     );
   }
