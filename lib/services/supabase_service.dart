@@ -42,30 +42,28 @@ class SupabaseService {
     bool ascending = false,
   }) async {
     try {
-      // بناء الاستعلام بشكل صحيح: الفلاتر أولاً ثم الترتيب
-      var query = client.from('products').select('*, profiles!products_seller_id_fkey(*)');
+      // نبدأ باستعلام الفلترة
+      var filterQuery = client.from('products').select('*, profiles!products_seller_id_fkey(*)');
 
-      // تطبيق الفلاتر أولاً
+      // تطبيق الفلاتر
       if (category != null && category.isNotEmpty && category != 'الكل') {
-        query = query.eq('category', category);
+        filterQuery = filterQuery.eq('category', category);
       }
 
       if (searchQuery != null && searchQuery.isNotEmpty) {
-        query = query.ilike('title', '%$searchQuery%');
+        filterQuery = filterQuery.ilike('title', '%$searchQuery%');
       }
 
       if (minPrice != null) {
-        query = query.gte('price', minPrice);
+        filterQuery = filterQuery.gte('price', minPrice);
       }
 
       if (maxPrice != null) {
-        query = query.lte('price', maxPrice);
+        filterQuery = filterQuery.lte('price', maxPrice);
       }
 
-      // تطبيق الترتيب بعد الفلاتر
-      query = query.order(sortBy, ascending: ascending);
-
-      final response = await query;
+      // بعد الانتهاء من الفلاتر، نستخدم متغير جديد للترتيب
+      final response = await filterQuery.order(sortBy, ascending: ascending);
 
       return (response as List).map((json) {
         final sellerData = json['profiles'] ?? {};
