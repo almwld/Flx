@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'dart:convert';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../config/app_config.dart';
 import '../models/product_model.dart';
@@ -430,7 +432,6 @@ class SupabaseService {
       print('Error updating product average rating: $e');
     }
   }
-}
 
   // ==================== رفع الصور إلى Supabase Storage ====================
   static Future<String?> uploadImage({
@@ -441,13 +442,12 @@ class SupabaseService {
     try {
       final file = File(filePath);
       final String finalFileName = fileName ?? '${DateTime.now().millisecondsSinceEpoch}.jpg';
-      final response = await client.storage.from(bucket).upload(
+      await client.storage.from(bucket).upload(
         finalFileName,
         file,
         fileOptions: const FileOptions(cacheControl: '3600'),
       );
       
-      // الحصول على الرابط العام
       final publicUrl = client.storage.from(bucket).getPublicUrl(finalFileName);
       return publicUrl;
     } catch (e) {
@@ -456,7 +456,6 @@ class SupabaseService {
     }
   }
 
-  // رفع صور متعددة
   static Future<List<String>> uploadMultipleImages({
     required List<String> filePaths,
     required String bucket,
@@ -468,3 +467,4 @@ class SupabaseService {
     }
     return urls;
   }
+}
