@@ -47,7 +47,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       // استخدام رقم الموبايل كبريد إلكتروني مؤقت (يمكن تحسينه لاحقاً)
       final email = '${_phoneController.text}@temp.com';
       
-      final response = await SupabaseService.signUpWithEmail(
+      final response = final response = await SupabaseService.signUpWithEmail(
         email: email,
         password: _passwordController.text,
         data: {
