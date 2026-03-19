@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'package:flutter/material.dart';
-
 class ProductModel {
   final String id;
   final String title;
@@ -73,8 +70,8 @@ class ProductModel {
     }
 
     return ProductModel(
-      id: json['id']?.toString() ?? '',
-      title: json['title'] ?? '',
+      id: json['id'] ?? '',
+      title: json['title'] ?? json['name'] ?? 'منتج غير معروف',  // تم التعديل هنا
       description: json['description'] ?? '',
       price: (json['price'] ?? 0).toDouble(),
       oldPrice: oldPrice,
@@ -82,11 +79,11 @@ class ProductModel {
       images: imagesList,
       category: json['category'] ?? '',
       subCategory: json['sub_category'] ?? '',
-      sellerId: json['seller_id']?.toString() ?? '',
+      sellerId: json['seller_id'] ?? '',
       sellerName: json['seller_name'] ?? json['profiles']?['full_name'] ?? 'متجر غير معروف',
       sellerRating: (json['seller_rating'] ?? json['profiles']?['rating'] ?? 0).toDouble(),
       sellerAvatar: json['seller_avatar'] ?? json['profiles']?['avatar_url'],
-      inStock: json['in_stock'] ?? json['stock_quantity'] != null ? json['stock_quantity'] > 0 : true,
+      inStock: json['in_stock'] ?? json['stock_quantity'] > 0 ?? true,
       rating: (json['rating'] ?? json['average_rating'] ?? 0).toDouble(),
       reviewCount: json['review_count'] ?? json['total_reviews'] ?? 0,
       isFeatured: json['is_featured'] ?? false,
@@ -166,5 +163,51 @@ class ProductModel {
     } else {
       return 'الآن';
     }
+  }
+
+  ProductModel copyWith({
+    String? id,
+    String? title,
+    String? description,
+    double? price,
+    double? oldPrice,
+    String? currency,
+    List<String>? images,
+    String? category,
+    String? subCategory,
+    String? sellerId,
+    String? sellerName,
+    double? sellerRating,
+    String? sellerAvatar,
+    bool? inStock,
+    double? rating,
+    int? reviewCount,
+    bool? isFeatured,
+    int? discountPercentage,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) {
+    return ProductModel(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      price: price ?? this.price,
+      oldPrice: oldPrice ?? this.oldPrice,
+      currency: currency ?? this.currency,
+      images: images ?? this.images,
+      category: category ?? this.category,
+      subCategory: subCategory ?? this.subCategory,
+      sellerId: sellerId ?? this.sellerId,
+      sellerName: sellerName ?? this.sellerName,
+      sellerRating: sellerRating ?? this.sellerRating,
+      sellerAvatar: sellerAvatar ?? this.sellerAvatar,
+      inStock: inStock ?? this.inStock,
+      rating: rating ?? this.rating,
+      reviewCount: reviewCount ?? this.reviewCount,
+      isFeatured: isFeatured ?? this.isFeatured,
+      discountPercentage: discountPercentage ?? this.discountPercentage,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
   }
 }
