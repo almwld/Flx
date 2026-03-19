@@ -7,6 +7,9 @@ environment:
   sdk: ">=3.0.0 <4.0.0"
 
 dependencies:
+  geolocator: ^13.0.1
+  geocoding: ^3.0.0
+  http: ^1.2.1
   http: ^1.2.1
   flutter:
     sdk: flutter
@@ -31,6 +34,9 @@ dependencies:
   share_plus: ^10.1.4
 
 dev_dependencies:
+  geolocator: ^13.0.1
+  geocoding: ^3.0.0
+  http: ^1.2.1
   http: ^1.2.1
   flutter_test:
     sdk: flutter

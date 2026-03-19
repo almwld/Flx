@@ -37,7 +37,7 @@ class _MapScreenState extends State<MapScreen> {
     });
 
     try {
-      // التحقق من صلاحيات الموقع
+      // التحقق من تفعيل خدمة الموقع
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
         setState(() {
@@ -47,6 +47,7 @@ class _MapScreenState extends State<MapScreen> {
         return;
       }
 
+      // التحقق من الصلاحيات
       LocationPermission permission = await Geolocator.checkPermission();
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
@@ -68,20 +69,12 @@ class _MapScreenState extends State<MapScreen> {
       }
 
       // الحصول على الموقع الحالي
-      final position = await Geolocator.getCurrentPosition();
-      
-      // الحصول على العنوان
-      final locationData = await MapService.getAddressFromCoordinates(
-        position.latitude, 
-        position.longitude
+      final position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
       );
-
-      // جلب المنتجات القريبة (سنقوم بتطوير هذه الدالة لاحقاً)
-      // final products = await _getNearbyProducts(position.latitude, position.longitude);
-
+      
       setState(() {
         _currentPosition = position;
-        _currentAddress = locationData?.address;
         _isLoading = false;
       });
 
@@ -98,19 +91,19 @@ class _MapScreenState extends State<MapScreen> {
 
   Future<void> _loadMockProducts() async {
     // مؤقتاً نستخدم منتجات وهمية
-    final products = await SupabaseService.getLatestProducts(limit: 10);
-    setState(() {
-      _nearbyProducts = products;
-    });
+    try {
+      final products = await SupabaseService.getLatestProducts(limit: 10);
+      setState(() {
+        _nearbyProducts = products;
+      });
+    } catch (e) {
+      print('Error loading products: $e');
+    }
   }
 
   void _openInMaps() {
     if (_currentPosition != null) {
-      final url = MapService.getMapUrl(
-        _currentPosition!.latitude,
-        _currentPosition!.longitude,
-        15
-      );
+      final url = 'https://www.openstreetmap.org/?mlat=${_currentPosition!.latitude}&mlon=${_currentPosition!.longitude}#map=15/${_currentPosition!.latitude}/${_currentPosition!.longitude}';
       launchUrl(Uri.parse(url));
     }
   }
@@ -161,7 +154,7 @@ class _MapScreenState extends State<MapScreen> {
                     )
                   : Stack(
                       children: [
-                        // خريطة وهمية (يمكن استبدالها بـ google_maps_flutter)
+                        // خريطة وهمية
                         Container(
                           width: double.infinity,
                           height: double.infinity,
@@ -176,15 +169,11 @@ class _MapScreenState extends State<MapScreen> {
                                   'موقعك الحالي',
                                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                                 ),
-                                if (_currentAddress != null) ...[
+                                if (_currentPosition != null) ...[
                                   const SizedBox(height: 8),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 32),
-                                    child: Text(
-                                      _currentAddress!,
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(color: Colors.grey[600]),
-                                    ),
+                                  Text(
+                                    '${_currentPosition!.latitude.toStringAsFixed(4)}, ${_currentPosition!.longitude.toStringAsFixed(4)}',
+                                    style: TextStyle(color: Colors.grey[600]),
                                   ),
                                 ],
                                 const SizedBox(height: 16),
