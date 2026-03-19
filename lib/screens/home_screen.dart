@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import '../theme/app_theme.dart';
 import '../widgets/custom_app_bar.dart';
 import 'products_screen.dart';
@@ -14,9 +16,50 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  int _currentSlide = 0;
   List<ProductModel> _featuredProducts = [];
   List<ProductModel> _latestProducts = [];
   bool _isLoading = true;
+
+  // قائمة السلايدرات الـ 6
+  final List<Map<String, dynamic>> _slides = [
+    {
+      'title': 'عرض خاص ١',
+      'subtitle': 'خصم يصل إلى ٥٠٪',
+      'image': 'https://images.unsplash.com/photo-1607083206864-6c7e3f2c7b3f?w=400',
+      'color': Color(0xFFD4AF37),
+    },
+    {
+      'title': 'عرض خاص ٢',
+      'subtitle': 'توصيل مجاني',
+      'image': 'https://images.unsplash.com/photo-1607083206325-cafd7b5f9c9b?w=400',
+      'color': Color(0xFF4CAF50),
+    },
+    {
+      'title': 'عرض خاص ٣',
+      'subtitle': 'اشتر ٢ واحصل ١ مجاناً',
+      'image': 'https://images.unsplash.com/photo-1607083206864-6c7e3f2c7b3f?w=400',
+      'color': Color(0xFF2196F3),
+    },
+    {
+      'title': 'عرض خاص ٤',
+      'subtitle': 'شحن سريع',
+      'image': 'https://images.unsplash.com/photo-1607083206325-cafd7b5f9c9b?w=400',
+      'color': Color(0xFFFF9800),
+    },
+    {
+      'title': 'عرض خاص ٥',
+      'subtitle': 'ضمان لمدة عام',
+      'image': 'https://images.unsplash.com/photo-1607083206864-6c7e3f2c7b3f?w=400',
+      'color': Color(0xFF9C27B0),
+    },
+    {
+      'title': 'عرض خاص ٦',
+      'subtitle': 'تخفيضات نهاية الموسم',
+      'image': 'https://images.unsplash.com/photo-1607083206325-cafd7b5f9c9b?w=400',
+      'color': Color(0xFFF44336),
+    },
+  ];
 
   @override
   void initState() {
@@ -26,17 +69,15 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _loadProducts() async {
     setState(() => _isLoading = true);
-    // محاكاة تحميل البيانات
     await Future.delayed(const Duration(seconds: 1));
     
-    // بيانات تجريبية
     _featuredProducts = List.generate(5, (index) => ProductModel(
       id: 'featured_$index',
       title: 'منتج مميز ${index + 1}',
       description: 'وصف المنتج المميز',
       price: 1500.0 * (index + 1),
       currency: 'YER',
-      images: ['https://picsum.photos/300/300?random=
+      images: ['https://picsum.photos/300/300?random=${index + 100}'],
       category: 'إلكترونيات',
       subCategory: 'هواتف',
       sellerId: 'seller_1',
@@ -55,7 +96,7 @@ class _HomeScreenState extends State<HomeScreen> {
       price: 800.0 * (index + 1),
       oldPrice: index % 2 == 0 ? 1000.0 * (index + 1) : null,
       currency: 'YER',
-      images: ['https://picsum.photos/300/300?random=
+      images: ['https://picsum.photos/300/300?random=$index'],
       category: 'إلكترونيات',
       subCategory: 'هواتف',
       sellerId: 'seller_2',
@@ -80,6 +121,101 @@ class _HomeScreenState extends State<HomeScreen> {
           ? const Center(child: CircularProgressIndicator())
           : CustomScrollView(
               slivers: [
+                // السلايدر المتحرك (6 سلايدرات)
+                SliverToBoxAdapter(
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 8),
+                      CarouselSlider.builder(
+                        itemCount: _slides.length,
+                        options: CarouselOptions(
+                          height: 200,
+                          autoPlay: true,
+                          autoPlayInterval: const Duration(seconds: 5),
+                          autoPlayAnimationDuration: const Duration(milliseconds: 800),
+                          enlargeCenterPage: true,
+                          enlargeFactor: 0.3,
+                          viewportFraction: 0.9,
+                          onPageChanged: (index, reason) {
+                            setState(() => _currentSlide = index);
+                          },
+                        ),
+                        itemBuilder: (context, index, realIndex) {
+                          final slide = _slides[index];
+                          return Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 4),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              image: DecorationImage(
+                                image: NetworkImage(slide['image']),
+                                fit: BoxFit.cover,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: slide['color'].withOpacity(0.5),
+                                  blurRadius: 20,
+                                  offset: const Offset(0, 8),
+                                ),
+                              ],
+                            ),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                gradient: LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: [
+                                    Colors.transparent,
+                                    Colors.black.withOpacity(0.7),
+                                  ],
+                                ),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(20),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                      slide['title'],
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      slide['subtitle'],
+                                      style: const TextStyle(
+                                        color: Colors.white70,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 12),
+                      AnimatedSmoothIndicator(
+                        activeIndex: _currentSlide,
+                        count: _slides.length,
+                        effect: ExpandingDotsEffect(
+                          activeDotColor: AppTheme.goldColor,
+                          dotColor: isDark ? Colors.grey[700]! : Colors.grey[300]!,
+                          dotHeight: 8,
+                          dotWidth: 8,
+                          expansionFactor: 3,
+                          spacing: 8,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
                 // شريط الأقسام السريعة
                 SliverToBoxAdapter(
                   child: Container(
@@ -357,60 +493,3 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-
-// إضافة سلايدر بسيط قبل شريط الأقسام (حوالي السطر 50)
-          SliverToBoxAdapter(
-            child: Container(
-              height: 150,
-              margin: const EdgeInsets.symmetric(vertical: 8),
-              child: PageView(
-                children: [
-                  Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 16),
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFFD4AF37), Color(0xFFF4E4BC)],
-                      ),
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: const Center(
-                      child: Text(
-                        'عرض خاص ١',
-                        style: TextStyle(color: Colors.black, fontSize: 24),
-                      ),
-                    ),
-                  ),
-                  Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 16),
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFF4CAF50), Color(0xFF8BC34A)],
-                      ),
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: const Center(
-                      child: Text(
-                        'عرض خاص ٢',
-                        style: TextStyle(color: Colors.white, fontSize: 24),
-                      ),
-                    ),
-                  ),
-                  Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 16),
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFF2196F3), Color(0xFF03A9F4)],
-                      ),
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: const Center(
-                      child: Text(
-                        'عرض خاص ٣',
-                        style: TextStyle(color: Colors.white, fontSize: 24),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
