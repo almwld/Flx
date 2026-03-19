@@ -1,3 +1,4 @@
+import 'dart:convert';
 class RatingModel {
   final String id;
   final String productId;

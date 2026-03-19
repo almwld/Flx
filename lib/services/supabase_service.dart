@@ -324,10 +324,10 @@ class SupabaseService {
     try {
       final response = await client
           .from('ratings')
-          .select('id', count: CountOption.exact)
+          .select('id')
           .eq('product_id', productId);
 
-      return response.count ?? 0;
+      return response.length;
     } catch (e) {
       print('Error counting ratings: $e');
       return 0;
