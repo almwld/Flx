@@ -118,8 +118,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       appBar: const CustomAppBar(),
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(top: 8),
         child: FloatingActionButton(
           onPressed: () {
             Navigator.push(
