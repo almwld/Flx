@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import '../theme/app_theme.dart';
 import 'home_screen.dart';
 import 'wallet_screen.dart';

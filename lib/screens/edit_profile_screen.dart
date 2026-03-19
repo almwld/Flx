@@ -1,4 +1,3 @@
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../widgets/custom_app_bar.dart';
@@ -44,10 +43,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       ),
                       child: const Icon(Icons.person, size: 60, color: Colors.black),
                     ),
-                  .animate()
-                  .scale(duration: 600.ms)
-                  .then()
-                  .shake(duration: 400.ms, hz: 3),
                     Positioned(
                       bottom: 0,
                       right: 0,

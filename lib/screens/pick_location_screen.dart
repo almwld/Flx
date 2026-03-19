@@ -1,4 +1,3 @@
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../widgets/custom_app_bar.dart';
@@ -20,7 +19,6 @@ class _PickLocationScreenState extends State<PickLocationScreen> {
       appBar: const CustomAppBar(title: 'اختر الموقع'),
       body: Stack(
         children: [
-          // خريطة وهمية
           Container(
             color: Colors.grey[300],
             child: const Center(
@@ -39,7 +37,7 @@ class _PickLocationScreenState extends State<PickLocationScreen> {
             left: 16,
             right: 16,
             child: Container(
-              padding: const EdgeInsets.all(16).animate().slideY(begin: 0.5, end: 0, duration: 600.ms).fadeIn(),
+              padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: Theme.of(context).brightness == Brightness.dark
                     ? AppTheme.darkCard

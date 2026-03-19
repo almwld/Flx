@@ -1,4 +1,3 @@
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../widgets/custom_app_bar.dart';
@@ -26,7 +25,7 @@ class SavedSearchesScreen extends StatelessWidget {
           return Card(
             margin: const EdgeInsets.only(bottom: 12),
             child: ListTile(
-              leading: const Icon(Icons.search, color: AppTheme.goldColor).animate().fadeIn(duration: 300.ms).slideX(begin: 0.1, end: 0),
+              leading: const Icon(Icons.search, color: AppTheme.goldColor),
               title: Text(s['query']),
               subtitle: Text('${s['filters']} • ${s['date']}'),
               trailing: IconButton(

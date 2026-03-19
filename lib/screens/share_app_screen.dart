@@ -1,4 +1,3 @@
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../widgets/custom_app_bar.dart';
@@ -15,7 +14,7 @@ class ShareAppScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            const Icon(Icons.share, size: 100, color: AppTheme.goldColor).animate().scale(duration: 800.ms).then().rotate(duration: 1000.ms),
+            const Icon(Icons.share, size: 100, color: AppTheme.goldColor),
             const SizedBox(height: 20),
             const Text(
               'شارك التطبيق مع أصدقائك',

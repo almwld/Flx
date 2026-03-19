@@ -1,9 +1,7 @@
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_button.dart';
-// يمكن إضافة local_auth لاحقاً
 
 class BiometricAuthScreen extends StatefulWidget {
   const BiometricAuthScreen({super.key});
@@ -35,7 +33,7 @@ class _BiometricAuthScreenState extends State<BiometricAuthScreen> {
                 width: 120,
                 height: 120,
                 decoration: BoxDecoration(
-                  color: AppTheme.goldColor.withOpacity(0.2).animate().pulse(duration: 2000.ms),
+                  color: AppTheme.goldColor.withOpacity(0.2),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(Icons.fingerprint, size: 60, color: AppTheme.goldColor),

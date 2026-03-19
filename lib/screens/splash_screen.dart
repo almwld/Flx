@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import '../theme/app_theme.dart';
 import 'login_screen.dart';
 
@@ -67,14 +66,12 @@ class _SplashScreenState extends State<SplashScreen> {
                   ],
                 ),
                 child: const Icon(Icons.shopping_bag, size: 80, color: Colors.black),
-              ).animate().scale(duration: 1200.ms).then().scale(duration: 1200.ms),
               const SizedBox(height: 30),
               const Column(
                 children: [
                   Text('FLEX', style: TextStyle(fontSize: 48, fontWeight: FontWeight.bold, color: AppTheme.goldColor, letterSpacing: 8, fontFamily: 'Changa')),
                   Text('YEMEN', style: TextStyle(fontSize: 24, color: AppTheme.goldLight, letterSpacing: 12, fontFamily: 'Changa')),
                 ],
-              ).animate().fadeIn(delay: 400.ms).slideY(begin: 0.3, end: 0),
               const SizedBox(height: 40),
               const SizedBox(
                 width: 40,
@@ -83,7 +80,6 @@ class _SplashScreenState extends State<SplashScreen> {
                   valueColor: AlwaysStoppedAnimation<Color>(AppTheme.goldColor),
                   strokeWidth: 3,
                 ),
-              ).animate().fadeIn(delay: 800.ms),
             ],
           ),
         ),

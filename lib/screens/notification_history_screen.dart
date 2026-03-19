@@ -1,4 +1,3 @@
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../widgets/custom_app_bar.dart';
@@ -26,7 +25,7 @@ class NotificationHistoryScreen extends StatelessWidget {
           final n = _notifications[i];
           return Container(
             margin: const EdgeInsets.only(bottom: 8),
-            padding: const EdgeInsets.all(16).animate().fadeIn(duration: 300.ms).slideX(begin: 0.1, end: 0),
+            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: isDark ? AppTheme.darkCard : AppTheme.lightCard,
               borderRadius: BorderRadius.circular(12),
