@@ -431,3 +431,40 @@ class SupabaseService {
     }
   }
 }
+
+  // ==================== رفع الصور إلى Supabase Storage ====================
+  static Future<String?> uploadImage({
+    required String filePath,
+    required String bucket,
+    String? fileName,
+  }) async {
+    try {
+      final file = File(filePath);
+      final String finalFileName = fileName ?? '${DateTime.now().millisecondsSinceEpoch}.jpg';
+      final response = await client.storage.from(bucket).upload(
+        finalFileName,
+        file,
+        fileOptions: const FileOptions(cacheControl: '3600'),
+      );
+      
+      // الحصول على الرابط العام
+      final publicUrl = client.storage.from(bucket).getPublicUrl(finalFileName);
+      return publicUrl;
+    } catch (e) {
+      print('Error uploading image: $e');
+      return null;
+    }
+  }
+
+  // رفع صور متعددة
+  static Future<List<String>> uploadMultipleImages({
+    required List<String> filePaths,
+    required String bucket,
+  }) async {
+    List<String> urls = [];
+    for (String path in filePaths) {
+      final url = await uploadImage(filePath: path, bucket: bucket);
+      if (url != null) urls.add(url);
+    }
+    return urls;
+  }

@@ -1,9 +1,12 @@
-import 'package:flex_yemen/models/rating_model.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../theme/app_theme.dart';
 import '../widgets/custom_app_bar.dart';
+import '../widgets/custom_button.dart';
+import '../widgets/custom_text_field.dart';
+import '../services/supabase_service.dart';
 
 class AddAdScreen extends StatefulWidget {
   const AddAdScreen({super.key});
@@ -60,14 +63,41 @@ class _AddAdScreenState extends State<AddAdScreen> {
     }
     
     setState(() => _isLoading = true);
-    await Future.delayed(const Duration(seconds: 2));
-    
-    if (mounted) {
-      setState(() => _isLoading = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('تم نشر الإعلان'), backgroundColor: AppTheme.success),
+
+    try {
+      // 1. رفع الصور إلى Supabase Storage
+      List<String> imagePaths = _selectedImages.map((f) => f.path).toList();
+      List<String> uploadedUrls = await SupabaseService.uploadMultipleImages(
+        filePaths: imagePaths,
+        bucket: 'ads',
       );
-      Navigator.of(context).pop();
+
+      // 2. إضافة الإعلان إلى قاعدة البيانات
+      await SupabaseService.addProduct({
+        'title': _titleController.text,
+        'description': _descriptionController.text,
+        'price': double.parse(_priceController.text),
+        'currency': 'YER',
+        'images': uploadedUrls,
+        'category': _selectedCategory,
+        'sub_category': '',
+        'city': _selectedCity,
+        'in_stock': true,
+        'is_featured': false,
+      });
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('تم نشر الإعلان بنجاح'), backgroundColor: AppTheme.success),
+        );
+        Navigator.of(context).pop();
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('حدث خطأ: $e'), backgroundColor: AppTheme.error),
+      );
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -78,19 +108,19 @@ class _AddAdScreenState extends State<AddAdScreen> {
     return Scaffold(
       appBar: const CustomAppBar(title: 'إضافة إعلان'),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(16.w),
         child: Form(
           key: _formKey,
           child: Column(
             children: [
               Container(
-                height: 120,
+                height: 120.h,
                 child: _selectedImages.isEmpty
                     ? Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           _buildImageButton(Icons.photo_library, 'المعرض', _pickImages),
-                          const SizedBox(width: 24),
+                          SizedBox(width: 24.w),
                           _buildImageButton(Icons.camera_alt, 'الكاميرا', _takePhoto),
                         ],
                       )
@@ -105,64 +135,47 @@ class _AddAdScreenState extends State<AddAdScreen> {
                         },
                       ),
               ),
-              const SizedBox(height: 24),
-              TextFormField(
+              SizedBox(height: 24.h),
+              CustomTextField(
                 controller: _titleController,
-                decoration: InputDecoration(
-                  labelText: 'عنوان الإعلان',
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                ),
-                validator: (v) => v!.isEmpty ? 'مطلوب' : null,
+                label: 'عنوان الإعلان',
+                prefixIcon: Icons.title,
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16.h),
               DropdownButtonFormField<String>(
                 value: _selectedCategory,
-                hint: const Text('اختر الفئة'),
-                decoration: InputDecoration(border: OutlineInputBorder(borderRadius: BorderRadius.circular(12))),
+                hint: Text('اختر الفئة'),
+                decoration: InputDecoration(border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.r))),
                 items: _categories.map((c) => DropdownMenuItem(value: c, child: Text(c))).toList(),
                 onChanged: (v) => setState(() => _selectedCategory = v),
-                validator: (v) => v == null ? 'مطلوب' : null,
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16.h),
               DropdownButtonFormField<String>(
                 value: _selectedCity,
-                hint: const Text('اختر المدينة'),
-                decoration: InputDecoration(border: OutlineInputBorder(borderRadius: BorderRadius.circular(12))),
+                hint: Text('اختر المدينة'),
+                decoration: InputDecoration(border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.r))),
                 items: _cities.map((c) => DropdownMenuItem(value: c, child: Text(c))).toList(),
                 onChanged: (v) => setState(() => _selectedCity = v),
-                validator: (v) => v == null ? 'مطلوب' : null,
               ),
-              const SizedBox(height: 16),
-              TextFormField(
+              SizedBox(height: 16.h),
+              CustomTextField(
                 controller: _priceController,
+                label: 'السعر',
+                prefixIcon: Icons.attach_money,
                 keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  labelText: 'السعر',
-                  suffixText: 'ر.ي',
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                ),
-                validator: (v) => v!.isEmpty ? 'مطلوب' : null,
               ),
-              const SizedBox(height: 16),
-              TextFormField(
+              SizedBox(height: 16.h),
+              CustomTextField(
                 controller: _descriptionController,
+                label: 'الوصف',
+                prefixIcon: Icons.description,
                 maxLines: 5,
-                decoration: InputDecoration(
-                  labelText: 'الوصف',
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                ),
-                validator: (v) => v!.isEmpty ? 'مطلوب' : null,
               ),
-              const SizedBox(height: 24),
-              SizedBox(
-                width: double.infinity,
-                height: 55,
-                child: ElevatedButton(
-                  onPressed: _isLoading ? null : _submitAd,
-                  child: _isLoading 
-                      ? const CircularProgressIndicator() 
-                      : const Text('نشر الإعلان', style: TextStyle(fontFamily: 'Changa', fontSize: 16)),
-                ),
+              SizedBox(height: 24.h),
+              CustomButton(
+                text: 'نشر الإعلان',
+                onPressed: _isLoading ? null : _submitAd,
+                isLoading: _isLoading,
               ),
             ],
           ),
@@ -177,15 +190,15 @@ class _AddAdScreenState extends State<AddAdScreen> {
       child: Column(
         children: [
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(16.r),
             decoration: BoxDecoration(
               color: AppTheme.goldColor.withOpacity(0.2),
               shape: BoxShape.circle,
             ),
-            child: Icon(icon, size: 32, color: AppTheme.goldColor),
+            child: Icon(icon, size: 32.r, color: AppTheme.goldColor),
           ),
-          const SizedBox(height: 8),
-          Text(label, style: const TextStyle(fontFamily: 'Changa')),
+          SizedBox(height: 8.h),
+          Text(label, style: TextStyle(fontSize: 12.sp)),
         ],
       ),
     );
@@ -195,13 +208,13 @@ class _AddAdScreenState extends State<AddAdScreen> {
     return GestureDetector(
       onTap: _pickImages,
       child: Container(
-        width: 100,
-        margin: const EdgeInsets.only(right: 8),
+        width: 100.w,
+        margin: EdgeInsets.only(right: 8.w),
         decoration: BoxDecoration(
           color: Colors.grey[300],
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(12.r),
         ),
-        child: const Icon(Icons.add_photo_alternate, size: 40, color: Colors.grey),
+        child: Icon(Icons.add_photo_alternate, size: 40.r, color: Colors.grey),
       ),
     );
   }
@@ -210,24 +223,24 @@ class _AddAdScreenState extends State<AddAdScreen> {
     return Stack(
       children: [
         Container(
-          width: 100,
-          margin: const EdgeInsets.only(right: 8),
+          width: 100.w,
+          margin: EdgeInsets.only(right: 8.w),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(12.r),
             image: DecorationImage(image: FileImage(image), fit: BoxFit.cover),
           ),
         ),
         Positioned(
-          top: 4,
-          right: 4,
+          top: 4.h,
+          right: 4.w,
           child: GestureDetector(
             onTap: () {
               setState(() => _selectedImages.removeAt(index));
             },
             child: Container(
-              padding: const EdgeInsets.all(4),
+              padding: EdgeInsets.all(4.r),
               decoration: const BoxDecoration(color: Colors.red, shape: BoxShape.circle),
-              child: const Icon(Icons.close, size: 16, color: Colors.white),
+              child: Icon(Icons.close, size: 16.r, color: Colors.white),
             ),
           ),
         ),

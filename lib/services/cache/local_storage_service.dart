@@ -111,3 +111,20 @@ class LocalStorageService {
     await _user.clear();
   }
 }
+
+  // حفظ الصور محلياً (تخزين مساراتها)
+  static Future<void> cacheImage(String url, String localPath) async {
+    // يمكن استخدام flutter_downloader أو dio لتنزيل الصورة
+    // هذا مثال بسيط باستخدام NetworkImage لتحميلها إلى الذاكرة
+    try {
+      final directory = await getTemporaryDirectory();
+      final file = File('${directory.path}/${url.hashCode}.jpg');
+      if (!await file.exists()) {
+        final response = await HttpClient().getUrl(Uri.parse(url));
+        final downloadedFile = await response.close();
+        await downloadedFile.pipe(file.openWrite());
+      }
+    } catch (e) {
+      print('Error caching image: $e');
+    }
+  }

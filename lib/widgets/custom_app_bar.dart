@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../theme/app_theme.dart';
 import '../providers/theme_manager.dart';
 import '../screens/cart_screen.dart';
@@ -17,7 +18,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.actions,
     this.automaticallyImplyLeading = true,
     this.leading,
-    this.height = 56.0,
+    this.height = 56,
   });
 
   @override
@@ -31,28 +32,30 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       title: title != null
           ? Text(
               title!,
-              style: const TextStyle(
+              style: TextStyle(
                 color: AppTheme.goldColor,
                 fontWeight: FontWeight.bold,
                 fontFamily: 'Changa',
+                fontSize: 18.sp,
               ),
             )
           : Row(
               children: [
-                const Text(
+                Text(
                   'FLEX',
                   style: TextStyle(
                     color: AppTheme.goldColor,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 2,
                     fontFamily: 'Changa',
+                    fontSize: 20.sp,
                   ),
                 ),
-                const SizedBox(width: 4),
-                const Text(
+                SizedBox(width: 4.w),
+                Text(
                   'YEMEN',
                   style: TextStyle(
-                    fontSize: 14,
+                    fontSize: 14.sp,
                     color: AppTheme.goldLight,
                     fontFamily: 'Changa',
                   ),
@@ -61,36 +64,34 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             ),
       actions: actions ??
           [
-            // أيقونة السلة
             Stack(
               children: [
                 IconButton(
-                  icon: const Icon(Icons.shopping_cart_outlined),
+                  icon: Icon(Icons.shopping_cart_outlined, size: 24.r),
                   onPressed: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(builder: (_) => const CartScreen()),
                     );
                   },
                 ),
-                // عداد السلة (مؤقت)
                 Positioned(
-                  right: 8,
-                  top: 8,
+                  right: 8.w,
+                  top: 8.h,
                   child: Container(
-                    padding: const EdgeInsets.all(2),
+                    padding: EdgeInsets.all(2.r),
                     decoration: const BoxDecoration(
                       color: Colors.red,
                       shape: BoxShape.circle,
                     ),
-                    constraints: const BoxConstraints(
-                      minWidth: 16,
-                      minHeight: 16,
+                    constraints: BoxConstraints(
+                      minWidth: 16.r,
+                      minHeight: 16.r,
                     ),
-                    child: const Text(
+                    child: Text(
                       '3',
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 10,
+                        fontSize: 10.sp,
                         fontWeight: FontWeight.bold,
                       ),
                       textAlign: TextAlign.center,
@@ -99,12 +100,12 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 ),
               ],
             ),
-            // أيقونة تغيير الثيم
             IconButton(
-              icon: Icon(isDark ? Icons.light_mode : Icons.dark_mode),
-              onPressed: () {
-                themeManager.toggleTheme();
-              },
+              icon: Icon(
+                isDark ? Icons.light_mode : Icons.dark_mode,
+                size: 24.r,
+              ),
+              onPressed: () => themeManager.toggleTheme(),
               color: isDark ? Colors.amber : Colors.grey,
             ),
           ],
@@ -116,5 +117,5 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => Size.fromHeight(height);
+  Size get preferredSize => Size.fromHeight(height.h);
 }
