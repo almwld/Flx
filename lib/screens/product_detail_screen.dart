@@ -427,7 +427,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                             context,
                             MaterialPageRoute(
                               builder: (_) => CheckoutScreen(
-                                items: [CheckoutItem(product: p, quantity: _quantity)],
+                                items: [CheckoutItem(product: p.toJson(), quantity: _quantity)],
                               ),
                             ),
                           );

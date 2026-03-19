@@ -118,7 +118,7 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> with SingleTickerProvid
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => OrderDetailScreen()),
+                MaterialPageRoute(builder: (_) => OrderDetailScreen(orderId: order['id'])),
               );
             },
             borderRadius: BorderRadius.circular(16),
