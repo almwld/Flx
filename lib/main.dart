@@ -7,6 +7,7 @@ import 'providers/theme_manager.dart';
 import 'screens/splash_screen.dart';
 import 'theme/app_theme.dart';
 import 'config/app_config.dart';
+import 'utils/responsive.dart'; // إضافة الاستيراد المفقود
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,7 +30,10 @@ class MyApp extends StatelessWidget {
         theme: AppTheme.lightTheme,
         darkTheme: AppTheme.darkTheme,
         themeMode: themeManager.isDarkMode ? ThemeMode.dark : ThemeMode.light,
-        home: Builder(builder: (context) { Responsive.init(context); return const SplashScreen(); }),
+        home: Builder(builder: (context) { 
+          Responsive.init(context); // الآن تم استيرادها بشكل صحيح
+          return const SplashScreen(); 
+        }),
       );
     });
   }

@@ -8,6 +8,7 @@ import 'products_screen.dart';
 import 'product_detail_screen.dart';
 import '../models/product_model.dart';
 import '../services/supabase_service.dart';
+import '../utils/responsive.dart'; // إضافة الاستيراد
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -55,43 +56,112 @@ class _HomeScreenState extends State<HomeScreen> {
                   effect: ExpandingDotsEffect(activeDotColor: AppTheme.goldColor, dotColor: isDark ? Colors.grey[700]! : Colors.grey[300]!,
                     dotHeight: 8, dotWidth: 8, expansionFactor: 3, spacing: 8)),
               ])),
-              SliverToBoxAdapter(child: Padding(padding: const EdgeInsets.all(16), child: Text('منتجات مميزة', style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold)))),
-              SliverToBoxAdapter(child: SizedBox(height: 220, child: ListView.builder(scrollDirection: Axis.horizontal, padding: const EdgeInsets.symmetric(horizontal: 16),
-                itemCount: _featured.length,
-                itemBuilder: (_, i) { final p = _featured[i];
-                  return GestureDetector(onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ProductDetailScreen(product: p))),
-                    child: Container(width: 150, margin: const EdgeInsets.only(right: 12), decoration: BoxDecoration(color: isDark ? AppTheme.darkCard : AppTheme.lightCard,
-                      borderRadius: BorderRadius.circular(12), border: Border.all(color: AppTheme.goldColor.withOpacity(0.3))),
-                      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                        Expanded(flex: 2, child: ClipRRect(borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-                          child: CachedNetworkImage(imageUrl: p.images.first, fit: BoxFit.cover, width: double.infinity))),
-                        Expanded(child: Padding(padding: const EdgeInsets.all(8), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                          Text(p.title, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold), maxLines: 1, overflow: TextOverflow.ellipsis),
-                          const Spacer(),
-                          Text('${p.price.toStringAsFixed(0)} ر.ي', style: const TextStyle(fontSize: 11, color: AppTheme.goldColor, fontWeight: FontWeight.bold))
-                        ]))),
-                      ]))); })),
-              SliverToBoxAdapter(child: Padding(padding: const EdgeInsets.all(16), child: Text('أحدث المنتجات', style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold)))),
-              SliverPadding(padding: const EdgeInsets.all(16), sliver: SliverGrid(gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, childAspectRatio: 0.7, crossAxisSpacing: 12, mainAxisSpacing: 12),
-                delegate: SliverChildBuilderDelegate((_, i) { final p = _latest[i];
-                  return GestureDetector(onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ProductDetailScreen(product: p))),
-                    child: Container(decoration: BoxDecoration(color: isDark ? AppTheme.darkCard : AppTheme.lightCard, borderRadius: BorderRadius.circular(12), border: Border.all(color: AppTheme.goldColor.withOpacity(0.3))),
-                      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                        Expanded(flex: 3, child: Stack(children: [
-                          ClipRRect(borderRadius: const BorderRadius.vertical(top: Radius.circular(12)), child: CachedNetworkImage(imageUrl: p.images.first, fit: BoxFit.cover, width: double.infinity)),
-                          if (!p.inStock) const Positioned(top: 8, left: 8, child: DecoratedBox(decoration: BoxDecoration(color: Colors.red, borderRadius: BorderRadius.all(Radius.circular(12))),
-                            child: Padding(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4), child: Text('غير متوفر', style: TextStyle(color: Colors.white, fontSize: 10))))),
-                        ])),
-                        Expanded(flex: 2, child: Padding(padding: const EdgeInsets.all(8), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                          Text(p.title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12), maxLines: 1, overflow: TextOverflow.ellipsis),
-                          const Spacer(),
-                          Row(children: [
-                            if (p.oldPrice != null) Text('${p.oldPrice!.toStringAsFixed(0)} ر.ي', style: const TextStyle(decoration: TextDecoration.lineThrough, fontSize: 9, color: Colors.grey)),
-                            const SizedBox(width: 4),
-                            Expanded(child: Text('${p.price.toStringAsFixed(0)} ر.ي', style: const TextStyle(color: AppTheme.goldColor, fontWeight: FontWeight.bold, fontSize: 11)))
-                          ]),
-                        ]))),
-                      ]))); }, childCount: _latest.length))),
+              // إصلاح: استخدام Responsive.sp
+              SliverToBoxAdapter(child: Padding(padding: const EdgeInsets.all(16), 
+                child: Text('منتجات مميزة', style: TextStyle(fontSize: Responsive.sp(20), fontWeight: FontWeight.bold)))),
+              // إصلاح: إغلاق قوس SliverToBoxAdapter بشكل صحيح
+              SliverToBoxAdapter(
+                child: SizedBox(
+                  height: 220, 
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal, 
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    itemCount: _featured.length,
+                    itemBuilder: (_, i) { 
+                      final p = _featured[i];
+                      return GestureDetector(
+                        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ProductDetailScreen(product: p))),
+                        child: Container(
+                          width: 150, 
+                          margin: const EdgeInsets.only(right: 12), 
+                          decoration: BoxDecoration(
+                            color: isDark ? AppTheme.darkCard : AppTheme.lightCard,
+                            borderRadius: BorderRadius.circular(12), 
+                            border: Border.all(color: AppTheme.goldColor.withOpacity(0.3))
+                          ),
+                          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                            Expanded(
+                              flex: 2, 
+                              child: ClipRRect(
+                                borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                                child: CachedNetworkImage(imageUrl: p.images.first, fit: BoxFit.cover, width: double.infinity)
+                              )
+                            ),
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.all(8), 
+                                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                                  Text(p.title, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold), maxLines: 1, overflow: TextOverflow.ellipsis),
+                                  const Spacer(),
+                                  Text('${p.price.toStringAsFixed(0)} ر.ي', style: const TextStyle(fontSize: 11, color: AppTheme.goldColor, fontWeight: FontWeight.bold))
+                                ])
+                              )
+                            ),
+                          ])
+                        )
+                      );
+                    }
+                  )
+                )
+              ),
+              SliverToBoxAdapter(child: Padding(padding: const EdgeInsets.all(16), 
+                child: Text('أحدث المنتجات', style: TextStyle(fontSize: Responsive.sp(20), fontWeight: FontWeight.bold)))),
+              SliverPadding(
+                padding: const EdgeInsets.all(16), 
+                sliver: SliverGrid(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, childAspectRatio: 0.7, crossAxisSpacing: 12, mainAxisSpacing: 12),
+                  delegate: SliverChildBuilderDelegate((_, i) { 
+                    final p = _latest[i];
+                    return GestureDetector(
+                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ProductDetailScreen(product: p))),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: isDark ? AppTheme.darkCard : AppTheme.lightCard, 
+                          borderRadius: BorderRadius.circular(12), 
+                          border: Border.all(color: AppTheme.goldColor.withOpacity(0.3))
+                        ),
+                        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                          Expanded(
+                            flex: 3, 
+                            child: Stack(children: [
+                              ClipRRect(
+                                borderRadius: const BorderRadius.vertical(top: Radius.circular(12)), 
+                                child: CachedNetworkImage(imageUrl: p.images.first, fit: BoxFit.cover, width: double.infinity)
+                              ),
+                              if (!p.inStock) 
+                                const Positioned(
+                                  top: 8, left: 8, 
+                                  child: DecoratedBox(
+                                    decoration: BoxDecoration(color: Colors.red, borderRadius: BorderRadius.all(Radius.circular(12))),
+                                    child: Padding(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4), 
+                                      child: Text('غير متوفر', style: TextStyle(color: Colors.white, fontSize: 10)))
+                                  )
+                                )
+                            ])
+                          ),
+                          Expanded(
+                            flex: 2, 
+                            child: Padding(padding: const EdgeInsets.all(8), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                              Text(p.title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12), maxLines: 1, overflow: TextOverflow.ellipsis),
+                              const Spacer(),
+                              Row(children: [
+                                if (p.oldPrice != null) 
+                                  Text('${p.oldPrice!.toStringAsFixed(0)} ر.ي', 
+                                    style: const TextStyle(decoration: TextDecoration.lineThrough, fontSize: 9, color: Colors.grey)
+                                  ),
+                                const SizedBox(width: 4),
+                                Expanded(child: Text('${p.price.toStringAsFixed(0)} ر.ي', 
+                                  style: const TextStyle(color: AppTheme.goldColor, fontWeight: FontWeight.bold, fontSize: 11)
+                                ))
+                              ])
+                            ]))
+                          ),
+                        ])
+                      )
+                    );
+                  }, childCount: _latest.length)
+                )
+              )
             ]),
     );
   }

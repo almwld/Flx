@@ -21,7 +21,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   List<ProductModel> _related = []; List<RatingModel> _ratings = []; double _avgRating = 0.0;
 
   @override void initState() { super.initState(); _checkFavorite(); _loadRelated(); _loadRatings(); }
-  Future<void> _checkFavorite() async { if (SupabaseService.isAuthenticated) setState(() => _isFavorite = SupabaseService.isFavorite(widget.product.id) as bool); }
+  Future<void> _checkFavorite() async { if (SupabaseService.isAuthenticated) setState(() => _isFavorite = await SupabaseService.isFavorite(widget.product.id)); }
   Future<void> _toggleFavorite() async { if (!SupabaseService.isAuthenticated) { _showLoginDialog(); return; }
     setState(() => _isLoading = true);
     try { if (_isFavorite) await SupabaseService.removeFromFavorites(widget.product.id); else await SupabaseService.addToFavorites(widget.product.id);
@@ -92,25 +92,54 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             title: Text(r.userName), subtitle: Row(children: List.generate(5, (i) => Icon(Icons.star, size: 14, color: i < r.rating ? Colors.amber : Colors.grey))),
             trailing: Text(r.formattedDate) )).toList()),
           const SizedBox(height: 24),
-          if (_related.isNotEmpty) ...[ const Text('منتجات مشابهة', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)), const SizedBox(height: 12),
-            SizedBox(height: 150, child: ListView.builder(scrollDirection: Axis.horizontal, itemCount: _related.length,
-              itemBuilder: (_, i) => GestureDetector(onTap: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => ProductDetailScreen(product: _related[i]))),
-                child: Container(width: 100, margin: const EdgeInsets.only(right: 12), decoration: BoxDecoration(color: isDark ? AppTheme.darkCard : AppTheme.lightCard, borderRadius: BorderRadius.circular(12)),
-                  child: Column(children: [
-                    Expanded(child: ClipRRect(borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-                      child: CachedNetworkImage(imageUrl: _related[i].images.isNotEmpty ? _related[i].images.first : '', fit: BoxFit.cover, width: double.infinity))),
-                    Padding(padding: const EdgeInsets.all(4), child: Text(_related[i].title, style: const TextStyle(fontSize: 10), maxLines: 1, overflow: TextOverflow.ellipsis)) ])))) ],
+          if (_related.isNotEmpty) ...[ 
+            const Text('منتجات مشابهة', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)), 
+            const SizedBox(height: 12),
+            SizedBox(
+              height: 150, 
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal, 
+                itemCount: _related.length,
+                itemBuilder: (_, i) => GestureDetector(
+                  onTap: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => ProductDetailScreen(product: _related[i]))),
+                  child: Container(
+                    width: 100, 
+                    margin: const EdgeInsets.only(right: 12), 
+                    decoration: BoxDecoration(color: isDark ? AppTheme.darkCard : AppTheme.lightCard, borderRadius: BorderRadius.circular(12)),
+                    child: Column(children: [
+                      Expanded(
+                        child: ClipRRect(
+                          borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                          child: CachedNetworkImage(imageUrl: _related[i].images.isNotEmpty ? _related[i].images.first : '', fit: BoxFit.cover, width: double.infinity)
+                        )
+                      ),
+                      Padding(padding: const EdgeInsets.all(4), child: Text(_related[i].title, style: const TextStyle(fontSize: 10), maxLines: 1, overflow: TextOverflow.ellipsis))
+                    ])
+                  )
+                )
+              )
+            )
+          ],
         ]))),
       ]),
-      bottomNavigationBar: p.inStock ? Container(padding: const EdgeInsets.all(16), decoration: BoxDecoration(color: isDark ? AppTheme.darkSurface : AppTheme.lightSurface),
+      bottomNavigationBar: p.inStock ? Container(
+        padding: const EdgeInsets.all(16), 
+        decoration: BoxDecoration(color: isDark ? AppTheme.darkSurface : AppTheme.lightSurface),
         child: SafeArea(child: Row(children: [
           Expanded(child: CustomButton(text: 'اشتر الآن', onPressed: () {
             if (!SupabaseService.isAuthenticated) { _showLoginDialog(); return; }
-            Navigator.push(context, MaterialPageRoute(builder: (_) => CheckoutScreen(items: [CheckoutItem(product: p.toJson(), quantity: _quantity)]))); })),
+            Navigator.push(context, MaterialPageRoute(builder: (_) => CheckoutScreen(items: [CheckoutItem(product: p.toJson(), quantity: _quantity)]))); 
+          })),
           const SizedBox(width: 12),
           Container(width: 50, height: 50, decoration: BoxDecoration(border: Border.all(color: AppTheme.goldColor), borderRadius: BorderRadius.circular(12)),
-            child: IconButton(icon: _isLoading ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)) : Icon(_isFavorite ? Icons.favorite : Icons.favorite_border),
-              onPressed: _toggleFavorite, color: AppTheme.goldColor)) ]))) : null,
+            child: IconButton(
+              icon: _isLoading ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)) : Icon(_isFavorite ? Icons.favorite : Icons.favorite_border),
+              onPressed: _toggleFavorite, 
+              color: AppTheme.goldColor
+            )
+          )
+        ]))
+      ) : null,
     );
   }
 }
