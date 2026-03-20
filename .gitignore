@@ -77,3 +77,4 @@ linux/flutter/generated_plugin_registrant.h
 linux/flutter/ephemeral/
 
 # Environment variables
+.env
