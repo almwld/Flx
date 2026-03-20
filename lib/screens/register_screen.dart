@@ -1,13 +1,13 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart';
 import '../theme/app_theme.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_text_field.dart';
 import '../widgets/custom_button.dart';
+import '../services/supabase_service.dart';
 import 'login_screen.dart';
 import 'terms_screen.dart';
 import 'privacy_policy_screen.dart';
-import '../services/supabase_service.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -44,10 +44,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
     setState(() => _isLoading = true);
 
     try {
-      // استخدام رقم الموبايل كبريد إلكتروني مؤقت (يمكن تحسينه لاحقاً)
-      final email = '${_phoneController.text}@temp.com';
+      // استخدام رقم الموبايل مع بريد وهمي مؤقت (يمكن تحسينه لاحقاً)
+      final email = '${_phoneController.text}@temp.flexyemen.com';
       
-      final response = final response = await SupabaseService.signUpWithEmail(
+      final response = await SupabaseService.signUpWithEmail(
         email: email,
         password: _passwordController.text,
         data: {
