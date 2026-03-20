@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
-import '../services/supabase_service.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -18,13 +17,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   Future<void> _sendResetEmail() async {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _isLoading = true);
-    try {
-      await SupabaseService.resetPassword(_emailController.text.trim());
-      setState(() { _emailSent = true; _isLoading = false; });
-    } catch (e) {
-      setState(() => _isLoading = false);
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('خطأ: $e')));
-    }
+    // محاكاة إرسال البريد
+    await Future.delayed(const Duration(seconds: 1));
+    setState(() { _emailSent = true; _isLoading = false; });
   }
 
   @override

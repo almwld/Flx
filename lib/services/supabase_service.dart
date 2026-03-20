@@ -510,3 +510,45 @@ class SupabaseService {
       return null;
     }
   }
+
+  // ==================== المصادقة المتقدمة ====================
+  static Future<void> resetPassword(String email) async {
+    try {
+      await client.auth.resetPasswordForEmail(email);
+    } catch (e) {
+      print('Error resetting password: $e');
+      rethrow;
+    }
+  }
+
+  static Future<void> updateUserProfile(Map<String, dynamic> updates) async {
+    try {
+      await client.auth.updateUser(updates);
+    } catch (e) {
+      print('Error updating user profile: $e');
+      rethrow;
+    }
+  }
+
+  static Future<void> updateUserData(String userId, Map<String, dynamic> data) async {
+    try {
+      await client.from('profiles').update(data).eq('id', userId);
+    } catch (e) {
+      print('Error updating user data: $e');
+      rethrow;
+    }
+  }
+
+  static Future<Map<String, dynamic>?> getUserProfile(String userId) async {
+    try {
+      final response = await client
+          .from('profiles')
+          .select()
+          .eq('id', userId)
+          .single();
+      return response as Map<String, dynamic>?;
+    } catch (e) {
+      print('Error fetching user profile: $e');
+      return null;
+    }
+  }
