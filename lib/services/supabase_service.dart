@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:convert';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../config/app_config.dart';
 import '../models/product_model.dart';
@@ -35,6 +34,38 @@ class SupabaseService {
     await client.auth.signOut();
   }
 
+  static Future<void> resetPassword(String email) async {
+    try {
+      await client.auth.resetPasswordForEmail(email);
+    } catch (e) {
+      print('Error resetting password: $e');
+      rethrow;
+    }
+  }
+
+  static Future<Map<String, dynamic>?> getUserProfile(String userId) async {
+    try {
+      final response = await client
+          .from('profiles')
+          .select()
+          .eq('id', userId)
+          .maybeSingle();
+      return response;
+    } catch (e) {
+      print('Error fetching user profile: $e');
+      return null;
+    }
+  }
+
+  static Future<void> updateUserData(String userId, Map<String, dynamic> data) async {
+    try {
+      await client.from('profiles').update(data).eq('id', userId);
+    } catch (e) {
+      print('Error updating user data: $e');
+      rethrow;
+    }
+  }
+
   // ==================== المنتجات ====================
   static Future<List<ProductModel>> getProducts({
     String? category,
@@ -45,25 +76,22 @@ class SupabaseService {
     bool ascending = false,
   }) async {
     try {
-      var filterQuery = client.from('products').select('*, profiles!products_seller_id_fkey(*)');
+      var query = client.from('products').select('*, profiles!products_seller_id_fkey(*)');
 
       if (category != null && category.isNotEmpty && category != 'الكل') {
-        filterQuery = filterQuery.eq('category', category);
+        query = query.eq('category', category);
       }
-
       if (searchQuery != null && searchQuery.isNotEmpty) {
-        filterQuery = filterQuery.ilike('title', '%$searchQuery%');
+        query = query.ilike('title', '%$searchQuery%');
       }
-
       if (minPrice != null) {
-        filterQuery = filterQuery.gte('price', minPrice);
+        query = query.gte('price', minPrice);
       }
-
       if (maxPrice != null) {
-        filterQuery = filterQuery.lte('price', maxPrice);
+        query = query.lte('price', maxPrice);
       }
 
-      final response = await filterQuery.order(sortBy, ascending: ascending);
+      final response = await query.order(sortBy, ascending: ascending);
 
       return (response as List).map((json) {
         final sellerData = json['profiles'] ?? {};
@@ -71,7 +99,6 @@ class SupabaseService {
           ...json,
           'seller_name': sellerData['full_name'] ?? 'متجر غير معروف',
           'seller_rating': sellerData['rating'] ?? 0.0,
-          'seller_avatar': sellerData['avatar_url'],
         });
       }).toList();
     } catch (e) {
@@ -86,63 +113,18 @@ class SupabaseService {
           .from('products')
           .select('*, profiles!products_seller_id_fkey(*)')
           .eq('id', id)
-          .single();
+          .maybeSingle();
 
+      if (response == null) return null;
       final sellerData = response['profiles'] ?? {};
       return ProductModel.fromJson({
         ...response,
         'seller_name': sellerData['full_name'] ?? 'متجر غير معروف',
         'seller_rating': sellerData['rating'] ?? 0.0,
-        'seller_avatar': sellerData['avatar_url'],
       });
     } catch (e) {
       print('Error fetching product: $e');
       return null;
-    }
-  }
-
-  static Future<List<ProductModel>> getFeaturedProducts({int limit = 5}) async {
-    try {
-      final response = await client
-          .from('products')
-          .select('*, profiles!products_seller_id_fkey(*)')
-          .eq('is_featured', true)
-          .order('created_at', ascending: false)
-          .limit(limit);
-
-      return (response as List).map((json) {
-        final sellerData = json['profiles'] ?? {};
-        return ProductModel.fromJson({
-          ...json,
-          'seller_name': sellerData['full_name'] ?? 'متجر غير معروف',
-          'seller_rating': sellerData['rating'] ?? 0.0,
-        });
-      }).toList();
-    } catch (e) {
-      print('Error fetching featured products: $e');
-      return [];
-    }
-  }
-
-  static Future<List<ProductModel>> getLatestProducts({int limit = 10}) async {
-    try {
-      final response = await client
-          .from('products')
-          .select('*, profiles!products_seller_id_fkey(*)')
-          .order('created_at', ascending: false)
-          .limit(limit);
-
-      return (response as List).map((json) {
-        final sellerData = json['profiles'] ?? {};
-        return ProductModel.fromJson({
-          ...json,
-          'seller_name': sellerData['full_name'] ?? 'متجر غير معروف',
-          'seller_rating': sellerData['rating'] ?? 0.0,
-        });
-      }).toList();
-    } catch (e) {
-      print('Error fetching latest products: $e');
-      return [];
     }
   }
 
@@ -170,24 +152,6 @@ class SupabaseService {
       });
     } catch (e) {
       print('Error adding product: $e');
-      rethrow;
-    }
-  }
-
-  static Future<void> updateProduct(String id, Map<String, dynamic> productData) async {
-    try {
-      await client.from('products').update(productData).eq('id', id);
-    } catch (e) {
-      print('Error updating product: $e');
-      rethrow;
-    }
-  }
-
-  static Future<void> deleteProduct(String id) async {
-    try {
-      await client.from('products').delete().eq('id', id);
-    } catch (e) {
-      print('Error deleting product: $e');
       rethrow;
     }
   }
@@ -304,43 +268,10 @@ class SupabaseService {
     }
   }
 
-  static Future<double> getProductAverageRating(String productId) async {
-    try {
-      final response = await client
-          .from('ratings')
-          .select('rating')
-          .eq('product_id', productId);
-
-      if (response.isEmpty) return 0.0;
-      
-      final ratings = (response as List).map((r) => (r['rating'] as num).toDouble()).toList();
-      final average = ratings.reduce((a, b) => a + b) / ratings.length;
-      return double.parse(average.toStringAsFixed(1));
-    } catch (e) {
-      print('Error calculating average rating: $e');
-      return 0.0;
-    }
-  }
-
-  static Future<int> getProductRatingsCount(String productId) async {
-    try {
-      final response = await client
-          .from('ratings')
-          .select('id')
-          .eq('product_id', productId);
-
-      return response.length;
-    } catch (e) {
-      print('Error counting ratings: $e');
-      return 0;
-    }
-  }
-
   static Future<bool> addRating({
     required String productId,
     required double rating,
     String? comment,
-    List<String>? images,
   }) async {
     if (!isAuthenticated) return false;
 
@@ -350,11 +281,8 @@ class SupabaseService {
         'user_id': currentUser!.id,
         'rating': rating,
         'comment': comment,
-        'images': images,
         'created_at': DateTime.now().toIso8601String(),
       });
-
-      await _updateProductAverageRating(productId);
       return true;
     } catch (e) {
       print('Error adding rating: $e');
@@ -362,78 +290,7 @@ class SupabaseService {
     }
   }
 
-  static Future<bool> updateRating(String ratingId, {
-    double? rating,
-    String? comment,
-    List<String>? images,
-  }) async {
-    try {
-      final updates = <String, dynamic>{};
-      if (rating != null) updates['rating'] = rating;
-      if (comment != null) updates['comment'] = comment;
-      if (images != null) updates['images'] = images;
-      updates['updated_at'] = DateTime.now().toIso8601String();
-
-      await client.from('ratings').update(updates).eq('id', ratingId);
-      return true;
-    } catch (e) {
-      print('Error updating rating: $e');
-      return false;
-    }
-  }
-
-  static Future<bool> deleteRating(String ratingId) async {
-    try {
-      await client.from('ratings').delete().eq('id', ratingId);
-      return true;
-    } catch (e) {
-      print('Error deleting rating: $e');
-      return false;
-    }
-  }
-
-  static Future<RatingModel?> getUserRatingForProduct(String productId) async {
-    if (!isAuthenticated) return null;
-
-    try {
-      final response = await client
-          .from('ratings')
-          .select('*, profiles!ratings_user_id_fkey(*)')
-          .eq('product_id', productId)
-          .eq('user_id', currentUser!.id)
-          .maybeSingle();
-
-      if (response == null) return null;
-
-      return RatingModel.fromJson({
-        ...response,
-        'user_name': response['profiles']?['full_name'],
-        'user_avatar': response['profiles']?['avatar_url'],
-      });
-    } catch (e) {
-      print('Error fetching user rating: $e');
-      return null;
-    }
-  }
-
-  static Future<void> _updateProductAverageRating(String productId) async {
-    try {
-      final avg = await getProductAverageRating(productId);
-      final count = await getProductRatingsCount(productId);
-      
-      await client
-          .from('products')
-          .update({
-            'rating': avg,
-            'review_count': count,
-          })
-          .eq('id', productId);
-    } catch (e) {
-      print('Error updating product average rating: $e');
-    }
-  }
-
-  // ==================== رفع الصور إلى Supabase Storage ====================
+  // ==================== رفع الصور ====================
   static Future<String?> uploadImage({
     required String filePath,
     required String bucket,
@@ -447,108 +304,10 @@ class SupabaseService {
         file,
         fileOptions: const FileOptions(cacheControl: '3600'),
       );
-      
-      final publicUrl = client.storage.from(bucket).getPublicUrl(finalFileName);
-      return publicUrl;
+      return client.storage.from(bucket).getPublicUrl(finalFileName);
     } catch (e) {
       print('Error uploading image: $e');
       return null;
     }
   }
-
-  static Future<List<String>> uploadMultipleImages({
-    required List<String> filePaths,
-    required String bucket,
-  }) async {
-    List<String> urls = [];
-    for (String path in filePaths) {
-      final url = await uploadImage(filePath: path, bucket: bucket);
-      if (url != null) urls.add(url);
-    }
-    return urls;
-  }
 }
-
-  // ==================== المصادقة المتقدمة ====================
-  static Future<void> resetPassword(String email) async {
-    try {
-      await client.auth.resetPasswordForEmail(email);
-    } catch (e) {
-      print('Error resetting password: $e');
-      rethrow;
-    }
-  }
-
-  static Future<void> updateUserProfile(Map<String, dynamic> updates) async {
-    try {
-      await client.auth.updateUser(updates);
-    } catch (e) {
-      print('Error updating user profile: $e');
-      rethrow;
-    }
-  }
-
-  static Future<void> updateUserData(String userId, Map<String, dynamic> data) async {
-    try {
-      await client.from('profiles').update(data).eq('id', userId);
-    } catch (e) {
-      print('Error updating user data: $e');
-      rethrow;
-    }
-  }
-
-  static Future<Map<String, dynamic>?> getUserProfile(String userId) async {
-    try {
-      final response = await client
-          .from('profiles')
-          .select()
-          .eq('id', userId)
-          .single();
-      return response as Map<String, dynamic>?;
-    } catch (e) {
-      print('Error fetching user profile: $e');
-      return null;
-    }
-  }
-
-  // ==================== المصادقة المتقدمة ====================
-  static Future<void> resetPassword(String email) async {
-    try {
-      await client.auth.resetPasswordForEmail(email);
-    } catch (e) {
-      print('Error resetting password: $e');
-      rethrow;
-    }
-  }
-
-  static Future<void> updateUserProfile(Map<String, dynamic> updates) async {
-    try {
-      await client.auth.updateUser(updates);
-    } catch (e) {
-      print('Error updating user profile: $e');
-      rethrow;
-    }
-  }
-
-  static Future<void> updateUserData(String userId, Map<String, dynamic> data) async {
-    try {
-      await client.from('profiles').update(data).eq('id', userId);
-    } catch (e) {
-      print('Error updating user data: $e');
-      rethrow;
-    }
-  }
-
-  static Future<Map<String, dynamic>?> getUserProfile(String userId) async {
-    try {
-      final response = await client
-          .from('profiles')
-          .select()
-          .eq('id', userId)
-          .single();
-      return response as Map<String, dynamic>?;
-    } catch (e) {
-      print('Error fetching user profile: $e');
-      return null;
-    }
-  }
