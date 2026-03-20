@@ -15,13 +15,27 @@ class PaymentMethodsScreen extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       appBar: const CustomAppBar(title: 'طرق الدفع'),
-      body: ListView.builder(padding: const EdgeInsets.all(16), itemCount: _methods.length,
-        itemBuilder: (_, i) { final m = _methods[i];
-          return Card(margin: const EdgeInsets.only(bottom: 12), color: isDark ? AppTheme.darkCard : AppTheme.lightCard,
+      body: ListView.builder(
+        padding: const EdgeInsets.all(16),
+        itemCount: _methods.length,
+        itemBuilder: (_, i) {
+          final m = _methods[i];
+          return Card(
+            margin: const EdgeInsets.only(bottom: 12),
+            color: isDark ? AppTheme.darkCard : AppTheme.lightCard,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-            child: ListTile(leading: Icon(m['icon'] as IconData, color: AppTheme.goldColor), title: Text(m['name']),
-              subtitle: Text(m.containsKey('balance') ? 'الرصيد: ${m['balance']}' : (m.containsKey('last4') ? '•••• ${m['last4']}' : m['account'])),
-              trailing: const Icon(Icons.arrow_forward_ios, size: 16), onTap: () {}}); });
+            child: ListTile(
+              leading: Icon(m['icon'] as IconData, color: AppTheme.goldColor),
+              title: Text(m['name']),
+              subtitle: Text(m.containsKey('balance')
+                  ? 'الرصيد: ${m['balance']}'
+                  : (m.containsKey('last4') ? '•••• ${m['last4']}' : m['account'])),
+              trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+              onTap: () {},
+            ),
+          );
+        },
+      ),
     );
   }
 }

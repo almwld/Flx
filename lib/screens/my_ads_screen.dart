@@ -59,7 +59,7 @@ class _MyAdsScreenState extends State<MyAdsScreen> {
                       const Icon(Icons.visibility, size: 14, color: Colors.grey), const SizedBox(width: 2), Text('${a.views}', style: const TextStyle(fontSize: 12)),
                       const SizedBox(width: 12),
                       Container(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2), decoration: BoxDecoration(color: a.status == 'active' ? Colors.green.withOpacity(0.2) : Colors.red.withOpacity(0.2), borderRadius: BorderRadius.circular(8)),
-                        child: Text(a.status == 'active' ? 'نشط' : 'منتهي', style: TextStyle(fontSize: 10, color: a.status == 'active' ? Colors.green : Colors.red))) ])) ])))); })),
+                        child: Text(a.status == 'active' ? 'نشط' : 'منتهي', style: TextStyle(fontSize: 10, color: a.status == 'active' ? Colors.green : Colors.red)))))])))])); }),
       ]),
     );
   }

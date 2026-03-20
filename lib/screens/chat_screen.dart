@@ -21,23 +21,54 @@ class _ChatScreenState extends State<ChatScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       appBar: const CustomAppBar(title: 'المحادثات'),
-      body: ListView.builder(padding: const EdgeInsets.all(16), itemCount: _chats.length,
+      body: ListView.builder(
+        padding: const EdgeInsets.all(16),
+        itemCount: _chats.length,
         itemBuilder: (_, i) {
           final c = _chats[i];
-          return GestureDetector(onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ChatDetailScreen(chat: c))),
-            child: Container(margin: const EdgeInsets.only(bottom: 12), decoration: BoxDecoration(color: isDark ? AppTheme.darkCard : AppTheme.lightCard, borderRadius: BorderRadius.circular(16)),
+          return GestureDetector(
+            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ChatDetailScreen(chat: c))),
+            child: Container(
+              margin: const EdgeInsets.only(bottom: 12),
+              decoration: BoxDecoration(
+                color: isDark ? AppTheme.darkCard : AppTheme.lightCard,
+                borderRadius: BorderRadius.circular(16),
+              ),
               child: ListTile(
-                leading: Stack(children: [
-                  CircleAvatar(backgroundColor: AppTheme.goldColor.withOpacity(0.2), child: Text(c['avatar'], style: const TextStyle(color: AppTheme.goldColor))),
-                  if (c['online']) Positioned(bottom: 0, right: 0, child: Container(width: 12, height: 12, decoration: const BoxDecoration(color: Colors.green, shape: BoxShape.circle))),
-                ]),
+                leading: Stack(
+                  children: [
+                    CircleAvatar(
+                      backgroundColor: AppTheme.goldColor.withOpacity(0.2),
+                      child: Text(c['avatar'], style: const TextStyle(color: AppTheme.goldColor)),
+                    ),
+                    if (c['online'])
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: Container(width: 12, height: 12, decoration: const BoxDecoration(color: Colors.green, shape: BoxShape.circle)),
+                      ),
+                  ],
+                ),
                 title: Text(c['name'], style: TextStyle(fontWeight: c['unread'] > 0 ? FontWeight.bold : FontWeight.normal)),
                 subtitle: Text(c['lastMessage'], maxLines: 1, overflow: TextOverflow.ellipsis),
-                trailing: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                  Text(c['time'], style: TextStyle(fontSize: 11, color: Colors.grey[500])),
-                  if (c['unread'] > 0) Container(margin: const EdgeInsets.only(top: 4), padding: const EdgeInsets.all(6), decoration: const BoxDecoration(color: AppTheme.goldColor, shape: BoxShape.circle),
-                    child: Text(c['unread'].toString(), style: const TextStyle(fontSize: 10, color: Colors.black))),
-                ])))); }));
+                trailing: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(c['time'], style: TextStyle(fontSize: 11, color: Colors.grey[500])),
+                    if (c['unread'] > 0)
+                      Container(
+                        margin: const EdgeInsets.only(top: 4),
+                        padding: const EdgeInsets.all(6),
+                        decoration: const BoxDecoration(color: AppTheme.goldColor, shape: BoxShape.circle),
+                        child: Text(c['unread'].toString(), style: const TextStyle(fontSize: 10, color: Colors.black)),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 }
