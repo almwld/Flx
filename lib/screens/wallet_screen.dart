@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../widgets/custom_app_bar.dart';
-import '../services/supabase_service.dart';
 
 class WalletScreen extends StatefulWidget {
   const WalletScreen({super.key});
@@ -57,9 +56,11 @@ class _WalletScreenState extends State<WalletScreen> {
                 itemCount: 2,
                 onPageChanged: (i) => setState(() => _currentCard = i),
                 itemBuilder: (_, i) {
-                  final card = i == 0
-                      ? {'name': 'الريال اليمني', 'balance': _balance, 'flag': '🇾🇪'}
-                      : {'name': 'الريال السعودي', 'balance': _balance ~/ 20, 'flag': '🇸🇦'};
+                  final bool isYer = i == 0;
+                  final String name = isYer ? 'الريال اليمني' : 'الريال السعودي';
+                  final double balance = isYer ? _balance : _balance ~/ 20;
+                  final String flag = isYer ? '🇾🇪' : '🇸🇦';
+                  final String currency = isYer ? 'YER' : 'SAR';
                   return Container(
                     margin: const EdgeInsets.symmetric(horizontal: 16),
                     decoration: BoxDecoration(
@@ -77,7 +78,7 @@ class _WalletScreenState extends State<WalletScreen> {
                         children: [
                           Row(
                             children: [
-                              Text(card[.flag.].toString(), style: const TextStyle(fontSize: 30)),
+                              Text(flag, style: const TextStyle(fontSize: 30)),
                               const Spacer(),
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -86,20 +87,17 @@ class _WalletScreenState extends State<WalletScreen> {
                                   borderRadius: BorderRadius.circular(20),
                                 ),
                                 child: Text(
-                                  i == 0 ? 'YER' : 'SAR',
+                                  currency,
                                   style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                                 ),
                               ),
                             ],
                           ),
                           const Spacer(),
-                          Text(
-                            card['name'],
-                            style: const TextStyle(color: Colors.white70),
-                          ),
+                          Text(name, style: const TextStyle(color: Colors.white70)),
                           const SizedBox(height: 4),
                           Text(
-                            _isHidden ? '••••••' : '${card['balance']} ر.ي',
+                            _isHidden ? '••••••' : '${balance.toStringAsFixed(0)} ر.ي',
                             style: const TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold),
                           ),
                         ],
@@ -143,7 +141,7 @@ class _WalletScreenState extends State<WalletScreen> {
                 (_, i) {
                   final s = _services[i];
                   return GestureDetector(
-                    onTap: () => _navigateToService(context, s['route'] ?? s['name']),
+                    onTap: () => _navigateToService(context, s['name'] as String),
                     child: Container(
                       decoration: BoxDecoration(
                         color: isDark ? AppTheme.darkCard : AppTheme.lightCard,
@@ -158,11 +156,11 @@ class _WalletScreenState extends State<WalletScreen> {
                               color: (s['color'] as Color).withOpacity(0.2),
                               shape: BoxShape.circle,
                             ),
-                            child: Icon(s['icon'], color: s['color'], size: 28),
+                            child: Icon(s['icon'] as IconData, color: s['color'] as Color, size: 28),
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            s['name'],
+                            s['name'] as String,
                             style: const TextStyle(fontSize: 12, fontFamily: 'Changa'),
                             textAlign: TextAlign.center,
                           ),
