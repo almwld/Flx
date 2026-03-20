@@ -77,7 +77,7 @@ class _WalletScreenState extends State<WalletScreen> {
                         children: [
                           Row(
                             children: [
-                              Text(card['flag'], style: const TextStyle(fontSize: 30)),
+                              Text(card[.flag.].toString(), style: const TextStyle(fontSize: 30)),
                               const Spacer(),
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
