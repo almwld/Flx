@@ -206,3 +206,98 @@ class SupabaseService {
     return urls;
   }
 }
+
+  // ==================== المحفظة ====================
+  static Future<Map<String, dynamic>?> getWallet() async {
+    try {
+      return await client
+          .from('wallets')
+          .select()
+          .eq('user_id', currentUser!.id)
+          .maybeSingle();
+    } catch (e) {
+      print('Error fetching wallet: $e');
+      return null;
+    }
+  }
+
+  static Future<void> updateBalance(String currency, double amount) async {
+    try {
+      await client
+          .from('wallets')
+          .update({'${currency.toLowerCase()}_balance': amount})
+          .eq('user_id', currentUser!.id);
+    } catch (e) {
+      print('Error updating balance: $e');
+      rethrow;
+    }
+  }
+
+  static Future<void> createTransaction(Map<String, dynamic> data) async {
+    try {
+      await client.from('transactions').insert({
+        ...data,
+        'user_id': currentUser!.id,
+        'created_at': DateTime.now().toIso8601String(),
+      });
+    } catch (e) {
+      print('Error creating transaction: $e');
+      rethrow;
+    }
+  }
+
+  // ==================== الدردشة ====================
+  static Future<List<Map<String, dynamic>>> getChats() async {
+    try {
+      // جلب قائمة المحادثات (آخر رسالة لكل محادثة)
+      // هنا نستخدم جدول messages ونجمعها
+      final response = await client
+          .from('messages')
+          .select('*, sender:profiles!messages_sender_id_fkey(full_name, avatar_url)')
+          .or('sender_id.eq.${currentUser!.id},receiver_id.eq.${currentUser!.id}')
+          .order('created_at', ascending: false);
+      return List<Map<String, dynamic>>.from(response);
+    } catch (e) {
+      print('Error fetching chats: $e');
+      return [];
+    }
+  }
+
+  static Future<List<Map<String, dynamic>>> getMessages(String otherUserId) async {
+    try {
+      final response = await client
+          .from('messages')
+          .select('*, sender:profiles!messages_sender_id_fkey(full_name, avatar_url)')
+          .or('and(sender_id.eq.${currentUser!.id},receiver_id.eq.$otherUserId),and(sender_id.eq.$otherUserId,receiver_id.eq.${currentUser!.id})')
+          .order('created_at', ascending: true);
+      return List<Map<String, dynamic>>.from(response);
+    } catch (e) {
+      print('Error fetching messages: $e');
+      return [];
+    }
+  }
+
+  static Future<void> sendMessage(String receiverId, String text, {String? imageUrl}) async {
+    try {
+      await client.from('messages').insert({
+        'sender_id': currentUser!.id,
+        'receiver_id': receiverId,
+        'message_text': text,
+        'image_url': imageUrl,
+        'created_at': DateTime.now().toIso8601String(),
+      });
+    } catch (e) {
+      print('Error sending message: $e');
+      rethrow;
+    }
+  }
+
+  static Stream<List<Map<String, dynamic>>> subscribeToMessages(String otherUserId) {
+    return client
+        .from('messages')
+        .stream(primaryKey: ['id'])
+        .eq('sender_id', currentUser!.id)
+        .eq('receiver_id', otherUserId)
+        .execute()
+        .map((event) => List<Map<String, dynamic>>.from(event));
+  }

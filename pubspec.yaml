@@ -61,3 +61,7 @@ flutter:
     - assets/icons/svg/
     - assets/animations/
     - .env
+  flutter_map: ^6.1.0
+  latlong2: ^0.9.0
+  geocoding: ^3.0.0
+  geolocator: ^13.0.1
