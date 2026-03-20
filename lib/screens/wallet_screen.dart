@@ -58,7 +58,7 @@ class _WalletScreenState extends State<WalletScreen> {
                 itemBuilder: (_, i) {
                   final bool isYer = i == 0;
                   final String name = isYer ? 'الريال اليمني' : 'الريال السعودي';
-                  final double balance = isYer ? _balance : _balance ~/ 20;
+                  final double balance = isYer ? _balance : _balance / 20.0;
                   final String flag = isYer ? '🇾🇪' : '🇸🇦';
                   final String currency = isYer ? 'YER' : 'SAR';
                   return Container(
