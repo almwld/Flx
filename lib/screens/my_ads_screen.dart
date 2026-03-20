@@ -42,7 +42,7 @@ class _MyAdsScreenState extends State<MyAdsScreen> {
             return GestureDetector(onTap: () => setState(() => _filter = f),
               child: Container(margin: const EdgeInsets.only(right: 8), padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 decoration: BoxDecoration(color: isSelected ? AppTheme.goldColor : (isDark ? AppTheme.darkCard : AppTheme.lightCard), borderRadius: BorderRadius.circular(20)),
-                child: Center(child: Text(f, style: TextStyle(color: isSelected ? Colors.black : (isDark ? Colors.white : Colors.black87)))))); })),
+                child: Center(child: Text(f, style: TextStyle(color: isSelected ? Colors.black : (isDark ? Colors.white : Colors.black87))))); })),
         Expanded(child: _filteredAds.isEmpty ? Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           Icon(Icons.campaign, size: 80, color: Colors.grey[400]), const SizedBox(height: 16), const Text('لا توجد إعلانات'),
           const SizedBox(height: 8), ElevatedButton(onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AddAdScreen())).then((_) => _loadAds()),

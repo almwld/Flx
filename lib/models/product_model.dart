@@ -19,6 +19,8 @@ class ProductModel {
   final int reviewCount;
   final bool isFeatured;
   final int? discountPercentage;
+  final int views;           // إضافة حقل المشاهدات
+  final String status;       // إضافة حقل الحالة (active, expired, sold)
   final DateTime createdAt;
   final DateTime? updatedAt;
 
@@ -41,6 +43,8 @@ class ProductModel {
     required this.reviewCount,
     this.isFeatured = false,
     this.discountPercentage,
+    this.views = 0,           // القيمة الافتراضية
+    this.status = 'active',    // القيمة الافتراضية
     required this.createdAt,
     this.updatedAt,
   });
@@ -88,6 +92,8 @@ class ProductModel {
       isFeatured: json['is_featured'] ?? false,
       discountPercentage: json['discount_percentage'] != null 
           ? (json['discount_percentage'] as num).toInt() : null,
+      views: json['views'] ?? 0,        // قراءة المشاهدات
+      status: json['status'] ?? 'active', // قراءة الحالة
       createdAt: json['created_at'] != null 
           ? DateTime.parse(json['created_at']) : DateTime.now(),
       updatedAt: json['updated_at'] != null 
@@ -115,6 +121,8 @@ class ProductModel {
       'review_count': reviewCount,
       'is_featured': isFeatured,
       'discount_percentage': discountPercentage,
+      'views': views,           // إضافة إلى JSON
+      'status': status,         // إضافة إلى JSON
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt?.toIso8601String(),
     };

@@ -24,7 +24,7 @@ class HelpSupportScreen extends StatelessWidget {
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             child: ListTile(leading: Icon(item['icon'] as IconData, color: AppTheme.goldColor), title: Text(item['title']),
               trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => item['screen'])))); });
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => item['screen']()))); });
     );
   }
 }
