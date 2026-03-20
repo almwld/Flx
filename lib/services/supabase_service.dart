@@ -128,6 +128,51 @@ class SupabaseService {
     }
   }
 
+  static Future<List<ProductModel>> getFeaturedProducts({int limit = 5}) async {
+    try {
+      final response = await client
+          .from('products')
+          .select('*, profiles!products_seller_id_fkey(*)')
+          .eq('is_featured', true)
+          .order('created_at', ascending: false)
+          .limit(limit);
+
+      return (response as List).map((json) {
+        final sellerData = json['profiles'] ?? {};
+        return ProductModel.fromJson({
+          ...json,
+          'seller_name': sellerData['full_name'] ?? 'متجر غير معروف',
+          'seller_rating': sellerData['rating'] ?? 0.0,
+        });
+      }).toList();
+    } catch (e) {
+      print('Error fetching featured products: $e');
+      return [];
+    }
+  }
+
+  static Future<List<ProductModel>> getLatestProducts({int limit = 10}) async {
+    try {
+      final response = await client
+          .from('products')
+          .select('*, profiles!products_seller_id_fkey(*)')
+          .order('created_at', ascending: false)
+          .limit(limit);
+
+      return (response as List).map((json) {
+        final sellerData = json['profiles'] ?? {};
+        return ProductModel.fromJson({
+          ...json,
+          'seller_name': sellerData['full_name'] ?? 'متجر غير معروف',
+          'seller_rating': sellerData['rating'] ?? 0.0,
+        });
+      }).toList();
+    } catch (e) {
+      print('Error fetching latest products: $e');
+      return [];
+    }
+  }
+
   static Future<List<ProductModel>> getSellerProducts(String sellerId) async {
     try {
       final response = await client
@@ -268,85 +313,6 @@ class SupabaseService {
     }
   }
 
-  static Future<bool> addRating({
-    required String productId,
-    required double rating,
-    String? comment,
-  }) async {
-    if (!isAuthenticated) return false;
-
-    try {
-      await client.from('ratings').insert({
-        'product_id': productId,
-        'user_id': currentUser!.id,
-        'rating': rating,
-        'comment': comment,
-        'created_at': DateTime.now().toIso8601String(),
-      });
-      return true;
-    } catch (e) {
-      print('Error adding rating: $e');
-      return false;
-    }
-  }
-
-  // ==================== رفع الصور ====================
-  static Future<String?> uploadImage({
-    required String filePath,
-    required String bucket,
-    String? fileName,
-  }) async {
-    try {
-      final file = File(filePath);
-      final String finalFileName = fileName ?? '${DateTime.now().millisecondsSinceEpoch}.jpg';
-      await client.storage.from(bucket).upload(
-        finalFileName,
-        file,
-        fileOptions: const FileOptions(cacheControl: '3600'),
-      );
-      return client.storage.from(bucket).getPublicUrl(finalFileName);
-    } catch (e) {
-      print('Error uploading image: $e');
-      return null;
-    }
-  }
-}
-
-  // دوال إضافية - إضافة بعد الدوال الموجودة
-  static Future<List<ProductModel>> getLatestProducts({int limit = 10}) async {
-    try {
-      final response = await client
-          .from('products')
-          .select('*, profiles!products_seller_id_fkey(*)')
-          .order('created_at', ascending: false)
-          .limit(limit);
-
-      return (response as List).map((json) {
-        final sellerData = json['profiles'] ?? {};
-        return ProductModel.fromJson({
-          ...json,
-          'seller_name': sellerData['full_name'] ?? 'متجر غير معروف',
-          'seller_rating': sellerData['rating'] ?? 0.0,
-        });
-      }).toList();
-    } catch (e) {
-      print('Error fetching latest products: $e');
-      return [];
-    }
-  }
-
-  static Future<List<String>> uploadMultipleImages({
-    required List<String> filePaths,
-    required String bucket,
-  }) async {
-    List<String> urls = [];
-    for (String path in filePaths) {
-      final url = await uploadImage(filePath: path, bucket: bucket);
-      if (url != null) urls.add(url);
-    }
-    return urls;
-  }
-
   static Future<double> getProductAverageRating(String productId) async {
     try {
       final response = await client
@@ -378,3 +344,68 @@ class SupabaseService {
       return 0;
     }
   }
+
+  static Future<bool> addRating({
+    required String productId,
+    required double rating,
+    String? comment,
+  }) async {
+    if (!isAuthenticated) return false;
+
+    try {
+      await client.from('ratings').insert({
+        'product_id': productId,
+        'user_id': currentUser!.id,
+        'rating': rating,
+        'comment': comment,
+        'created_at': DateTime.now().toIso8601String(),
+      });
+      
+      // تحديث متوسط التقييم في جدول المنتجات
+      await _updateProductAverageRating(productId);
+      
+      return true;
+    } catch (e) {
+      print('Error adding rating: $e');
+      return false;
+    }
+  }
+
+  static Future<void> _updateProductAverageRating(String productId) async {
+    try {
+      final avg = await getProductAverageRating(productId);
+      final count = await getProductRatingsCount(productId);
+      
+      await client
+          .from('products')
+          .update({
+            'rating': avg,
+            'review_count': count,
+          })
+          .eq('id', productId);
+    } catch (e) {
+      print('Error updating product average rating: $e');
+    }
+  }
+
+  // ==================== رفع الصور ====================
+  static Future<String?> uploadImage({
+    required String filePath,
+    required String bucket,
+    String? fileName,
+  }) async {
+    try {
+      final file = File(filePath);
+      final String finalFileName = fileName ?? '${DateTime.now().millisecondsSinceEpoch}.jpg';
+      await client.storage.from(bucket).upload(
+        finalFileName,
+        file,
+        fileOptions: const FileOptions(cacheControl: '3600'),
+      );
+      return client.storage.from(bucket).getPublicUrl(finalFileName);
+    } catch (e) {
+      print('Error uploading image: $e');
+      return null;
+    }
+  }
+}
