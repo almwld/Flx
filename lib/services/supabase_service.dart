@@ -388,6 +388,7 @@ class SupabaseService {
     }
   }
 
+
   // ==================== رفع الصور ====================
   static Future<String?> uploadImage({
     required String filePath,
@@ -402,13 +403,13 @@ class SupabaseService {
         file,
         fileOptions: const FileOptions(cacheControl: '3600'),
       );
-      return client.storage.from(bucket).getPublicUrl(finalFileName);
+      final publicUrl = client.storage.from(bucket).getPublicUrl(finalFileName);
+      return publicUrl;
     } catch (e) {
       print('Error uploading image: $e');
       return null;
     }
   }
-}
 
   static Future<List<String>> uploadMultipleImages({
     required List<String> filePaths,
@@ -416,8 +417,9 @@ class SupabaseService {
   }) async {
     List<String> urls = [];
     for (String path in filePaths) {
-      final url = await uploadImage(filePath: path, bucket: bucket);
+      final url = await SupabaseService.uploadImage(filePath: path, bucket: bucket);
       if (url != null) urls.add(url);
     }
     return urls;
   }
+}
