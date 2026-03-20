@@ -5,29 +5,18 @@ import '../services/supabase_service.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
-
-  @override
-  State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
+  @override State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
 }
 
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
-  final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
-  bool _isLoading = false;
-  bool _emailSent = false;
+  final _formKey = GlobalKey<FormState>(); final _emailController = TextEditingController();
+  bool _isLoading = false; bool _emailSent = false;
 
   Future<void> _sendResetEmail() async {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _isLoading = true);
-    try {
-      await SupabaseService.resetPassword(_emailController.text.trim());
-      setState(() { _emailSent = true; _isLoading = false; });
-    } catch (e) {
-      setState(() => _isLoading = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('خطأ: $e'), backgroundColor: AppTheme.error),
-      );
-    }
+    try { await SupabaseService.resetPassword(_emailController.text.trim()); setState(() { _emailSent = true; _isLoading = false; }); }
+    catch (e) { setState(() => _isLoading = false); ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('خطأ: $e'), backgroundColor: AppTheme.error)); }
   }
 
   @override
@@ -42,23 +31,14 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 SizedBox(height: 20),
                 Text('تم إرسال رابط إعادة التعيين إلى بريدك الإلكتروني.'),
               ])
-            : Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    TextFormField(
-                      controller: _emailController,
-                      decoration: const InputDecoration(labelText: 'البريد الإلكتروني'),
-                      validator: (v) => v!.isEmpty ? 'مطلوب' : null,
-                    ),
-                    const SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: _sendResetEmail,
-                      child: _isLoading ? const CircularProgressIndicator() : const Text('إرسال'),
-                    ),
-                  ],
-                ),
-              ),
+            : Form(key: _formKey, child: Column(children: [
+                TextFormField(controller: _emailController, decoration: const InputDecoration(labelText: 'البريد الإلكتروني', border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(12)))),
+                  validator: (v) => v!.isEmpty ? 'مطلوب' : null),
+                const SizedBox(height: 20),
+                SizedBox(width: double.infinity, height: 50, child: ElevatedButton(onPressed: _sendResetEmail,
+                  style: ElevatedButton.styleFrom(backgroundColor: AppTheme.goldColor, foregroundColor: Colors.black, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+                  child: _isLoading ? const CircularProgressIndicator(color: Colors.black) : const Text('إرسال'))),
+              ])),
       ),
     );
   }

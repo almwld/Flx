@@ -78,3 +78,30 @@ linux/flutter/ephemeral/
 
 # Environment variables
 .env
+.env
+.DS_Store
+.dart_tool/
+.packages
+build/
+*.iml
+*.log
+*.swp
+.secrets
+.env
+.DS_Store
+.dart_tool/
+.packages
+build/
+*.iml
+*.log
+*.swp
+.secrets
+.env
+.DS_Store
+.dart_tool/
+.packages
+build/
+*.iml
+*.log
+*.swp
+.secrets
