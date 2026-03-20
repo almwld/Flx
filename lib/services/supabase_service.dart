@@ -301,3 +301,47 @@ class SupabaseService {
         .execute()
         .map((event) => List<Map<String, dynamic>>.from(event));
   }
+
+  // ==================== الدردشة ====================
+  static Future<List<Map<String, dynamic>>> getChats() async {
+    try {
+      final response = await client
+          .from('messages')
+          .select('*, sender:profiles!messages_sender_id_fkey(full_name, avatar_url), receiver:profiles!messages_receiver_id_fkey(full_name, avatar_url)')
+          .or('sender_id.eq.${currentUser!.id},receiver_id.eq.${currentUser!.id}')
+          .order('created_at', ascending: false);
+      return List<Map<String, dynamic>>.from(response);
+    } catch (e) {
+      print('Error fetching chats: $e');
+      return [];
+    }
+  }
+
+  static Future<List<Map<String, dynamic>>> getMessages(String otherUserId) async {
+    try {
+      final response = await client
+          .from('messages')
+          .select('*, sender:profiles!messages_sender_id_fkey(full_name, avatar_url)')
+          .or('and(sender_id.eq.${currentUser!.id},receiver_id.eq.$otherUserId),and(sender_id.eq.$otherUserId,receiver_id.eq.${currentUser!.id})')
+          .order('created_at', ascending: true);
+      return List<Map<String, dynamic>>.from(response);
+    } catch (e) {
+      print('Error fetching messages: $e');
+      return [];
+    }
+  }
+
+  static Future<void> sendMessage(String receiverId, String text, {String? imageUrl}) async {
+    try {
+      await client.from('messages').insert({
+        'sender_id': currentUser!.id,
+        'receiver_id': receiverId,
+        'message_text': text,
+        'image_url': imageUrl,
+        'created_at': DateTime.now().toIso8601String(),
+      });
+    } catch (e) {
+      print('Error sending message: $e');
+      rethrow;
+    }
+  }

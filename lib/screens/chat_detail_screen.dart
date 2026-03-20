@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import '../theme/app_theme.dart';
 import '../services/supabase_service.dart';
 
@@ -14,13 +13,11 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
   final TextEditingController _controller = TextEditingController();
   List<Map<String, dynamic>> _messages = [];
   bool _isLoading = true;
-  late RealtimeSubscription _subscription;
 
   @override
   void initState() {
     super.initState();
     _loadMessages();
-    _subscribeToMessages();
   }
 
   Future<void> _loadMessages() async {
@@ -29,38 +26,12 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     setState(() => _isLoading = false);
   }
 
-  void _subscribeToMessages() {
-    _subscription = SupabaseService.client
-        .channel('messages')
-        .on(
-          RealtimeListenTypes.postgresChanges,
-          ChannelFilter(
-            event: 'INSERT',
-            schema: 'public',
-            table: 'messages',
-            filter: 'sender_id=eq.${widget.otherUserId}&receiver_id=eq.${SupabaseService.currentUser!.id}',
-          ),
-          (payload) {
-            final newMsg = payload['new'] as Map<String, dynamic>;
-            setState(() {
-              _messages.add(newMsg);
-            });
-          },
-        )
-        .subscribe();
-  }
-
   Future<void> _sendMessage() async {
     if (_controller.text.trim().isEmpty) return;
     final text = _controller.text.trim();
     _controller.clear();
     await SupabaseService.sendMessage(widget.otherUserId, text);
-  }
-
-  @override
-  void dispose() {
-    _subscription.unsubscribe();
-    super.dispose();
+    _loadMessages(); // تحديث الرسائل بعد الإرسال
   }
 
   @override
