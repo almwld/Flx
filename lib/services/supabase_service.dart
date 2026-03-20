@@ -7,6 +7,7 @@ import '../models/rating_model.dart';
 class SupabaseService {
   static final SupabaseClient client = Supabase.instance.client;
 
+  // ==================== المصادقة ====================
   static User? get currentUser => client.auth.currentUser;
   static bool get isAuthenticated => currentUser != null;
 
@@ -33,6 +34,7 @@ class SupabaseService {
     await client.from('profiles').update(data).eq('id', userId);
   }
 
+  // ==================== المنتجات ====================
   static Future<List<ProductModel>> getProducts({
     String? category, String? searchQuery, double? minPrice, double? maxPrice,
     String sortBy = 'created_at', bool ascending = false,
@@ -110,6 +112,7 @@ class SupabaseService {
     });
   }
 
+  // ==================== الطلبات ====================
   static Future<void> createOrder(Map<String, dynamic> orderData) async {
     await client.from('orders').insert({
       ...orderData, 'user_id': currentUser!.id, 'created_at': DateTime.now().toIso8601String(), 'status': 'pending',
@@ -124,6 +127,7 @@ class SupabaseService {
     } catch (e) { return []; }
   }
 
+  // ==================== المفضلة ====================
   static Future<void> addToFavorites(String productId) async {
     await client.from('favorites').insert({
       'user_id': currentUser!.id, 'product_id': productId, 'created_at': DateTime.now().toIso8601String(),
@@ -150,6 +154,7 @@ class SupabaseService {
     } catch (e) { return false; }
   }
 
+  // ==================== التقييمات ====================
   static Future<List<RatingModel>> getProductRatings(String productId) async {
     try {
       final response = await client.from('ratings').select('*, profiles!ratings_user_id_fkey(*)')
@@ -188,6 +193,63 @@ class SupabaseService {
     } catch (e) { return false; }
   }
 
+  // ==================== المحفظة ====================
+  static Future<Map<String, dynamic>?> getWallet() async {
+    try {
+      return await client.from('wallets').select().eq('user_id', currentUser!.id).maybeSingle();
+    } catch (e) { return null; }
+  }
+
+  static Future<void> updateBalance(String currency, double amount) async {
+    try {
+      await client.from('wallets').update({'${currency.toLowerCase()}_balance': amount}).eq('user_id', currentUser!.id);
+    } catch (e) { rethrow; }
+  }
+
+  static Future<void> createTransaction(Map<String, dynamic> data) async {
+    try {
+      await client.from('transactions').insert({
+        ...data, 'user_id': currentUser!.id, 'created_at': DateTime.now().toIso8601String(),
+      });
+    } catch (e) { rethrow; }
+  }
+
+  // ==================== الدردشة ====================
+  static Future<List<Map<String, dynamic>>> getChats() async {
+    try {
+      final response = await client
+          .from('messages')
+          .select('*, sender:profiles!messages_sender_id_fkey(full_name, avatar_url), receiver:profiles!messages_receiver_id_fkey(full_name, avatar_url)')
+          .or('sender_id.eq.${currentUser!.id},receiver_id.eq.${currentUser!.id}')
+          .order('created_at', ascending: false);
+      return List<Map<String, dynamic>>.from(response);
+    } catch (e) { return []; }
+  }
+
+  static Future<List<Map<String, dynamic>>> getMessages(String otherUserId) async {
+    try {
+      final response = await client
+          .from('messages')
+          .select('*, sender:profiles!messages_sender_id_fkey(full_name, avatar_url)')
+          .or('and(sender_id.eq.${currentUser!.id},receiver_id.eq.$otherUserId),and(sender_id.eq.$otherUserId,receiver_id.eq.${currentUser!.id})')
+          .order('created_at', ascending: true);
+      return List<Map<String, dynamic>>.from(response);
+    } catch (e) { return []; }
+  }
+
+  static Future<void> sendMessage(String receiverId, String text, {String? imageUrl}) async {
+    try {
+      await client.from('messages').insert({
+        'sender_id': currentUser!.id,
+        'receiver_id': receiverId,
+        'message_text': text,
+        'image_url': imageUrl,
+        'created_at': DateTime.now().toIso8601String(),
+      });
+    } catch (e) { rethrow; }
+  }
+
+  // ==================== رفع الصور ====================
   static Future<String?> uploadImage({required String filePath, required String bucket, String? fileName}) async {
     try {
       final file = File(filePath);
@@ -206,142 +268,3 @@ class SupabaseService {
     return urls;
   }
 }
-
-  // ==================== المحفظة ====================
-  static Future<Map<String, dynamic>?> getWallet() async {
-    try {
-      return await client
-          .from('wallets')
-          .select()
-          .eq('user_id', currentUser!.id)
-          .maybeSingle();
-    } catch (e) {
-      print('Error fetching wallet: $e');
-      return null;
-    }
-  }
-
-  static Future<void> updateBalance(String currency, double amount) async {
-    try {
-      await client
-          .from('wallets')
-          .update({'${currency.toLowerCase()}_balance': amount})
-          .eq('user_id', currentUser!.id);
-    } catch (e) {
-      print('Error updating balance: $e');
-      rethrow;
-    }
-  }
-
-  static Future<void> createTransaction(Map<String, dynamic> data) async {
-    try {
-      await client.from('transactions').insert({
-        ...data,
-        'user_id': currentUser!.id,
-        'created_at': DateTime.now().toIso8601String(),
-      });
-    } catch (e) {
-      print('Error creating transaction: $e');
-      rethrow;
-    }
-  }
-
-  // ==================== الدردشة ====================
-  static Future<List<Map<String, dynamic>>> getChats() async {
-    try {
-      // جلب قائمة المحادثات (آخر رسالة لكل محادثة)
-      // هنا نستخدم جدول messages ونجمعها
-      final response = await client
-          .from('messages')
-          .select('*, sender:profiles!messages_sender_id_fkey(full_name, avatar_url)')
-          .or('sender_id.eq.${currentUser!.id},receiver_id.eq.${currentUser!.id}')
-          .order('created_at', ascending: false);
-      return List<Map<String, dynamic>>.from(response);
-    } catch (e) {
-      print('Error fetching chats: $e');
-      return [];
-    }
-  }
-
-  static Future<List<Map<String, dynamic>>> getMessages(String otherUserId) async {
-    try {
-      final response = await client
-          .from('messages')
-          .select('*, sender:profiles!messages_sender_id_fkey(full_name, avatar_url)')
-          .or('and(sender_id.eq.${currentUser!.id},receiver_id.eq.$otherUserId),and(sender_id.eq.$otherUserId,receiver_id.eq.${currentUser!.id})')
-          .order('created_at', ascending: true);
-      return List<Map<String, dynamic>>.from(response);
-    } catch (e) {
-      print('Error fetching messages: $e');
-      return [];
-    }
-  }
-
-  static Future<void> sendMessage(String receiverId, String text, {String? imageUrl}) async {
-    try {
-      await client.from('messages').insert({
-        'sender_id': currentUser!.id,
-        'receiver_id': receiverId,
-        'message_text': text,
-        'image_url': imageUrl,
-        'created_at': DateTime.now().toIso8601String(),
-      });
-    } catch (e) {
-      print('Error sending message: $e');
-      rethrow;
-    }
-  }
-
-  static Stream<List<Map<String, dynamic>>> subscribeToMessages(String otherUserId) {
-    return client
-        .from('messages')
-        .stream(primaryKey: ['id'])
-        .eq('sender_id', currentUser!.id)
-        .eq('receiver_id', otherUserId)
-        .execute()
-        .map((event) => List<Map<String, dynamic>>.from(event));
-  }
-
-  // ==================== الدردشة ====================
-  static Future<List<Map<String, dynamic>>> getChats() async {
-    try {
-      final response = await client
-          .from('messages')
-          .select('*, sender:profiles!messages_sender_id_fkey(full_name, avatar_url), receiver:profiles!messages_receiver_id_fkey(full_name, avatar_url)')
-          .or('sender_id.eq.${currentUser!.id},receiver_id.eq.${currentUser!.id}')
-          .order('created_at', ascending: false);
-      return List<Map<String, dynamic>>.from(response);
-    } catch (e) {
-      print('Error fetching chats: $e');
-      return [];
-    }
-  }
-
-  static Future<List<Map<String, dynamic>>> getMessages(String otherUserId) async {
-    try {
-      final response = await client
-          .from('messages')
-          .select('*, sender:profiles!messages_sender_id_fkey(full_name, avatar_url)')
-          .or('and(sender_id.eq.${currentUser!.id},receiver_id.eq.$otherUserId),and(sender_id.eq.$otherUserId,receiver_id.eq.${currentUser!.id})')
-          .order('created_at', ascending: true);
-      return List<Map<String, dynamic>>.from(response);
-    } catch (e) {
-      print('Error fetching messages: $e');
-      return [];
-    }
-  }
-
-  static Future<void> sendMessage(String receiverId, String text, {String? imageUrl}) async {
-    try {
-      await client.from('messages').insert({
-        'sender_id': currentUser!.id,
-        'receiver_id': receiverId,
-        'message_text': text,
-        'image_url': imageUrl,
-        'created_at': DateTime.now().toIso8601String(),
-      });
-    } catch (e) {
-      print('Error sending message: $e');
-      rethrow;
-    }
-  }
