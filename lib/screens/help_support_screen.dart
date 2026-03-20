@@ -7,7 +7,6 @@ import 'support_tickets_screen.dart';
 
 class HelpSupportScreen extends StatelessWidget {
   const HelpSupportScreen({super.key});
-
   final List<Map<String, dynamic>> _items = const [
     {'title': 'الأسئلة الشائعة', 'icon': Icons.question_answer, 'screen': FaqScreen()},
     {'title': 'تواصل معنا', 'icon': Icons.contact_mail, 'screen': ContactUsScreen()},
@@ -17,31 +16,15 @@ class HelpSupportScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-
     return Scaffold(
       appBar: const CustomAppBar(title: 'المساعدة والدعم'),
-      body: ListView.builder(
-        padding: const EdgeInsets.all(16),
-        itemCount: _items.length,
-        itemBuilder: (ctx, i) {
-          final item = _items[i];
-          return Card(
-            margin: const EdgeInsets.only(bottom: 12),
-            color: isDark ? AppTheme.darkCard : AppTheme.lightCard,
+      body: ListView.builder(padding: const EdgeInsets.all(16), itemCount: _items.length,
+        itemBuilder: (_, i) { final item = _items[i];
+          return Card(margin: const EdgeInsets.only(bottom: 12), color: isDark ? AppTheme.darkCard : AppTheme.lightCard,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-            child: ListTile(
-              leading: Icon(item['icon'] as IconData, color: AppTheme.goldColor),
-              title: Text(item['title']),
+            child: ListTile(leading: Icon(item['icon'] as IconData, color: AppTheme.goldColor), title: Text(item['title']),
               trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => item['screen']),
-                );
-              },
-            ),
-          );
-        },
-      ),
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => item['screen'])))); });
     );
   }
 }
