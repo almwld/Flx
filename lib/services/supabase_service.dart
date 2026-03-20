@@ -311,3 +311,70 @@ class SupabaseService {
     }
   }
 }
+
+  // دوال إضافية - إضافة بعد الدوال الموجودة
+  static Future<List<ProductModel>> getLatestProducts({int limit = 10}) async {
+    try {
+      final response = await client
+          .from('products')
+          .select('*, profiles!products_seller_id_fkey(*)')
+          .order('created_at', ascending: false)
+          .limit(limit);
+
+      return (response as List).map((json) {
+        final sellerData = json['profiles'] ?? {};
+        return ProductModel.fromJson({
+          ...json,
+          'seller_name': sellerData['full_name'] ?? 'متجر غير معروف',
+          'seller_rating': sellerData['rating'] ?? 0.0,
+        });
+      }).toList();
+    } catch (e) {
+      print('Error fetching latest products: $e');
+      return [];
+    }
+  }
+
+  static Future<List<String>> uploadMultipleImages({
+    required List<String> filePaths,
+    required String bucket,
+  }) async {
+    List<String> urls = [];
+    for (String path in filePaths) {
+      final url = await uploadImage(filePath: path, bucket: bucket);
+      if (url != null) urls.add(url);
+    }
+    return urls;
+  }
+
+  static Future<double> getProductAverageRating(String productId) async {
+    try {
+      final response = await client
+          .from('ratings')
+          .select('rating')
+          .eq('product_id', productId);
+
+      if (response.isEmpty) return 0.0;
+      
+      final ratings = (response as List).map((r) => (r['rating'] as num).toDouble()).toList();
+      final average = ratings.reduce((a, b) => a + b) / ratings.length;
+      return double.parse(average.toStringAsFixed(1));
+    } catch (e) {
+      print('Error calculating average rating: $e');
+      return 0.0;
+    }
+  }
+
+  static Future<int> getProductRatingsCount(String productId) async {
+    try {
+      final response = await client
+          .from('ratings')
+          .select('id')
+          .eq('product_id', productId);
+
+      return response.length;
+    } catch (e) {
+      print('Error counting ratings: $e');
+      return 0;
+    }
+  }

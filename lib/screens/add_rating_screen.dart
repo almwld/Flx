@@ -201,7 +201,7 @@ class _AddRatingScreenState extends State<AddRatingScreen> {
       productId: widget.productId,
       rating: _rating,
       comment: _commentController.text.isNotEmpty ? _commentController.text : null,
-      images: imageUrls.isNotEmpty ? imageUrls : null,
+
     );
 
     if (!mounted) return;
