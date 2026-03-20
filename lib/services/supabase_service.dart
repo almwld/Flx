@@ -409,3 +409,15 @@ class SupabaseService {
     }
   }
 }
+
+  static Future<List<String>> uploadMultipleImages({
+    required List<String> filePaths,
+    required String bucket,
+  }) async {
+    List<String> urls = [];
+    for (String path in filePaths) {
+      final url = await uploadImage(filePath: path, bucket: bucket);
+      if (url != null) urls.add(url);
+    }
+    return urls;
+  }
