@@ -8,15 +8,49 @@ class SecuritySettingsScreen extends StatefulWidget {
 }
 
 class _SecuritySettingsScreenState extends State<SecuritySettingsScreen> {
-  bool _twoFactor = false, _biometric = false, _saveLogin = true;
+  bool _twoFactor = false;
+  bool _biometric = false;
+  bool _saveLogin = true;
+
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       appBar: const CustomAppBar(title: 'الأمان والخصوصية'),
-      body: ListView(padding: const EdgeInsets.all(16), children: [
-        Card(child: Column(children: [
-          SwitchListTile(title: const Text('المصادقة الثنائية'), subtitle: const Text('تعزيز أمان حسابك'), value: _twoFactor, onChanged: (v) => setState(() => _twoFactor = v)),
-          const Divider(), SwitchListTile(title: const Text('الدخول بالبصمة'), value: _biometric, onChanged: (v) => setState(() => _biometric = v)),
-          const Divider(), SwitchListTile(title: const Text('البقاء متصلاً'), value: _saveLogin, onChanged: (v) => setState(() => _saveLogin = v)) ])) ]));
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          Card(
+            color: isDark ? AppTheme.darkCard : AppTheme.lightCard,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            child: Column(
+              children: [
+                SwitchListTile(
+                  title: const Text('المصادقة الثنائية'),
+                  subtitle: const Text('تعزيز أمان حسابك'),
+                  value: _twoFactor,
+                  onChanged: (v) => setState(() => _twoFactor = v),
+                  secondary: const Icon(Icons.lock, color: AppTheme.goldColor),
+                ),
+                const Divider(),
+                SwitchListTile(
+                  title: const Text('الدخول بالبصمة / Face ID'),
+                  value: _biometric,
+                  onChanged: (v) => setState(() => _biometric = v),
+                  secondary: const Icon(Icons.fingerprint, color: AppTheme.goldColor),
+                ),
+                const Divider(),
+                SwitchListTile(
+                  title: const Text('البقاء متصلاً'),
+                  value: _saveLogin,
+                  onChanged: (v) => setState(() => _saveLogin = v),
+                  secondary: const Icon(Icons.save, color: AppTheme.goldColor),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
