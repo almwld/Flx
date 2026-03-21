@@ -1,9 +1,7 @@
-name: Build Flex Yemen
+# name: Build Flex Yemen
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
     branches: [ main ]
 
 jobs:
@@ -11,12 +9,46 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: subosito/flutter-action@v2
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-      - run: flutter pub get
-      - run: flutter build apk --release
-      - uses: actions/upload-artifact@v4
+          cache: false
+
+      - name: Create fresh Flutter project
+        run: |
+          mkdir -p /tmp/fresh_project
+          cd /tmp/fresh_project
+          flutter create --org com.flexyemen --project-name flex_temp .
+          cd $GITHUB_WORKSPACE
+          # backup current lib, assets, pubspec.yaml
+          cp -r lib /tmp/lib_backup
+          cp -r assets /tmp/assets_backup 2>/dev/null || true
+          cp pubspec.yaml /tmp/pubspec_backup
+          # replace android and ios with fresh ones
+          rm -rf android ios
+          cp -r /tmp/fresh_project/android .
+          cp -r /tmp/fresh_project/ios .
+          # restore lib, assets, pubspec.yaml
+          rm -rf lib assets pubspec.yaml
+          cp -r /tmp/lib_backup lib
+          cp -r /tmp/assets_backup assets 2>/dev/null || true
+          cp /tmp/pubspec_backup pubspec.yaml
+          rm -rf /tmp/fresh_project /tmp/lib_backup /tmp/assets_backup /tmp/pubspec_backup
+
+      - name: Set app name
+        run: |
+          sed -i 's/android:label="flex_temp"/android:label="Flex Yemen Market"/g' android/app/src/main/AndroidManifest.xml
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Build APK
+        run: flutter build apk --release --split-per-abi
+
+      - name: Upload APKs
+        uses: actions/upload-artifact@v4
         with:
           name: app-release
           path: build/app/outputs/flutter-apk/*.apk
