@@ -1,4 +1,4 @@
-name: Build Flx
+name: Build Flex Yemen
 
 on:
   push:
@@ -15,37 +15,17 @@ jobs:
         with:
           channel: 'stable'
 
-      - name: Create fresh Android project
-        run: |
-          mkdir -p /tmp/new
-          cd /tmp/new
-          flutter create --org com.flexyemen --project-name flex .
-          cd $GITHUB_WORKSPACE
-          rm -rf android ios
-          cp -r /tmp/new/android .
-          cp -r /tmp/new/ios .
-          rm -rf /tmp/new
-
-      - name: Set app name
-        run: sed -i 's/android:label="flex"/android:label="Flex Yemen Market"/g' android/app/src/main/AndroidManifest.xml
-
       - name: Get dependencies
         run: flutter pub get
 
-      - name: Build APK (split-per-abi)
-        run: flutter build apk --release --split-per-abi --no-tree-shake-icons
+      - name: Generate launcher icons
+        run: flutter pub run flutter_launcher_icons
 
-      - name: Build App Bundle (optional)
-        run: flutter build appbundle --release
+      - name: Build APK (split-per-abi)
+        run: flutter build apk --release --split-per-abi
 
       - name: Upload APKs
         uses: actions/upload-artifact@v4
         with:
-          name: app-release-apks
+          name: app-release
           path: build/app/outputs/flutter-apk/*.apk
-
-      - name: Upload App Bundle
-        uses: actions/upload-artifact@v4
-        with:
-          name: app-release-bundle
-          path: build/app/outputs/bundle/release/*.aab
