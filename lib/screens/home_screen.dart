@@ -154,10 +154,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                     color: AppTheme.goldColor.withOpacity(0.2),
                                     shape: BoxShape.circle,
                                   ),
-                                  child: Icon(item[.icon.] as IconData, color: AppTheme.goldColor),
+                                  child: Icon(item['icon'] as IconData, color: AppTheme.goldColor),
                                 ),
                                 const SizedBox(height: 4),
-                                Text(item[.name.] as String, style: const TextStyle(fontSize: 10), textAlign: TextAlign.center),
+                                Text(item['name'] as String, style: const TextStyle(fontSize: 10), textAlign: TextAlign.center),
                               ],
                             ),
                           );

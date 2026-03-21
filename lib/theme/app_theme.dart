@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class AppTheme {
+  static const Color darkDivider = Color(0xFF2A2A3A);
+  static const Color lightDivider = Color(0xFFE0E0E0);
   static const Color goldColor = Color(0xFFD4AF37);
   static const Color goldLight = Color(0xFFF4E4BC);
   static const Color goldDark = Color(0xFFB8860B);
@@ -78,5 +80,3 @@ class AppTheme {
 
 
 
-  static const Color darkDivider = Color(0xFF2A2A3A);
-  static const Color lightDivider = Color(0xFFE0E0E0);

@@ -16,7 +16,6 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
   final TextEditingController _controller = TextEditingController();
   List<MessageModel> _messages = [];
   bool _isLoading = true;
-  late RealtimeSubscription _subscription;
 
   @override
   void initState() {
