@@ -45,12 +45,19 @@ class CategoriesScreen extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(cat['icon'], color: cat['color'], size: 40),
+                  Container(
+                    width: 50,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      color: (cat['color'] as Color).withOpacity(0.2),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(cat['icon'] as IconData, color: cat['color']),
+                  ),
                   const SizedBox(height: 8),
                   Text(
                     cat['name'],
                     style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-                    textAlign: TextAlign.center,
                   ),
                 ],
               ),

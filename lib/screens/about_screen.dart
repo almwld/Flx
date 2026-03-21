@@ -22,19 +22,14 @@ class AboutScreen extends StatelessWidget {
               child: const Icon(Icons.shopping_bag, size: 60, color: Colors.black),
             ),
             const SizedBox(height: 20),
-            const Text(
-              'Flex Yemen',
-              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, fontFamily: 'Changa'),
-            ),
+            const Text('Flex Yemen', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
-            const Text(
-              'الإصدار 1.0.0',
-              style: TextStyle(color: Colors.grey),
-            ),
+            const Text('الإصدار 1.0.0', style: TextStyle(color: Colors.grey)),
             const SizedBox(height: 30),
             const Text(
               'منصة تجارة إلكترونية يمنية متكاملة تهدف إلى تسهيل البيع والشراء وتوفير خدمات مالية متنوعة.',
               textAlign: TextAlign.center,
+              style: TextStyle(height: 1.5),
             ),
             const SizedBox(height: 40),
             ListTile(
