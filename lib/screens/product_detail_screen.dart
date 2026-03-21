@@ -199,7 +199,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                           icon: const Icon(Icons.chat, color: AppTheme.goldColor),
                           onPressed: () => Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (_) => ChatDetailScreen(otherUserId: p.sellerId, userName: p.sellerName)),
+                            MaterialPageRoute(builder: (_) => ChatDetailScreen(chat: {"name": p.sellerName, "id": p.sellerId})),
                           ),
                         ),
                       ],

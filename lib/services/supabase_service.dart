@@ -71,7 +71,7 @@ class SupabaseService {
       }).toList();
     } catch (e) {
       print('Error fetching products: $e');
-      return DummyData.getProducts();
+      return [];
     }
   }
 
@@ -109,7 +109,7 @@ class SupabaseService {
       }).toList();
     } catch (e) {
       print('Error fetching featured products: $e');
-      return DummyData.getProducts();
+      return [];
     }
   }
 
@@ -130,7 +130,7 @@ class SupabaseService {
       }).toList();
     } catch (e) {
       print('Error fetching latest products: $e');
-      return DummyData.getProducts();
+      return [];
     }
   }
 
@@ -144,7 +144,7 @@ class SupabaseService {
       return (response as List).map((json) => ProductModel.fromJson(json)).toList();
     } catch (e) {
       print('Error fetching seller products: $e');
-      return DummyData.getProducts();
+      return [];
     }
   }
 
@@ -176,7 +176,7 @@ class SupabaseService {
       return List<Map<String, dynamic>>.from(response);
     } catch (e) {
       print('Error fetching orders: $e');
-      return DummyData.getProducts();
+      return [];
     }
   }
 
@@ -203,7 +203,7 @@ class SupabaseService {
       return (response as List).map((json) => ProductModel.fromJson(json['products'] ?? {})).toList();
     } catch (e) {
       print('Error fetching favorites: $e');
-      return DummyData.getProducts();
+      return [];
     }
   }
 
@@ -237,7 +237,7 @@ class SupabaseService {
       })).toList();
     } catch (e) {
       print('Error fetching ratings: $e');
-      return DummyData.getProducts();
+      return [];
     }
   }
 
@@ -320,7 +320,7 @@ class SupabaseService {
       return List<Map<String, dynamic>>.from(response);
     } catch (e) {
       print('Error fetching chats: $e');
-      return DummyData.getProducts();
+      return [];
     }
   }
 
@@ -334,7 +334,7 @@ class SupabaseService {
       return (response as List).map((json) => MessageModel.fromJson(json)).toList();
     } catch (e) {
       print('Error fetching messages: $e');
-      return DummyData.getProducts();
+      return [];
     }
   }
 
