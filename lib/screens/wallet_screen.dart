@@ -17,10 +17,10 @@ class WalletScreen extends StatelessWidget {
 
   // إزالة const بالكامل من هذه القائمة
   final List<Map<String, dynamic>> _services = [
-    {'name': 'إيداع', 'icon': Icons.add_card, 'color': Colors.orange, 'screen': const DepositScreen()},
-    {'name': 'سحب', 'icon': Icons.atm, 'color': Colors.blue, 'screen': const WithdrawScreen()},
-    {'name': 'تحويل', 'icon': Icons.swap_horiz, 'color': Colors.green, 'screen': const TransferScreen()},
-    {'name': 'عمليات', 'icon': Icons.history, 'color': Colors.teal, 'screen': const TransactionsScreen()},
+    {'name': 'إيداع', 'icon': Icons.add_card, 'color': Colors.orange, 'screen': DepositScreen()},
+    {'name': 'سحب', 'icon': Icons.atm, 'color': Colors.blue, 'screen': WithdrawScreen()},
+    {'name': 'تحويل', 'icon': Icons.swap_horiz, 'color': Colors.green, 'screen': TransferScreen()},
+    {'name': 'عمليات', 'icon': Icons.history, 'color': Colors.teal, 'screen': TransactionsScreen()},
   ];
 
   @override
