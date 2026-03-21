@@ -1,22 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import '../theme/app_theme.dart';
-import '../widgets/custom_app_bar.dart';
-import 'wallet/deposit_screen.dart';
-import 'wallet/withdraw_screen.dart';
-import 'wallet/transfer_screen.dart';
-import 'wallet/transactions_screen.dart';
+import 'deposit_screen.dart';
+import 'withdraw_screen.dart';
+import 'transfer_screen.dart';
+import 'transactions_screen.dart';
 
 class WalletScreen extends StatelessWidget {
   const WalletScreen({super.key});
 
-  final List<Map<String, dynamic>> _cards = const [
-    {'currency': 'YER', 'balance': 125000, 'symbol': 'ر.ي', 'name': 'الريال اليمني', 'flag': '🇾🇪'},
-    {'currency': 'SAR', 'balance': 5000, 'symbol': 'ر.س', 'name': 'الريال السعودي', 'flag': '🇸🇦'},
-    {'currency': 'USD', 'balance': 200, 'symbol': '\$', 'name': 'الدولار الأمريكي', 'flag': '🇺🇸'},
-  ];
-
-  // إزالة const بالكامل من هذه القائمة
-  final List<Map<String, dynamic>> _services = [
+  final List<Map<String, dynamic>> _services = const [
     {'name': 'إيداع', 'icon': Icons.add_card, 'color': Colors.orange, 'screen': DepositScreen()},
     {'name': 'سحب', 'icon': Icons.atm, 'color': Colors.blue, 'screen': WithdrawScreen()},
     {'name': 'تحويل', 'icon': Icons.swap_horiz, 'color': Colors.green, 'screen': TransferScreen()},
@@ -26,103 +19,167 @@ class WalletScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Scaffold(
-      appBar: const CustomAppBar(title: 'المحفظة'),
-      body: CustomScrollView(
-        slivers: [
-          SliverToBoxAdapter(
-            child: SizedBox(
-              height: 180,
-              child: PageView.builder(
-                itemCount: _cards.length,
-                itemBuilder: (_, i) {
-                  final card = _cards[i];
-                  return Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 16),
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [AppTheme.goldColor, AppTheme.goldLight],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      borderRadius: BorderRadius.circular(24),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(20),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Text(card['flag'], style: const TextStyle(fontSize: 30)),
-                              const Spacer(),
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.2),
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: Text(card['currency'], style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                              ),
-                            ],
-                          ),
-                          const Spacer(),
-                          Text(card['name'], style: const TextStyle(color: Colors.white70)),
-                          const SizedBox(height: 4),
-                          Text(
-                            '${card['balance']} ${card['symbol']}',
-                            style: const TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
+      backgroundColor: isDark ? AppTheme.darkBackground : AppTheme.lightBackground,
+      appBar: AppBar(
+        title: const Text('المحفظة'),
+        backgroundColor: isDark ? AppTheme.darkSurface : AppTheme.lightSurface,
+        elevation: 0,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // بطاقة الرصيد
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [AppTheme.goldColor, AppTheme.goldLight],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(20),
               ),
-            ),
-          ),
-          SliverPadding(
-            padding: const EdgeInsets.all(16),
-            sliver: SliverGrid(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'الرصيد الحالي',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    '0 ريال',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'آخر تحديث: اليوم',
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.8),
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+            ).animate().fadeIn().slideY(begin: 0.2, end: 0),
+            
+            const SizedBox(height: 24),
+            
+            // عنوان الخدمات
+            const Text(
+              'الخدمات المالية',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ).animate().fadeIn(delay: const Duration(milliseconds: 200)),
+            
+            const SizedBox(height: 16),
+            
+            // قائمة الخدمات
+            GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 4,
-                childAspectRatio: 1,
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 12,
+                crossAxisCount: 2,
+                crossAxisSpacing: 16,
+                mainAxisSpacing: 16,
+                childAspectRatio: 1.2,
               ),
-              delegate: SliverChildBuilderDelegate(
-                (_, i) {
-                  final s = _services[i];
-                  return GestureDetector(
-                    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => s['screen'])),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: isDark ? AppTheme.darkCard : AppTheme.lightCard,
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: (s['color'] as Color).withOpacity(0.2),
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(s['icon'], color: s['color'], size: 28),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(s['name'], style: const TextStyle(fontSize: 11)),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-                childCount: _services.length,
+              itemCount: _services.length,
+              itemBuilder: (context, index) {
+                final service = _services[index];
+                return _ServiceCard(
+                  name: service['name'],
+                  icon: service['icon'],
+                  color: service['color'],
+                  onTap: () {
+                    final screen = service['screen'] as Widget;
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => screen),
+                    );
+                  },
+                ).animate().fadeIn(
+                  delay: Duration(milliseconds: 100 + (index * 100)),
+                ).scale();
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ServiceCard extends StatelessWidget {
+  final String name;
+  final IconData icon;
+  final Color color;
+  final VoidCallback onTap;
+
+  const _ServiceCard({
+    required this.name,
+    required this.icon,
+    required this.color,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).brightness == Brightness.dark
+              ? AppTheme.darkSurface
+              : Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                icon,
+                size: 32,
+                color: color,
               ),
             ),
-          ),
-        ],
+            const SizedBox(height: 12),
+            Text(
+              name,
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
