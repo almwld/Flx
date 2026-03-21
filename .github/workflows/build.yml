@@ -1,4 +1,4 @@
-name: Build Flex Yemen
+name: Build Flx
 
 on:
   push:
@@ -15,11 +15,28 @@ jobs:
         with:
           channel: 'stable'
 
+      - name: Create fresh Flutter project
+        run: |
+          mkdir -p /tmp/fresh
+          cd /tmp/fresh
+          flutter create --org com.flexyemen --project-name fresh_project .
+          cd $GITHUB_WORKSPACE
+          cp -r lib /tmp/fresh/
+          cp -r assets /tmp/fresh/ 2>/dev/null || true
+          cp pubspec.yaml /tmp/fresh/
+          cp .env /tmp/fresh/ 2>/dev/null || true
+          rm -rf lib assets pubspec.yaml .env
+          cp -r /tmp/fresh/* .
+          rm -rf /tmp/fresh
+
+      - name: Fix app name and remove iOS for now
+        run: |
+          sed -i 's/android:label="fresh_project"/android:label="Flex Yemen Market"/g' android/app/src/main/AndroidManifest.xml
+          # حذف مجلد iOS مؤقتاً لتجنب أخطاء الأيقونات
+          rm -rf ios
+
       - name: Get dependencies
         run: flutter pub get
-
-      - name: Generate launcher icons
-        run: flutter pub run flutter_launcher_icons
 
       - name: Build APK (split-per-abi)
         run: flutter build apk --release --split-per-abi
