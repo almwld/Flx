@@ -1,81 +1,136 @@
 import 'package:flutter/material.dart';
-import '../../theme/app_theme.dart';
-import '../../widgets/custom_button.dart';
-import '../../widgets/simple_app_bar.dart';
+import '../theme/app_theme.dart';
+import '../widgets/custom_app_bar.dart';
 
-class OrderDetailScreen extends StatelessWidget {
-  const OrderDetailScreen({super.key});
+class OrderDetailScreen extends StatefulWidget {
+  final String orderId;
+  const OrderDetailScreen({super.key, required this.orderId});
+  @override State<OrderDetailScreen> createState() => _OrderDetailScreenState();
+}
+
+class _OrderDetailScreenState extends State<OrderDetailScreen> {
+  Map<String, dynamic>? _order;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadOrder();
+  }
+
+  Future<void> _loadOrder() async {
+    // محاكاة جلب البيانات
+    await Future.delayed(const Duration(seconds: 1));
+    setState(() {
+      _order = {
+        'id': widget.orderId,
+        'created_at': DateTime.now().toIso8601String(),
+        'status': 'processing',
+        'total_amount': 32000,
+        'shipping_address': 'صنعاء - شارع حدة',
+        'payment_method': 'المحفظة',
+        'order_items': [
+          {'product_title': 'منتج 1', 'quantity': 1, 'price': 15000},
+          {'product_title': 'منتج 2', 'quantity': 1, 'price': 15000},
+        ],
+      };
+      _isLoading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: isDark ? AppTheme.darkBackground : AppTheme.lightBackground,
-      appBar: const SimpleAppBar(title: 'تفاصيل الطلب'),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text('طلب #1001', style: TextStyle(fontFamily: 'Changa', fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.getTextColor(context))),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                          decoration: BoxDecoration(color: AppTheme.success.withOpacity(0.1), borderRadius: BorderRadius.circular(20)),
-                          child: const Text('مكتمل', style: TextStyle(fontFamily: 'Changa', color: AppTheme.success)),
-                        ),
-                      ],
+      appBar: const CustomAppBar(title: 'تفاصيل الطلب'),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              Icon(Icons.check_circle, color: Colors.green),
+                              const SizedBox(width: 8),
+                              Text('الحالة: قيد المعالجة', style: const TextStyle(fontWeight: FontWeight.bold)),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          LinearProgressIndicator(value: 0.33, backgroundColor: Colors.grey[300], color: AppTheme.goldColor),
+                          const SizedBox(height: 16),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: const [Text('قيد المعالجة'), Text('تم الشحن'), Text('تم التوصيل')],
+                          ),
+                        ],
+                      ),
                     ),
-                    const SizedBox(height: 16),
-                    _buildInfoRow('التاريخ', '2024-01-15'),
-                    _buildInfoRow('الإجمالي', '150,000 ر.ي'),
-                    _buildInfoRow('طريقة الدفع', 'المحفظة'),
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 16),
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('معلومات التوصيل', style: TextStyle(fontWeight: FontWeight.bold)),
+                          const Divider(),
+                          ListTile(
+                            leading: const Icon(Icons.location_on, color: AppTheme.goldColor),
+                            title: Text(_order!['shipping_address']),
+                            subtitle: const Text('العنوان'),
+                          ),
+                          ListTile(
+                            leading: const Icon(Icons.payment, color: AppTheme.goldColor),
+                            title: Text(_order!['payment_method']),
+                            subtitle: const Text('طريقة الدفع'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('المنتجات', style: TextStyle(fontWeight: FontWeight.bold)),
+                          const Divider(),
+                          ...(_order!['order_items'] as List).map((item) => Padding(
+                            padding: const EdgeInsets.only(bottom: 8),
+                            child: Row(
+                              children: [
+                                Container(width: 50, height: 50, color: Colors.grey[300], child: const Icon(Icons.image)),
+                                const SizedBox(width: 12),
+                                Expanded(child: Text(item['product_title'])),
+                                Text('${item['price']} ر.ي'),
+                              ],
+                            ),
+                          )),
+                          const Divider(),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text('الإجمالي'),
+                              Text('${_order!['total_amount']} ر.ي', style: const TextStyle(color: AppTheme.goldColor)),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 24),
-            Text('المنتجات', style: TextStyle(fontFamily: 'Changa', fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.getTextColor(context))),
-            const SizedBox(height: 12),
-            Card(
-              child: ListTile(
-                leading: Container(
-                  width: 60,
-                  height: 60,
-                  decoration: BoxDecoration(color: AppTheme.goldColor.withOpacity(0.1), borderRadius: BorderRadius.circular(8)),
-                  child: const Icon(Icons.phone_android, color: AppTheme.goldColor),
-                ),
-                title: Text('آيفون 15', style: TextStyle(fontFamily: 'Changa', color: AppTheme.getTextColor(context))),
-                subtitle: const Text('الكمية: 1', style: TextStyle(fontFamily: 'Changa')),
-                trailing: const Text('450,000 ر.ي', style: TextStyle(fontFamily: 'Changa', color: AppTheme.goldColor, fontWeight: FontWeight.bold)),
-              ),
-            ),
-            const SizedBox(height: 24),
-            CustomButton(text: 'تتبع الطلب', onPressed: () {}),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildInfoRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(label, style: const TextStyle(fontFamily: 'Changa', color: AppTheme.darkTextSecondary)),
-          Text(value, style: const TextStyle(fontFamily: 'Changa', fontWeight: FontWeight.w600)),
-        ],
-      ),
     );
   }
 }

@@ -1,44 +1,71 @@
 import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
+import '../../widgets/custom_app_bar.dart';
 import '../../widgets/custom_button.dart';
-import '../../widgets/simple_app_bar.dart';
+import '../../widgets/custom_text_field.dart';
+import '../../services/supabase_service.dart';
 
-class PaymentsScreen extends StatelessWidget {
+class PaymentsScreen extends StatefulWidget {
   const PaymentsScreen({super.key});
+  @override State<PaymentsScreen> createState() => _PaymentsScreenState();
+}
+
+class _PaymentsScreenState extends State<PaymentsScreen> {
+  final _billController = TextEditingController();
+  final _amountController = TextEditingController();
+  String? _selectedService;
+  bool _isLoading = false;
+  final List<String> _services = ['كهرباء', 'ماء', 'إنترنت', 'هاتف'];
+
+  Future<void> _pay() async {
+    if (_selectedService == null || _billController.text.isEmpty || _amountController.text.isEmpty) return;
+    setState(() => _isLoading = true);
+    try {
+      final amount = double.parse(_amountController.text);
+      final wallet = await SupabaseService.getWallet();
+      if (wallet != null && wallet.yerBalance >= amount) {
+        await SupabaseService.updateBalance('yer', wallet.yerBalance - amount);
+        await SupabaseService.createTransaction({
+          'type': 'payment',
+          'amount': amount,
+          'currency': 'YER',
+          'description': 'دفع فاتورة $_selectedService - رقم ${_billController.text}',
+          'status': 'completed',
+        });
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('تم الدفع بنجاح'), backgroundColor: AppTheme.success));
+        Navigator.pop(context);
+      } else {
+        throw Exception('الرصيد غير كافٍ');
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('خطأ: $e'), backgroundColor: AppTheme.error));
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: isDark ? AppTheme.darkBackground : AppTheme.lightBackground,
-      appBar: const SimpleAppBar(title: 'دفع الفواتير'),
-      body: ListView(
+      appBar: const CustomAppBar(title: 'دفع فواتير'),
+      body: Padding(
         padding: const EdgeInsets.all(16),
-        children: [
-          _buildBillCard(context, 'فاتورة الكهرباء', '25,000 ر.ي', Icons.electric_bolt, Colors.yellow),
-          _buildBillCard(context, 'فاتورة الماء', '8,500 ر.ي', Icons.water_drop, Colors.blue),
-          _buildBillCard(context, 'فاتورة الإنترنت', '15,000 ر.ي', Icons.wifi, Colors.green),
-          _buildBillCard(context, 'فاتورة الهاتف', '5,000 ر.ي', Icons.phone, Colors.purple),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBillCard(BuildContext context, String title, String amount, IconData icon, Color color) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      child: ListTile(
-        leading: Container(
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(color: color.withOpacity(0.1), borderRadius: BorderRadius.circular(10)),
-          child: Icon(icon, color: color),
-        ),
-        title: Text(title, style: TextStyle(fontFamily: 'Changa', color: AppTheme.getTextColor(context))),
-        subtitle: Text(amount, style: const TextStyle(fontFamily: 'Changa', color: AppTheme.goldColor, fontWeight: FontWeight.bold)),
-        trailing: ElevatedButton(
-          onPressed: () {},
-          style: ElevatedButton.styleFrom(backgroundColor: AppTheme.goldColor, foregroundColor: AppTheme.darkText),
-          child: const Text('دفع', style: TextStyle(fontFamily: 'Changa')),
+        child: Column(
+          children: [
+            DropdownButtonFormField<String>(
+              value: _selectedService,
+              hint: const Text('اختر الخدمة'),
+              items: _services.map((s) => DropdownMenuItem(value: s, child: Text(s))).toList(),
+              onChanged: (v) => setState(() => _selectedService = v),
+              decoration: InputDecoration(border: OutlineInputBorder(borderRadius: BorderRadius.circular(12))),
+            ),
+            const SizedBox(height: 16),
+            CustomTextField(controller: _billController, label: 'رقم الاشتراك', keyboardType: TextInputType.number),
+            const SizedBox(height: 16),
+            CustomTextField(controller: _amountController, label: 'المبلغ', prefixIcon: Icons.attach_money, keyboardType: TextInputType.number),
+            const SizedBox(height: 24),
+            CustomButton(text: 'دفع', onPressed: _pay, isLoading: _isLoading),
+          ],
         ),
       ),
     );
