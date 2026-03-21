@@ -15,57 +15,28 @@ jobs:
         with:
           channel: 'stable'
 
-      - name: Create fresh Flutter project with correct Gradle setup
+      - name: Create fresh Flutter project with updated AGP
         run: |
           mkdir -p /tmp/fresh
           cd /tmp/fresh
-          flutter create --org com.flexyemen --project-name flex_app .
-          cd $GITHUB_WORKSPACE
+          flutter create --org com.flexyemen --project-name fresh_project .
           
-          # نسخ الملفات المهمة
+          # تحديث Android Gradle Plugin إلى الإصدار 8.1.1
+          sed -i 's/id "com.android.application" version "8.1.0"/id "com.android.application" version "8.1.1"/g' android/settings.gradle
+          
+          cd $GITHUB_WORKSPACE
           cp -r lib /tmp/fresh/
           cp -r assets /tmp/fresh/ 2>/dev/null || true
           cp pubspec.yaml /tmp/fresh/
           cp .env /tmp/fresh/ 2>/dev/null || true
           
-          # استبدال المشروع بالكامل
-          rm -rf .git lib assets pubspec.yaml .env android ios
+          rm -rf lib assets pubspec.yaml .env android ios
           cp -r /tmp/fresh/. .
-          
-          # إزالة مجلد .git المؤقت
           rm -rf /tmp/fresh
-
-      - name: Fix Gradle settings
-        run: |
-          # تعديل settings.gradle لاستخدام الإعدادات الحديثة
-          cat > android/settings.gradle << 'SETTINGS_EOF'
-          pluginManagement {
-              def flutterSdkPath = {
-                  def properties = new Properties()
-                  file("local.properties").withInputStream { properties.load(it) }
-                  def flutterSdkPath = properties.getProperty("flutter.sdk")
-                  assert flutterSdkPath != null, "flutter.sdk not set in local.properties"
-                  return flutterSdkPath
-              }()
-              includeBuild("$flutterSdkPath/packages/flutter_tools/gradle")
-              repositories {
-                  google()
-                  mavenCentral()
-                  gradlePluginPortal()
-              }
-          }
-          
-          plugins {
-              id "dev.flutter.flutter-plugin-loader" version "1.0.0"
-              id "com.android.application" version "8.1.0" apply false
-          }
-          
-          include ":app"
-          SETTINGS_EOF
 
       - name: Set app name
         run: |
-          sed -i 's/android:label="flex_app"/android:label="Flex Yemen Market"/g' android/app/src/main/AndroidManifest.xml
+          sed -i 's/android:label="fresh_project"/android:label="Flex Yemen Market"/g' android/app/src/main/AndroidManifest.xml
 
       - name: Get dependencies
         run: flutter pub get
