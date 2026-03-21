@@ -1,39 +1,31 @@
 import 'package:flutter/material.dart';
-import '../../theme/app_theme.dart';
-import '../../widgets/simple_app_bar.dart';
+import '../../widgets/custom_app_bar.dart';
 
 class LanguageScreen extends StatefulWidget {
   const LanguageScreen({super.key});
-
-  @override
-  State<LanguageScreen> createState() => _LanguageScreenState();
+  @override State<LanguageScreen> createState() => _LanguageScreenState();
 }
 
 class _LanguageScreenState extends State<LanguageScreen> {
-  String _selectedLanguage = 'ar';
-
+  String _selectedLang = 'ar';
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: isDark ? AppTheme.darkBackground : AppTheme.lightBackground,
-      appBar: const SimpleAppBar(title: 'اللغة'),
+      appBar: const CustomAppBar(title: 'اللغة'),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          RadioListTile<String>(
-            title: const Text('العربية', style: TextStyle(fontFamily: 'Changa')),
+          RadioListTile(
+            title: const Text('العربية'),
             value: 'ar',
-            groupValue: _selectedLanguage,
-            activeColor: AppTheme.goldColor,
-            onChanged: (value) => setState(() => _selectedLanguage = value!),
+            groupValue: _selectedLang,
+            onChanged: (v) => setState(() => _selectedLang = v!),
           ),
-          RadioListTile<String>(
-            title: const Text('English', style: TextStyle(fontFamily: 'Changa')),
+          RadioListTile(
+            title: const Text('English'),
             value: 'en',
-            groupValue: _selectedLanguage,
-            activeColor: AppTheme.goldColor,
-            onChanged: (value) => setState(() => _selectedLanguage = value!),
+            groupValue: _selectedLang,
+            onChanged: (v) => setState(() => _selectedLang = v!),
           ),
         ],
       ),

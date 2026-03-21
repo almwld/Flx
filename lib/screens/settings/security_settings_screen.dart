@@ -1,49 +1,32 @@
 import 'package:flutter/material.dart';
-import '../../theme/app_theme.dart';
-import '../../widgets/custom_button.dart';
-import '../../widgets/simple_app_bar.dart';
+import '../../widgets/custom_app_bar.dart';
 
-class SecuritySettingsScreen extends StatelessWidget {
+class SecuritySettingsScreen extends StatefulWidget {
   const SecuritySettingsScreen({super.key});
+  @override State<SecuritySettingsScreen> createState() => _SecuritySettingsScreenState();
+}
 
+class _SecuritySettingsScreenState extends State<SecuritySettingsScreen> {
+  bool _twoFactor = false;
+  bool _biometric = false;
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: isDark ? AppTheme.darkBackground : AppTheme.lightBackground,
-      appBar: const SimpleAppBar(title: 'الأمان'),
-      body: Padding(
+      appBar: const CustomAppBar(title: 'الأمان والخصوصية'),
+      body: ListView(
         padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            Card(
-              child: ListTile(
-                leading: const Icon(Icons.lock_outline, color: AppTheme.goldColor),
-                title: Text('تغيير كلمة المرور', style: TextStyle(fontFamily: 'Changa', color: AppTheme.getTextColor(context))),
-                trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                onTap: () {},
-              ),
-            ),
-            const SizedBox(height: 12),
-            Card(
-              child: ListTile(
-                leading: const Icon(Icons.fingerprint, color: AppTheme.goldColor),
-                title: Text('المصادقة البيومترية', style: TextStyle(fontFamily: 'Changa', color: AppTheme.getTextColor(context))),
-                trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                onTap: () {},
-              ),
-            ),
-            const SizedBox(height: 12),
-            Card(
-              child: ListTile(
-                leading: const Icon(Icons.devices, color: AppTheme.goldColor),
-                title: Text('إدارة الأجهزة', style: TextStyle(fontFamily: 'Changa', color: AppTheme.getTextColor(context))),
-                trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                onTap: () {},
-              ),
-            ),
-          ],
-        ),
+        children: [
+          SwitchListTile(
+            title: const Text('المصادقة الثنائية'),
+            value: _twoFactor,
+            onChanged: (v) => setState(() => _twoFactor = v),
+          ),
+          SwitchListTile(
+            title: const Text('الدخول بالبصمة'),
+            value: _biometric,
+            onChanged: (v) => setState(() => _biometric = v),
+          ),
+        ],
       ),
     );
   }

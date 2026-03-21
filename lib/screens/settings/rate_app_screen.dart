@@ -5,7 +5,6 @@ import '../../widgets/custom_app_bar.dart';
 
 class RateAppScreen extends StatelessWidget {
   const RateAppScreen({super.key});
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,8 +41,8 @@ class RateAppScreen extends StatelessWidget {
               icon: const Icon(Icons.open_in_browser),
               label: const Text('فتح في المتجر'),
               style: OutlinedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 side: const BorderSide(color: AppTheme.goldColor),
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               ),
             ),
           ],

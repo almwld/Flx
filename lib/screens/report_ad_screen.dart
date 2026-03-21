@@ -1,58 +1,43 @@
 import 'package:flutter/material.dart';
-import '../../theme/app_theme.dart';
-import '../../widgets/custom_button.dart';
-import '../../widgets/simple_app_bar.dart';
+import '../widgets/custom_app_bar.dart';
+import '../widgets/custom_button.dart';
+import '../widgets/custom_text_field.dart';
 
 class ReportAdScreen extends StatefulWidget {
   const ReportAdScreen({super.key});
-
-  @override
-  State<ReportAdScreen> createState() => _ReportAdScreenState();
+  @override State<ReportAdScreen> createState() => _ReportAdScreenState();
 }
 
 class _ReportAdScreenState extends State<ReportAdScreen> {
-  String? _selectedReason;
+  String? _reason;
   final _detailsController = TextEditingController();
-
-  final List<String> _reasons = ['إعلان مضلل', 'منتج غير متوفر', 'سعر غير صحيح', 'صور مزيفة', 'سبام', 'أخرى'];
+  final List<String> _reasons = ['إعلان مخالف', 'محتوى غير لائق', 'انتحال شخصية', 'احتيال', 'أخرى'];
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: isDark ? AppTheme.darkBackground : AppTheme.lightBackground,
-      appBar: const SimpleAppBar(title: 'الإبلاغ عن إعلان'),
-      body: SingleChildScrollView(
+      appBar: const CustomAppBar(title: 'الإبلاغ عن إعلان'),
+      body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('سبب الإبلاغ:', style: TextStyle(fontFamily: 'Changa', fontSize: 16, fontWeight: FontWeight.w600, color: AppTheme.getTextColor(context))),
-            const SizedBox(height: 12),
-            Wrap(
-              spacing: 8,
-              children: _reasons.map((reason) => ChoiceChip(
-                label: Text(reason, style: const TextStyle(fontFamily: 'Changa')),
-                selected: _selectedReason == reason,
-                selectedColor: AppTheme.goldColor,
-                onSelected: (selected) => setState(() => _selectedReason = reason),
-              )).toList(),
+            DropdownButtonFormField<String>(
+              value: _reason,
+              hint: const Text('اختر سبب الإبلاغ'),
+              items: _reasons.map((r) => DropdownMenuItem(value: r, child: Text(r))).toList(),
+              onChanged: (v) => setState(() => _reason = v),
+              decoration: const InputDecoration(border: OutlineInputBorder()),
             ),
+            const SizedBox(height: 16),
+            CustomTextField(controller: _detailsController, label: 'تفاصيل إضافية (اختياري)', maxLines: 3),
             const SizedBox(height: 24),
-            Text('تفاصيل إضافية:', style: TextStyle(fontFamily: 'Changa', fontSize: 16, fontWeight: FontWeight.w600, color: AppTheme.getTextColor(context))),
-            const SizedBox(height: 12),
-            TextField(
-              controller: _detailsController,
-              maxLines: 4,
-              decoration: InputDecoration(
-                hintText: 'اشرح المشكلة بالتفصيل...',
-                filled: true,
-                fillColor: AppTheme.getCardColor(context),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
-              ),
+            CustomButton(
+              text: 'إرسال البلاغ',
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('تم إرسال البلاغ بنجاح')));
+                Navigator.pop(context);
+              },
             ),
-            const SizedBox(height: 32),
-            CustomButton(text: 'إرسال البلاغ', onPressed: () {}),
           ],
         ),
       ),

@@ -13,20 +13,10 @@ class _SupportTicketsScreenState extends State<SupportTicketsScreen> {
   final List<Map<String, dynamic>> _tickets = [
     {'id': 'T123', 'subject': 'مشكلة في الدفع', 'status': 'مفتوح', 'date': '2026-03-15'},
     {'id': 'T124', 'subject': 'استفسار عن منتج', 'status': 'مغلق', 'date': '2026-03-10'},
-    {'id': 'T125', 'subject': 'مشكلة في تسجيل الدخول', 'status': 'قيد المعالجة', 'date': '2026-03-18'},
   ];
   bool _showNewTicket = false;
   final _subjectController = TextEditingController();
   final _messageController = TextEditingController();
-
-  Color _getStatusColor(String status) {
-    switch (status) {
-      case 'مفتوح': return Colors.orange;
-      case 'مغلق': return Colors.green;
-      case 'قيد المعالجة': return Colors.blue;
-      default: return Colors.grey;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,16 +43,9 @@ class _SupportTicketsScreenState extends State<SupportTicketsScreen> {
               ),
               child: Column(
                 children: [
-                  CustomTextField(
-                    controller: _subjectController,
-                    label: 'الموضوع',
-                  ),
+                  CustomTextField(controller: _subjectController, label: 'الموضوع'),
                   const SizedBox(height: 12),
-                  CustomTextField(
-                    controller: _messageController,
-                    label: 'الرسالة',
-                    maxLines: 3,
-                  ),
+                  CustomTextField(controller: _messageController, label: 'الرسالة', maxLines: 3),
                   const SizedBox(height: 16),
                   Row(
                     children: [
@@ -98,7 +81,7 @@ class _SupportTicketsScreenState extends State<SupportTicketsScreen> {
             child: ListView.builder(
               padding: const EdgeInsets.all(16),
               itemCount: _tickets.length,
-              itemBuilder: (ctx, i) {
+              itemBuilder: (_, i) {
                 final t = _tickets[i];
                 return Card(
                   margin: const EdgeInsets.only(bottom: 12),
@@ -106,23 +89,22 @@ class _SupportTicketsScreenState extends State<SupportTicketsScreen> {
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   child: ListTile(
                     leading: CircleAvatar(
-                      backgroundColor: _getStatusColor(t['status']).withOpacity(0.2),
-                      child: Icon(Icons.confirmation_number, color: _getStatusColor(t['status'])),
+                      backgroundColor: (t['status'] == 'مفتوح' ? Colors.orange : Colors.green).withOpacity(0.2),
+                      child: Icon(Icons.confirmation_number, color: t['status'] == 'مفتوح' ? Colors.orange : Colors.green),
                     ),
                     title: Text(t['subject']),
                     subtitle: Text('رقم: ${t['id']} • ${t['date']}'),
                     trailing: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: _getStatusColor(t['status']).withOpacity(0.2),
+                        color: (t['status'] == 'مفتوح' ? Colors.orange : Colors.green).withOpacity(0.2),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
                         t['status'],
-                        style: TextStyle(color: _getStatusColor(t['status']), fontSize: 12),
+                        style: TextStyle(color: t['status'] == 'مفتوح' ? Colors.orange : Colors.green),
                       ),
                     ),
-                    onTap: () {},
                   ),
                 );
               },
