@@ -1,4 +1,4 @@
-name: Build Flex Yemen
+name: Build Flx
 
 on:
   push:
@@ -32,11 +32,20 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
-      - name: Build APK
-        run: flutter build apk --release
+      - name: Build APK (split-per-abi)
+        run: flutter build apk --release --split-per-abi --no-tree-shake-icons
 
-      - name: Upload APK
+      - name: Build App Bundle (optional)
+        run: flutter build appbundle --release
+
+      - name: Upload APKs
         uses: actions/upload-artifact@v4
         with:
-          name: app-release
+          name: app-release-apks
           path: build/app/outputs/flutter-apk/*.apk
+
+      - name: Upload App Bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release-bundle
+          path: build/app/outputs/bundle/release/*.aab
