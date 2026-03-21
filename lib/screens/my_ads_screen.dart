@@ -27,7 +27,7 @@ class MyAdsScreen extends StatelessWidget {
                     decoration: BoxDecoration(color: AppTheme.goldColor.withOpacity(0.1), borderRadius: BorderRadius.circular(8)),
                     child: const Icon(Icons.image, color: AppTheme.goldColor),
                   ),
-                  title: Text('إعلان ${index + 1}', style: TextStyle(fontFamily: 'Changa', color: AppTheme.getTextColor(context))),
+                  title: Text('إعلان ${index + 1}', style: TextStyle(fontFamily: 'Changa', color: isDark ? AppTheme.darkText : AppTheme.lightText)),
                   subtitle: Text('${(index + 1) * 10000} ر.ي', style: const TextStyle(fontFamily: 'Changa', color: AppTheme.goldColor)),
                   trailing: PopupMenuButton(
                     itemBuilder: (context) => [
@@ -38,7 +38,6 @@ class MyAdsScreen extends StatelessWidget {
                 ),
               ),
             )
-          : NoAdsState(onAddAd: () => Navigator.pushNamed(context, '/add_ad')),
     );
   }
 }

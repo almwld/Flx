@@ -3,7 +3,7 @@ import '../../widgets/custom_app_bar.dart';
 
 class AppsScreen extends StatelessWidget {
   const AppsScreen({super.key});
-  final List<String> _apps = ['NordVPN', 'McAfee', 'ويندوز', 'أوفيس'];
+  static const List<String> _apps = ['NordVPN', 'McAfee', 'ويندوز', 'أوفيس'];
   @override
   Widget build(BuildContext context) {
     return Scaffold(

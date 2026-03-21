@@ -3,7 +3,7 @@ import '../../widgets/custom_app_bar.dart';
 
 class GiftCardsScreen extends StatelessWidget {
   const GiftCardsScreen({super.key});
-  final List<String> _cards = ['جوجل بلاي', 'آيتونز', 'ستيم', 'بلاي ستيشن'];
+  static const List<String> _cards = ['جوجل بلاي', 'آيتونز', 'ستيم', 'بلاي ستيشن'];
   @override
   Widget build(BuildContext context) {
     return Scaffold(

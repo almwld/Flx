@@ -3,7 +3,7 @@ import '../../widgets/custom_app_bar.dart';
 
 class GamesScreen extends StatelessWidget {
   const GamesScreen({super.key});
-  final List<String> _games = ['بيجي', 'فري فاير', 'بوبجي', 'فورتنايت'];
+  static const List<String> _games = ['بيجي', 'فري فاير', 'بوبجي', 'فورتنايت'];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
