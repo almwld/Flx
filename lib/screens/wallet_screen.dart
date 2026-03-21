@@ -96,7 +96,7 @@ class _WalletScreenState extends State<WalletScreen> {
                         children: [
                           Row(
                             children: [
-                              Text(card['flag'], style: const TextStyle(fontSize: 30)),
+                              Text(card[.flag.] as String, style: const TextStyle(fontSize: 30)),
                               const Spacer(),
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -105,17 +105,17 @@ class _WalletScreenState extends State<WalletScreen> {
                                   borderRadius: BorderRadius.circular(20),
                                 ),
                                 child: Text(
-                                  card['currency'],
+                                  card[.currency.] as String,
                                   style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                                 ),
                               ),
                             ],
                           ),
                           const Spacer(),
-                          Text(card['name'], style: const TextStyle(color: Colors.white70)),
+                          Text(card[.name.] as String, style: const TextStyle(color: Colors.white70)),
                           const SizedBox(height: 4),
                           Text(
-                            _isHidden ? '••••••' : '${card['balance'].toStringAsFixed(0)} ر.ي',
+                            _isHidden ? '••••••' : '${(card[.balance.] as num).toDouble().toStringAsFixed(0)} ر.ي',
                             style: const TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold),
                           ),
                         ],

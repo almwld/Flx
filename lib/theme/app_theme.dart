@@ -76,5 +76,6 @@ class AppTheme {
   }
 }
 
+
   static const Color darkDivider = Color(0xFF2A2A3A);
   static const Color lightDivider = Color(0xFFE0E0E0);

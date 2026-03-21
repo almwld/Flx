@@ -32,7 +32,6 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
   }
 
   void _subscribeToMessages() {
-    _subscription = SupabaseService.client
         .channel('messages')
         .onPostgresChanges(
           event: PostgresChangeEvent.insert,
@@ -60,7 +59,6 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
 
   @override
   void dispose() {
-    _subscription.unsubscribe();
     super.dispose();
   }
 

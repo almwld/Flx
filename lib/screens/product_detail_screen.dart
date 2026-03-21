@@ -33,7 +33,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
 
   Future<void> _checkFavorite() async {
     if (SupabaseService.isAuthenticated) {
-      setState(() => _isFavorite = await SupabaseService.isFavorite(widget.product.id));
+      _checkFavorite() async { _isFavorite = await SupabaseService.isFavorite(widget.product.id); setState(() {}); }
     }
   }
 
