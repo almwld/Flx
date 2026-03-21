@@ -12,13 +12,14 @@ class WalletScreen extends StatelessWidget {
   final List<Map<String, dynamic>> _cards = const [
     {'currency': 'YER', 'balance': 125000, 'symbol': 'ر.ي', 'name': 'الريال اليمني', 'flag': '🇾🇪'},
     {'currency': 'SAR', 'balance': 5000, 'symbol': 'ر.س', 'name': 'الريال السعودي', 'flag': '🇸🇦'},
+    {'currency': 'USD', 'balance': 200, 'symbol': '\$', 'name': 'الدولار الأمريكي', 'flag': '🇺🇸'},
   ];
 
   final List<Map<String, dynamic>> _services = [
-    {'name': 'إيداع', 'icon': Icons.add_card, 'color': Colors.orange, 'screen': DepositScreen()},
-    {'name': 'سحب', 'icon': Icons.atm, 'color': Colors.blue, 'screen': WithdrawScreen()},
-    {'name': 'تحويل', 'icon': Icons.swap_horiz, 'color': Colors.green, 'screen': TransferScreen()},
-    {'name': 'عمليات', 'icon': Icons.history, 'color': Colors.teal, 'screen': TransactionsScreen()},
+    {'name': 'إيداع', 'icon': Icons.add_card, 'color': Colors.orange, 'screen': const DepositScreen()},
+    {'name': 'سحب', 'icon': Icons.atm, 'color': Colors.blue, 'screen': const WithdrawScreen()},
+    {'name': 'تحويل', 'icon': Icons.swap_horiz, 'color': Colors.green, 'screen': const TransferScreen()},
+    {'name': 'عمليات', 'icon': Icons.history, 'color': Colors.teal, 'screen': const TransactionsScreen()},
   ];
 
   @override
