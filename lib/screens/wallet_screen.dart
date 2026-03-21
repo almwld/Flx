@@ -15,7 +15,7 @@ class WalletScreen extends StatelessWidget {
     {'currency': 'USD', 'balance': 200, 'symbol': '\$', 'name': 'الدولار الأمريكي', 'flag': '🇺🇸'},
   ];
 
-  // إزالة const من هنا لأن القائمة تحتوي على كائنات غير ثابتة
+  // إزالة const بالكامل من هذه القائمة
   final List<Map<String, dynamic>> _services = [
     {'name': 'إيداع', 'icon': Icons.add_card, 'color': Colors.orange, 'screen': const DepositScreen()},
     {'name': 'سحب', 'icon': Icons.atm, 'color': Colors.blue, 'screen': const WithdrawScreen()},
