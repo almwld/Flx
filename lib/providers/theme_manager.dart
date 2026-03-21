@@ -4,12 +4,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 class ThemeManager extends ChangeNotifier {
   static const String _themeKey = 'isDarkMode';
   bool _isDarkMode = true;
-
   bool get isDarkMode => _isDarkMode;
 
-  ThemeManager() {
-    _loadTheme();
-  }
+  ThemeManager() { _loadTheme(); }
 
   Future<void> _loadTheme() async {
     final prefs = await SharedPreferences.getInstance();
