@@ -1,6 +1,15 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../widgets/custom_app_bar.dart';
+import '../services/supabase_service.dart';
+import 'wallet/deposit_screen.dart';
+import 'wallet/withdraw_screen.dart';
+import 'wallet/transfer_screen.dart';
+import 'wallet/payments_screen.dart';
+import 'wallet/transactions_screen.dart';
+import 'wallet/games_screen.dart';
+import 'wallet/apps_screen.dart';
+import 'wallet/gift_cards_screen.dart';
 
 class WalletScreen extends StatefulWidget {
   const WalletScreen({super.key});
@@ -10,27 +19,36 @@ class WalletScreen extends StatefulWidget {
 class _WalletScreenState extends State<WalletScreen> {
   int _currentCard = 0;
   bool _isHidden = false;
-  double _balance = 125000;
+  double _yerBalance = 125000;
+  double _sarBalance = 5000;
+  double _usdBalance = 200;
 
   final List<Map<String, dynamic>> _services = [
-    {'name': 'إيداع', 'icon': Icons.add_card, 'color': Colors.orange},
-    {'name': 'سحب', 'icon': Icons.atm, 'color': Colors.blue},
-    {'name': 'تحويل', 'icon': Icons.swap_horiz, 'color': Colors.green},
-    {'name': 'فواتير', 'icon': Icons.receipt, 'color': Colors.purple},
-    {'name': 'تطبيقات', 'icon': Icons.apps, 'color': Colors.cyan},
-    {'name': 'ألعاب', 'icon': Icons.sports_esports, 'color': Colors.red},
-    {'name': 'ترفيه', 'icon': Icons.movie, 'color': Colors.pink},
-    {'name': 'شبكة تحويل', 'icon': Icons.settings_ethernet, 'color': Colors.teal},
-    {'name': 'بنوك', 'icon': Icons.account_balance, 'color': Colors.indigo},
-    {'name': 'أمازون', 'icon': Icons.shopping_cart, 'color': Colors.amber},
-    {'name': 'بطاقة نت', 'icon': Icons.card_giftcard, 'color': Colors.brown},
-    {'name': 'تحويلات', 'icon': Icons.compare_arrows, 'color': Colors.lightBlue},
+    {'name': 'إيداع', 'icon': Icons.add_card, 'color': Colors.orange, 'screen': const DepositScreen()},
+    {'name': 'سحب', 'icon': Icons.atm, 'color': Colors.blue, 'screen': const WithdrawScreen()},
+    {'name': 'تحويل', 'icon': Icons.swap_horiz, 'color': Colors.green, 'screen': const TransferScreen()},
+    {'name': 'فواتير', 'icon': Icons.receipt, 'color': Colors.purple, 'screen': const PaymentsScreen()},
+    {'name': 'ألعاب', 'icon': Icons.sports_esports, 'color': Colors.red, 'screen': const GamesScreen()},
+    {'name': 'تطبيقات', 'icon': Icons.apps, 'color': Colors.cyan, 'screen': const AppsScreen()},
+    {'name': 'بطاقات', 'icon': Icons.card_giftcard, 'color': Colors.brown, 'screen': const GiftCardsScreen()},
+    {'name': 'عمليات', 'icon': Icons.history, 'color': Colors.teal, 'screen': const TransactionsScreen()},
   ];
 
-  void _navigateToService(BuildContext context, String route) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('سيتم إضافة خدمة $route قريباً')),
-    );
+  @override
+  void initState() {
+    super.initState();
+    _loadBalance();
+  }
+
+  Future<void> _loadBalance() async {
+    final wallet = await SupabaseService.getWallet();
+    if (wallet != null) {
+      setState(() {
+        _yerBalance = wallet.yerBalance;
+        _sarBalance = wallet.sarBalance;
+        _usdBalance = wallet.usdBalance;
+      });
+    }
   }
 
   @override
@@ -53,14 +71,14 @@ class _WalletScreenState extends State<WalletScreen> {
             child: SizedBox(
               height: 200,
               child: PageView.builder(
-                itemCount: 2,
+                itemCount: 3,
                 onPageChanged: (i) => setState(() => _currentCard = i),
                 itemBuilder: (_, i) {
-                  final bool isYer = i == 0;
-                  final String name = isYer ? 'الريال اليمني' : 'الريال السعودي';
-                  final double balance = isYer ? _balance : _balance / 20.0;
-                  final String flag = isYer ? '🇾🇪' : '🇸🇦';
-                  final String currency = isYer ? 'YER' : 'SAR';
+                  final card = i == 0
+                      ? {'name': 'الريال اليمني', 'balance': _yerBalance, 'flag': '🇾🇪', 'currency': 'YER'}
+                      : i == 1
+                          ? {'name': 'الريال السعودي', 'balance': _sarBalance, 'flag': '🇸🇦', 'currency': 'SAR'}
+                          : {'name': 'الدولار الأمريكي', 'balance': _usdBalance, 'flag': '🇺🇸', 'currency': 'USD'};
                   return Container(
                     margin: const EdgeInsets.symmetric(horizontal: 16),
                     decoration: BoxDecoration(
@@ -78,7 +96,7 @@ class _WalletScreenState extends State<WalletScreen> {
                         children: [
                           Row(
                             children: [
-                              Text(flag, style: const TextStyle(fontSize: 30)),
+                              Text(card['flag'], style: const TextStyle(fontSize: 30)),
                               const Spacer(),
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -87,17 +105,17 @@ class _WalletScreenState extends State<WalletScreen> {
                                   borderRadius: BorderRadius.circular(20),
                                 ),
                                 child: Text(
-                                  currency,
+                                  card['currency'],
                                   style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                                 ),
                               ),
                             ],
                           ),
                           const Spacer(),
-                          Text(name, style: const TextStyle(color: Colors.white70)),
+                          Text(card['name'], style: const TextStyle(color: Colors.white70)),
                           const SizedBox(height: 4),
                           Text(
-                            _isHidden ? '••••••' : '${balance.toStringAsFixed(0)} ر.ي',
+                            _isHidden ? '••••••' : '${card['balance'].toStringAsFixed(0)} ر.ي',
                             style: const TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold),
                           ),
                         ],
@@ -113,7 +131,7 @@ class _WalletScreenState extends State<WalletScreen> {
               padding: const EdgeInsets.symmetric(vertical: 16),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(2, (i) => AnimatedContainer(
+                children: List.generate(3, (i) => AnimatedContainer(
                   duration: const Duration(milliseconds: 300),
                   width: _currentCard == i ? 24 : 8,
                   height: 8,
@@ -132,7 +150,7 @@ class _WalletScreenState extends State<WalletScreen> {
             padding: const EdgeInsets.all(16),
             sliver: SliverGrid(
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
+                crossAxisCount: 4,
                 childAspectRatio: 1,
                 crossAxisSpacing: 12,
                 mainAxisSpacing: 12,
@@ -141,7 +159,7 @@ class _WalletScreenState extends State<WalletScreen> {
                 (_, i) {
                   final s = _services[i];
                   return GestureDetector(
-                    onTap: () => _navigateToService(context, s['name'] as String),
+                    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => s['screen'])),
                     child: Container(
                       decoration: BoxDecoration(
                         color: isDark ? AppTheme.darkCard : AppTheme.lightCard,
@@ -156,12 +174,12 @@ class _WalletScreenState extends State<WalletScreen> {
                               color: (s['color'] as Color).withOpacity(0.2),
                               shape: BoxShape.circle,
                             ),
-                            child: Icon(s['icon'] as IconData, color: s['color'] as Color, size: 28),
+                            child: Icon(s['icon'], color: s['color'], size: 28),
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            s['name'] as String,
-                            style: const TextStyle(fontSize: 12, fontFamily: 'Changa'),
+                            s['name'],
+                            style: const TextStyle(fontSize: 11, fontFamily: 'Changa'),
                             textAlign: TextAlign.center,
                           ),
                         ],
