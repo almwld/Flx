@@ -15,24 +15,29 @@ jobs:
         with:
           channel: 'stable'
 
-      - name: Create fresh Flutter project with updated AGP
+      - name: Create fresh Flutter project
         run: |
           mkdir -p /tmp/fresh
           cd /tmp/fresh
           flutter create --org com.flexyemen --project-name fresh_project .
-          
-          # تحديث Android Gradle Plugin إلى الإصدار 8.1.1
-          sed -i 's/id "com.android.application" version "8.1.0"/id "com.android.application" version "8.1.1"/g' android/settings.gradle
-          
           cd $GITHUB_WORKSPACE
           cp -r lib /tmp/fresh/
           cp -r assets /tmp/fresh/ 2>/dev/null || true
           cp pubspec.yaml /tmp/fresh/
           cp .env /tmp/fresh/ 2>/dev/null || true
-          
           rm -rf lib assets pubspec.yaml .env android ios
           cp -r /tmp/fresh/. .
           rm -rf /tmp/fresh
+
+      - name: Update AGP version
+        run: |
+          # تحديث Android Gradle Plugin إلى 8.1.1 بعد إنشاء المشروع
+          if [ -f android/settings.gradle ]; then
+            sed -i 's/id "com.android.application" version "8.1.0"/id "com.android.application" version "8.1.1"/g' android/settings.gradle
+            echo "✅ Updated AGP to 8.1.1"
+          else
+            echo "⚠️ android/settings.gradle not found"
+          fi
 
       - name: Set app name
         run: |
