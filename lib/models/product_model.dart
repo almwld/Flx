@@ -19,8 +19,8 @@ class ProductModel {
   final int reviewCount;
   final bool isFeatured;
   final int? discountPercentage;
-  final int views;           // إضافة حقل المشاهدات
-  final String status;       // إضافة حقل الحالة (active, expired, sold)
+  final int views;
+  final String status;
   final DateTime createdAt;
   final DateTime? updatedAt;
 
@@ -43,8 +43,8 @@ class ProductModel {
     required this.reviewCount,
     this.isFeatured = false,
     this.discountPercentage,
-    this.views = 0,           // القيمة الافتراضية
-    this.status = 'active',    // القيمة الافتراضية
+    this.views = 0,
+    this.status = 'active',
     required this.createdAt,
     this.updatedAt,
   });
@@ -90,42 +90,12 @@ class ProductModel {
       rating: (json['rating'] ?? json['average_rating'] ?? 0).toDouble(),
       reviewCount: json['review_count'] ?? json['total_reviews'] ?? 0,
       isFeatured: json['is_featured'] ?? false,
-      discountPercentage: json['discount_percentage'] != null 
-          ? (json['discount_percentage'] as num).toInt() : null,
-      views: json['views'] ?? 0,        // قراءة المشاهدات
-      status: json['status'] ?? 'active', // قراءة الحالة
-      createdAt: json['created_at'] != null 
-          ? DateTime.parse(json['created_at']) : DateTime.now(),
-      updatedAt: json['updated_at'] != null 
-          ? DateTime.parse(json['updated_at']) : null,
+      discountPercentage: json['discount_percentage'] != null ? (json['discount_percentage'] as num).toInt() : null,
+      views: json['views'] ?? 0,
+      status: json['status'] ?? 'active',
+      createdAt: json['created_at'] != null ? DateTime.parse(json['created_at']) : DateTime.now(),
+      updatedAt: json['updated_at'] != null ? DateTime.parse(json['updated_at']) : null,
     );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'title': title,
-      'description': description,
-      'price': price,
-      'old_price': oldPrice,
-      'currency': currency,
-      'images': images,
-      'category': category,
-      'sub_category': subCategory,
-      'seller_id': sellerId,
-      'seller_name': sellerName,
-      'seller_rating': sellerRating,
-      'seller_avatar': sellerAvatar,
-      'in_stock': inStock,
-      'rating': rating,
-      'review_count': reviewCount,
-      'is_featured': isFeatured,
-      'discount_percentage': discountPercentage,
-      'views': views,           // إضافة إلى JSON
-      'status': status,         // إضافة إلى JSON
-      'created_at': createdAt.toIso8601String(),
-      'updated_at': updatedAt?.toIso8601String(),
-    };
   }
 
   String get formattedPrice {
@@ -145,12 +115,12 @@ class ProductModel {
 
   String get timeAgo {
     final now = DateTime.now();
-    final difference = now.difference(createdAt);
-    if (difference.inDays > 365) return 'منذ ${difference.inDays ~/ 365} سنة';
-    else if (difference.inDays > 30) return 'منذ ${difference.inDays ~/ 30} شهر';
-    else if (difference.inDays > 0) return 'منذ ${difference.inDays} يوم';
-    else if (difference.inHours > 0) return 'منذ ${difference.inHours} ساعة';
-    else if (difference.inMinutes > 0) return 'منذ ${difference.inMinutes} دقيقة';
+    final diff = now.difference(createdAt);
+    if (diff.inDays > 365) return 'منذ ${diff.inDays ~/ 365} سنة';
+    else if (diff.inDays > 30) return 'منذ ${diff.inDays ~/ 30} شهر';
+    else if (diff.inDays > 0) return 'منذ ${diff.inDays} يوم';
+    else if (diff.inHours > 0) return 'منذ ${diff.inHours} ساعة';
+    else if (diff.inMinutes > 0) return 'منذ ${diff.inMinutes} دقيقة';
     else return 'الآن';
   }
 }
