@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../widgets/custom_app_bar.dart';
+import '../widgets/custom_button.dart';
+import '../widgets/custom_text_field.dart';
 import '../services/supabase_service.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
@@ -9,14 +11,24 @@ class ForgotPasswordScreen extends StatefulWidget {
 }
 
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
-  final _formKey = GlobalKey<FormState>(); final _emailController = TextEditingController();
-  bool _isLoading = false; bool _emailSent = false;
+  final _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
+  bool _isLoading = false;
+  bool _emailSent = false;
 
   Future<void> _sendResetEmail() async {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _isLoading = true);
-    try { await SupabaseService.resetPassword(_emailController.text.trim()); setState(() { _emailSent = true; _isLoading = false; }); }
-    catch (e) { setState(() => _isLoading = false); ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('خطأ: $e'), backgroundColor: AppTheme.error)); }
+    try {
+      await SupabaseService.resetPassword(_emailController.text.trim());
+      setState(() => _emailSent = true);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('خطأ: $e'), backgroundColor: AppTheme.error),
+      );
+    } finally {
+      setState(() => _isLoading = false);
+    }
   }
 
   @override
@@ -26,19 +38,56 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: _emailSent
-            ? Column(mainAxisAlignment: MainAxisAlignment.center, children: const [
-                Icon(Icons.mark_email_read, size: 80, color: AppTheme.goldColor),
-                SizedBox(height: 20),
-                Text('تم إرسال رابط إعادة التعيين إلى بريدك الإلكتروني.'),
-              ])
-            : Form(key: _formKey, child: Column(children: [
-                TextFormField(controller: _emailController, decoration: const InputDecoration(labelText: 'البريد الإلكتروني', border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(12)))),
-                  validator: (v) => v!.isEmpty ? 'مطلوب' : null),
-                const SizedBox(height: 20),
-                SizedBox(width: double.infinity, height: 50, child: ElevatedButton(onPressed: _sendResetEmail,
-                  style: ElevatedButton.styleFrom(backgroundColor: AppTheme.goldColor, foregroundColor: Colors.black, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
-                  child: _isLoading ? const CircularProgressIndicator(color: Colors.black) : const Text('إرسال'))),
-              ])),
+            ? Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.mark_email_read, size: 80, color: AppTheme.goldColor),
+                  const SizedBox(height: 20),
+                  const Text(
+                    'تم إرسال رابط إعادة التعيين',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 16),
+                  const Text(
+                    'لقد أرسلنا رابطاً إلى بريدك الإلكتروني. يرجى التحقق منه واتباع التعليمات.',
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 32),
+                  CustomButton(
+                    text: 'العودة لتسجيل الدخول',
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ],
+              )
+            : Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    const Text(
+                      'أدخل بريدك الإلكتروني',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    const SizedBox(height: 16),
+                    CustomTextField(
+                      controller: _emailController,
+                      label: 'البريد الإلكتروني',
+                      prefixIcon: Icons.email_outlined,
+                      keyboardType: TextInputType.emailAddress,
+                      validator: (v) {
+                        if (v!.isEmpty) return 'مطلوب';
+                        if (!v.contains('@')) return 'بريد غير صحيح';
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 24),
+                    CustomButton(
+                      text: 'إرسال رابط إعادة التعيين',
+                      onPressed: _sendResetEmail,
+                      isLoading: _isLoading,
+                    ),
+                  ],
+                ),
+              ),
       ),
     );
   }

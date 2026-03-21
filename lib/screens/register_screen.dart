@@ -6,8 +6,7 @@ import '../widgets/custom_button.dart';
 import '../widgets/custom_text_field.dart';
 import '../services/supabase_service.dart';
 import 'login_screen.dart';
-import 'terms_screen.dart';
-import 'privacy_policy_screen.dart';
+import 'settings/privacy_policy_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -15,24 +14,56 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  final _formKey = GlobalKey<FormState>(); final _nameController = TextEditingController(); final _phoneController = TextEditingController();
-  final _passwordController = TextEditingController(); final _confirmController = TextEditingController();
-  String _userType = 'customer'; bool _agreeToTerms = false; bool _isLoading = false;
-  bool _obscurePassword = true; bool _obscureConfirm = true;
+  final _formKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
+  final _phoneController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _confirmController = TextEditingController();
+  String _userType = 'customer';
+  bool _agreeToTerms = false;
+  bool _isLoading = false;
+  bool _obscurePassword = true;
+  bool _obscureConfirm = true;
+  String? _selectedCity;
+  final List<String> _cities = ['صنعاء', 'عدن', 'تعز', 'الحديدة', 'المكلا', 'إب', 'سيئون', 'ذمار', 'صعدة', 'حجة'];
 
   Future<void> _register() async {
     if (!_formKey.currentState!.validate()) return;
-    if (!_agreeToTerms) { ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('يجب الموافقة على الشروط'), backgroundColor: AppTheme.error)); return; }
+    if (!_agreeToTerms) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('يجب الموافقة على الشروط'), backgroundColor: AppTheme.error),
+      );
+      return;
+    }
     setState(() => _isLoading = true);
     try {
-      final email = '${_phoneController.text}@temp.flexyemen.com';
-      final response = await SupabaseService.signUpWithEmail(email: email, password: _passwordController.text, data: {'full_name': _nameController.text, 'phone': _phoneController.text, 'user_type': _userType});
+      final email = _emailController.text.trim();
+      final response = await SupabaseService.signUpWithEmail(
+        email: email,
+        password: _passwordController.text,
+        data: {
+          'full_name': _nameController.text,
+          'phone': _phoneController.text,
+          'user_type': _userType,
+          'city': _selectedCity,
+        },
+      );
       if (response.user != null && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('تم إنشاء الحساب، يرجى تفعيل البريد'), backgroundColor: AppTheme.success));
-        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const LoginScreen()));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('تم إنشاء الحساب، يرجى تفعيل البريد'), backgroundColor: AppTheme.success),
+        );
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (_) => const LoginScreen()),
+        );
       }
-    } catch (e) { ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('حدث خطأ: $e'), backgroundColor: AppTheme.error)); }
-    finally { if (mounted) setState(() => _isLoading = false); }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('حدث خطأ: $e'), backgroundColor: AppTheme.error),
+      );
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 
   @override
@@ -44,55 +75,177 @@ class _RegisterScreenState extends State<RegisterScreen> {
         padding: const EdgeInsets.all(16),
         child: Form(
           key: _formKey,
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            const Text('أدخل بياناتك لإنشاء حساب جديد', style: TextStyle(fontSize: 16, color: Colors.grey)), const SizedBox(height: 24),
-            Row(children: [
-              Expanded(child: GestureDetector(onTap: () => setState(() => _userType = 'merchant'), child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 12), decoration: BoxDecoration(color: _userType == 'merchant' ? AppTheme.goldColor : (isDark ? AppTheme.darkCard : AppTheme.lightCard),
-                  borderRadius: BorderRadius.circular(8), border: Border.all(color: _userType == 'merchant' ? AppTheme.goldColor : Colors.grey.shade400)),
-                child: Center(child: Text('نقطة مبيعات', style: TextStyle(color: _userType == 'merchant' ? Colors.black : (isDark ? Colors.white : Colors.black87), fontWeight: FontWeight.bold))),
-              ))),
-              const SizedBox(width: 12),
-              Expanded(child: GestureDetector(onTap: () => setState(() => _userType = 'customer'), child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 12), decoration: BoxDecoration(color: _userType == 'customer' ? AppTheme.goldColor : (isDark ? AppTheme.darkCard : AppTheme.lightCard),
-                  borderRadius: BorderRadius.circular(8), border: Border.all(color: _userType == 'customer' ? AppTheme.goldColor : Colors.grey.shade400)),
-                child: Center(child: Text('عميل', style: TextStyle(color: _userType == 'customer' ? Colors.black : (isDark ? Colors.white : Colors.black87), fontWeight: FontWeight.bold))),
-              ))),
-            ]), const SizedBox(height: 16),
-            CustomTextField(controller: _nameController, label: 'الاسم الكامل', prefixIcon: Icons.person_outline, validator: (v) => v!.isEmpty ? 'مطلوب' : null),
-            const SizedBox(height: 16),
-            CustomTextField(controller: _phoneController, label: 'رقم الموبايل', prefixIcon: Icons.phone_android, keyboardType: TextInputType.phone,
-              validator: (v) { if (v!.isEmpty) return 'مطلوب'; if (v.length < 10) return 'رقم غير صحيح'; return null; }),
-            const SizedBox(height: 16),
-            CustomTextField(controller: _passwordController, label: 'كلمة المرور', prefixIcon: Icons.lock_outline, obscureText: _obscurePassword,
-              suffixIcon: _obscurePassword ? Icons.visibility_off : Icons.visibility,
-              onSuffixPressed: () => setState(() => _obscurePassword = !_obscurePassword),
-              validator: (v) { if (v!.isEmpty) return 'مطلوبة'; if (v.length < 6) return '6 أحرف على الأقل'; return null; }),
-            const SizedBox(height: 16),
-            CustomTextField(controller: _confirmController, label: 'تأكيد كلمة المرور', prefixIcon: Icons.lock_outline, obscureText: _obscureConfirm,
-              suffixIcon: _obscureConfirm ? Icons.visibility_off : Icons.visibility,
-              onSuffixPressed: () => setState(() => _obscureConfirm = !_obscureConfirm),
-              validator: (v) { if (v!.isEmpty) return 'مطلوب'; if (v != _passwordController.text) return 'غير متطابقة'; return null; }),
-            const SizedBox(height: 16),
-            Row(children: [
-              Checkbox(value: _agreeToTerms, onChanged: (v) => setState(() => _agreeToTerms = v ?? false), activeColor: AppTheme.goldColor),
-              Expanded(child: GestureDetector(onTap: () => setState(() => _agreeToTerms = !_agreeToTerms), child: RichText(
-                text: TextSpan(style: TextStyle(color: isDark ? Colors.white : Colors.black87), children: [
-                  const TextSpan(text: 'أوافق على '),
-                  TextSpan(text: 'الشروط والأحكام', style: const TextStyle(color: AppTheme.goldColor, decoration: TextDecoration.underline),
-                    recognizer: TapGestureRecognizer()..onTap = () => Navigator.push(context, MaterialPageRoute(builder: (_) => const TermsScreen()))),
-                  const TextSpan(text: ' و '),
-                  TextSpan(text: 'سياسة الخصوصية', style: const TextStyle(color: AppTheme.goldColor, decoration: TextDecoration.underline),
-                    recognizer: TapGestureRecognizer()..onTap = () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PrivacyPolicyScreen()))),
-                ])))),
-            ]), const SizedBox(height: 24),
-            CustomButton(text: 'إنشاء حساب', onPressed: _register, isLoading: _isLoading),
-            const SizedBox(height: 16),
-            Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              const Text('لديك حساب بالفعل؟'),
-              TextButton(onPressed: () => Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const LoginScreen())), child: const Text('تسجيل الدخول', style: TextStyle(color: AppTheme.goldColor))),
-            ]),
-          ]),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('أدخل بياناتك لإنشاء حساب جديد', style: TextStyle(fontSize: 16, color: Colors.grey)),
+              const SizedBox(height: 24),
+              Row(
+                children: [
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => setState(() => _userType = 'merchant'),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        decoration: BoxDecoration(
+                          color: _userType == 'merchant' ? AppTheme.goldColor : (isDark ? AppTheme.darkCard : AppTheme.lightCard),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: _userType == 'merchant' ? AppTheme.goldColor : Colors.grey.shade400),
+                        ),
+                        child: Center(
+                          child: Text(
+                            'نقطة مبيعات',
+                            style: TextStyle(
+                              color: _userType == 'merchant' ? Colors.black : (isDark ? Colors.white : Colors.black87),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => setState(() => _userType = 'customer'),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        decoration: BoxDecoration(
+                          color: _userType == 'customer' ? AppTheme.goldColor : (isDark ? AppTheme.darkCard : AppTheme.lightCard),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: _userType == 'customer' ? AppTheme.goldColor : Colors.grey.shade400),
+                        ),
+                        child: Center(
+                          child: Text(
+                            'عميل',
+                            style: TextStyle(
+                              color: _userType == 'customer' ? Colors.black : (isDark ? Colors.white : Colors.black87),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+              CustomTextField(
+                controller: _nameController,
+                label: 'الاسم الكامل',
+                prefixIcon: Icons.person_outline,
+                validator: (v) => v!.isEmpty ? 'مطلوب' : null,
+              ),
+              const SizedBox(height: 16),
+              CustomTextField(
+                controller: _phoneController,
+                label: 'رقم الموبايل',
+                prefixIcon: Icons.phone_android,
+                keyboardType: TextInputType.phone,
+                validator: (v) => v!.isEmpty ? 'مطلوب' : null,
+              ),
+              const SizedBox(height: 16),
+              CustomTextField(
+                controller: _emailController,
+                label: 'البريد الإلكتروني',
+                prefixIcon: Icons.email_outlined,
+                keyboardType: TextInputType.emailAddress,
+                validator: (v) => v!.isEmpty ? 'مطلوب' : null,
+              ),
+              const SizedBox(height: 16),
+              CustomTextField(
+                controller: _passwordController,
+                label: 'كلمة المرور',
+                prefixIcon: Icons.lock_outline,
+                obscureText: _obscurePassword,
+                suffixIcon: _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                onSuffixPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                validator: (v) {
+                  if (v!.isEmpty) return 'مطلوبة';
+                  if (v.length < 6) return '6 أحرف على الأقل';
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+              CustomTextField(
+                controller: _confirmController,
+                label: 'تأكيد كلمة المرور',
+                prefixIcon: Icons.lock_outline,
+                obscureText: _obscureConfirm,
+                suffixIcon: _obscureConfirm ? Icons.visibility_off : Icons.visibility,
+                onSuffixPressed: () => setState(() => _obscureConfirm = !_obscureConfirm),
+                validator: (v) => v != _passwordController.text ? 'غير متطابقة' : null,
+              ),
+              const SizedBox(height: 16),
+              DropdownButtonFormField<String>(
+                value: _selectedCity,
+                hint: const Text('اختر المدينة'),
+                items: _cities.map((c) => DropdownMenuItem(value: c, child: Text(c))).toList(),
+                onChanged: (v) => setState(() => _selectedCity = v),
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Checkbox(
+                    value: _agreeToTerms,
+                    onChanged: (v) => setState(() => _agreeToTerms = v ?? false),
+                    activeColor: AppTheme.goldColor,
+                  ),
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => setState(() => _agreeToTerms = !_agreeToTerms),
+                      child: RichText(
+                        text: TextSpan(
+                          style: TextStyle(color: isDark ? Colors.white : Colors.black87),
+                          children: [
+                            const TextSpan(text: 'أوافق على '),
+                            TextSpan(
+                              text: 'سياسة الخصوصية',
+                              style: const TextStyle(color: AppTheme.goldColor, decoration: TextDecoration.underline),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (_) => const PrivacyPolicyScreen()),
+                                  );
+                                },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+              CustomButton(
+                text: 'إنشاء حساب',
+                onPressed: _register,
+                isLoading: _isLoading,
+              ),
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text('لديك حساب بالفعل؟'),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(builder: (_) => const LoginScreen()),
+                      );
+                    },
+                    child: const Text(
+                      'تسجيل الدخول',
+                      style: TextStyle(color: AppTheme.goldColor),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

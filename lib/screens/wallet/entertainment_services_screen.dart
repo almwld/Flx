@@ -1,47 +1,36 @@
-import 'package:flex_yemen/models/rating_model.dart';
 import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
-import '../../widgets/custom_app_bar.dart';
+import '../../widgets/simple_app_bar.dart';
 
 class EntertainmentServicesScreen extends StatelessWidget {
   const EntertainmentServicesScreen({super.key});
 
-  final List<Map<String, dynamic>> _services = const [
-    {'name': 'نتفلكس', 'icon': Icons.movie, 'price': '15$'},
-    {'name': 'شاهد', 'icon': Icons.tv, 'price': '10$'},
-    {'name': 'يوتيوب بريميوم', 'icon': Icons.play_circle, 'price': '12$'},
-    {'name': 'سبوتيفاي', 'icon': Icons.music_note, 'price': '8$'},
-    {'name': 'أنغامي', 'icon': Icons.audiotrack, 'price': '5$'},
-    {'name': 'ديزني بلس', 'icon': Icons.movie, 'price': '14$'},
+  final List<Map<String, dynamic>> services = const [
+    {'name': 'Netflix', 'icon': Icons.movie},
+    {'name': 'Shahid', 'icon': Icons.tv},
+    {'name': 'Spotify', 'icon': Icons.music_note},
+    {'name': 'YouTube Premium', 'icon': Icons.play_circle},
   ];
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-
     return Scaffold(
-      appBar: const CustomAppBar(title: 'خدمات ترفيه'),
-      body: ListView.builder(
+      backgroundColor: isDark ? AppTheme.darkBackground : AppTheme.lightBackground,
+      appBar: const SimpleAppBar(title: 'خدمات ترفيه'),
+      body: GridView.builder(
         padding: const EdgeInsets.all(16),
-        itemCount: _services.length,
-        itemBuilder: (ctx, i) {
-          final s = _services[i];
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, childAspectRatio: 1.2),
+        itemCount: services.length,
+        itemBuilder: (context, index) {
           return Card(
-            margin: const EdgeInsets.only(bottom: 8),
-            color: isDark ? AppTheme.darkCard : AppTheme.lightCard,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            child: ListTile(
-              leading: Icon(s['icon'] as IconData, color: AppTheme.goldColor),
-              title: Text(s['name']),
-              subtitle: Text('اشتراك شهري: ${s['price']}'),
-              trailing: ElevatedButton(
-                onPressed: () {},
-                child: const Text('اشتراك'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppTheme.goldColor,
-                  foregroundColor: Colors.black,
-                ),
-              ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(services[index]['icon'], size: 48, color: AppTheme.goldColor),
+                const SizedBox(height: 12),
+                Text(services[index]['name'], style: TextStyle(fontFamily: 'Changa', color: AppTheme.getTextColor(context))),
+              ],
             ),
           );
         },

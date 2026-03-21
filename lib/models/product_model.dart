@@ -98,6 +98,33 @@ class ProductModel {
     );
   }
 
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'description': description,
+      'price': price,
+      'old_price': oldPrice,
+      'currency': currency,
+      'images': images,
+      'category': category,
+      'sub_category': subCategory,
+      'seller_id': sellerId,
+      'seller_name': sellerName,
+      'seller_rating': sellerRating,
+      'seller_avatar': sellerAvatar,
+      'in_stock': inStock,
+      'rating': rating,
+      'review_count': reviewCount,
+      'is_featured': isFeatured,
+      'discount_percentage': discountPercentage,
+      'views': views,
+      'status': status,
+      'created_at': createdAt.toIso8601String(),
+      'updated_at': updatedAt?.toIso8601String(),
+    };
+  }
+
   String get formattedPrice {
     if (price >= 1000000) return '${(price / 1000000).toStringAsFixed(1)}M';
     else if (price >= 1000) return '${(price / 1000).toStringAsFixed(0)}K';

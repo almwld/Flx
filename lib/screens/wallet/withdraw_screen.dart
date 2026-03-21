@@ -1,9 +1,7 @@
-import 'package:flex_yemen/models/rating_model.dart';
 import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
-import '../../widgets/custom_app_bar.dart';
 import '../../widgets/custom_button.dart';
-import '../../widgets/custom_text_field.dart';
+import '../../widgets/simple_app_bar.dart';
 
 class WithdrawScreen extends StatefulWidget {
   const WithdrawScreen({super.key});
@@ -15,85 +13,130 @@ class WithdrawScreen extends StatefulWidget {
 class _WithdrawScreenState extends State<WithdrawScreen> {
   final _amountController = TextEditingController();
   final _accountController = TextEditingController();
-  String? _selectedBank;
+  String _selectedCurrency = 'YER';
+  String _selectedMethod = 'كريمي';
   bool _isLoading = false;
 
-  final List<String> _banks = [
-    'البنك الأهلي اليمني',
-    'كاك بنك',
-    'بنك الكريمي',
-    'البنك الإسلامي',
-  ];
+  final List<String> _currencies = ['YER', 'SAR', 'USD'];
+  final List<String> _methods = ['كريمي', 'بنكي', 'تحويل', 'نقدي'];
+
+  @override
+  void dispose() {
+    _amountController.dispose();
+    _accountController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _withdraw() async {
+    if (_amountController.text.isEmpty || _accountController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('يرجى ملء جميع الحقول', style: TextStyle(fontFamily: 'Changa')),
+          backgroundColor: AppTheme.error,
+        ),
+      );
+      return;
+    }
+
+    setState(() => _isLoading = true);
+    await Future.delayed(const Duration(seconds: 2));
+
+    if (mounted) {
+      setState(() => _isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('تم إرسال طلب السحب بنجاح', style: TextStyle(fontFamily: 'Changa')),
+          backgroundColor: AppTheme.success,
+        ),
+      );
+      Navigator.pop(context);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final balance = 125000;
 
     return Scaffold(
-      appBar: const CustomAppBar(title: 'سحب'),
+      backgroundColor: isDark ? AppTheme.darkBackground : AppTheme.lightBackground,
+      appBar: const SimpleAppBar(title: 'سحب'),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [AppTheme.goldColor, AppTheme.goldLight],
-                ),
+                gradient: AppTheme.goldGradient,
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('الرصيد المتاح', style: TextStyle(fontSize: 14, color: Colors.black87)),
+                  const Text('الرصيد الحالي', style: TextStyle(fontFamily: 'Changa', fontSize: 14, color: AppTheme.darkText)),
                   const SizedBox(height: 8),
-                  Text('$balance ر.ي', style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.black)),
+                  const Text('125,000 ر.ي', style: TextStyle(fontFamily: 'Changa', fontSize: 28, fontWeight: FontWeight.bold, color: AppTheme.darkText)),
                 ],
               ),
             ),
+            const SizedBox(height: 32),
+            Text('العملة', style: TextStyle(fontFamily: 'Changa', fontSize: 16, fontWeight: FontWeight.w600, color: AppTheme.getTextColor(context))),
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 12,
+              children: _currencies.map((currency) {
+                return ChoiceChip(
+                  label: Text(currency, style: TextStyle(fontFamily: 'Changa', color: _selectedCurrency == currency ? AppTheme.darkText : AppTheme.getTextColor(context))),
+                  selected: _selectedCurrency == currency,
+                  selectedColor: AppTheme.goldColor,
+                  onSelected: (selected) => setState(() => _selectedCurrency = currency),
+                );
+              }).toList(),
+            ),
             const SizedBox(height: 24),
-            DropdownButtonFormField<String>(
-              value: _selectedBank,
-              hint: const Text('اختر البنك'),
-              decoration: InputDecoration(
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-              ),
-              items: _banks.map((b) => DropdownMenuItem(value: b, child: Text(b))).toList(),
-              onChanged: (v) => setState(() => _selectedBank = v),
-            ),
-            const SizedBox(height: 16),
-            CustomTextField(
-              controller: _accountController,
-              label: 'رقم الحساب / IBAN',
-              prefixIcon: Icons.numbers,
-            ),
-            const SizedBox(height: 16),
-            CustomTextField(
+            Text('المبلغ', style: TextStyle(fontFamily: 'Changa', fontSize: 16, fontWeight: FontWeight.w600, color: AppTheme.getTextColor(context))),
+            const SizedBox(height: 12),
+            TextField(
               controller: _amountController,
-              label: 'المبلغ',
-              prefixIcon: Icons.attach_money,
               keyboardType: TextInputType.number,
+              textAlign: TextAlign.right,
+              style: const TextStyle(fontFamily: 'Changa'),
+              decoration: InputDecoration(
+                hintText: 'أدخل المبلغ',
+                filled: true,
+                fillColor: AppTheme.getCardColor(context),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+              ),
             ),
             const SizedBox(height: 24),
-            CustomButton(
-              text: 'طلب سحب',
-              onPressed: (_selectedBank == null || _accountController.text.isEmpty || _amountController.text.isEmpty)
-                  ? null
-                  : () {
-                      setState(() => _isLoading = true);
-                      Future.delayed(const Duration(seconds: 2), () {
-                        setState(() => _isLoading = false);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('تم تقديم طلب السحب بنجاح')),
-                        );
-                        Navigator.pop(context);
-                      });
-                    },
-              isLoading: _isLoading,
+            Text('رقم الحساب/الجوال', style: TextStyle(fontFamily: 'Changa', fontSize: 16, fontWeight: FontWeight.w600, color: AppTheme.getTextColor(context))),
+            const SizedBox(height: 12),
+            TextField(
+              controller: _accountController,
+              keyboardType: TextInputType.phone,
+              textAlign: TextAlign.right,
+              style: const TextStyle(fontFamily: 'Changa'),
+              decoration: InputDecoration(
+                hintText: 'أدخل رقم الحساب أو الجوال',
+                filled: true,
+                fillColor: AppTheme.getCardColor(context),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+              ),
             ),
+            const SizedBox(height: 24),
+            Text('طريقة السحب', style: TextStyle(fontFamily: 'Changa', fontSize: 16, fontWeight: FontWeight.w600, color: AppTheme.getTextColor(context))),
+            const SizedBox(height: 12),
+            ..._methods.map((method) => RadioListTile<String>(
+              title: Text(method, style: const TextStyle(fontFamily: 'Changa')),
+              value: method,
+              groupValue: _selectedMethod,
+              activeColor: AppTheme.goldColor,
+              onChanged: (value) => setState(() => _selectedMethod = value!),
+            )).toList(),
+            const SizedBox(height: 32),
+            CustomButton(text: 'سحب', onPressed: _withdraw, isLoading: _isLoading),
           ],
         ),
       ),

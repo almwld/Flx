@@ -10,7 +10,6 @@ class RatingModel {
   final String? comment;
   final List<String>? images;
   final DateTime createdAt;
-  final DateTime? updatedAt;
 
   RatingModel({
     required this.id,
@@ -22,16 +21,19 @@ class RatingModel {
     this.comment,
     this.images,
     required this.createdAt,
-    this.updatedAt,
   });
 
   factory RatingModel.fromJson(Map<String, dynamic> json) {
     List<String>? imagesList;
     if (json['images'] != null) {
-      if (json['images'] is List) imagesList = List<String>.from(json['images']);
-      else if (json['images'] is String) {
-        try { imagesList = List<String>.from(jsonDecode(json['images'])); } 
-        catch (e) { imagesList = []; }
+      if (json['images'] is List) {
+        imagesList = List<String>.from(json['images']);
+      } else if (json['images'] is String) {
+        try {
+          imagesList = List<String>.from(jsonDecode(json['images']));
+        } catch (e) {
+          imagesList = [];
+        }
       }
     }
 
@@ -45,18 +47,17 @@ class RatingModel {
       comment: json['comment'],
       images: imagesList,
       createdAt: json['created_at'] != null ? DateTime.parse(json['created_at']) : DateTime.now(),
-      updatedAt: json['updated_at'] != null ? DateTime.parse(json['updated_at']) : null,
     );
   }
 
   String get formattedDate {
     final now = DateTime.now();
-    final difference = now.difference(createdAt);
-    if (difference.inDays > 365) return 'منذ ${difference.inDays ~/ 365} سنة';
-    else if (difference.inDays > 30) return 'منذ ${difference.inDays ~/ 30} شهر';
-    else if (difference.inDays > 0) return 'منذ ${difference.inDays} يوم';
-    else if (difference.inHours > 0) return 'منذ ${difference.inHours} ساعة';
-    else if (difference.inMinutes > 0) return 'منذ ${difference.inMinutes} دقيقة';
+    final diff = now.difference(createdAt);
+    if (diff.inDays > 365) return 'منذ ${diff.inDays ~/ 365} سنة';
+    else if (diff.inDays > 30) return 'منذ ${diff.inDays ~/ 30} شهر';
+    else if (diff.inDays > 0) return 'منذ ${diff.inDays} يوم';
+    else if (diff.inHours > 0) return 'منذ ${diff.inHours} ساعة';
+    else if (diff.inMinutes > 0) return 'منذ ${diff.inMinutes} دقيقة';
     else return 'الآن';
   }
 }

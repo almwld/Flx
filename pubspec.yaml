@@ -13,6 +13,7 @@ dependencies:
   provider: ^6.1.1
   supabase_flutter: ^2.0.0
   carousel_slider: ^5.1.2
+  flutter_animate: ^4.3.0
   flutter_svg: ^2.0.17
   image_picker: ^1.0.7
   cached_network_image: ^3.3.1
@@ -62,7 +63,6 @@ flutter:
           weight: 600
   assets:
     - assets/images/
-    - assets/icons/
     - assets/icons/svg/
     - assets/animations/
     - .env

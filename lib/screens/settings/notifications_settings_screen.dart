@@ -1,78 +1,52 @@
 import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
-import '../../widgets/custom_app_bar.dart';
+import '../../widgets/simple_app_bar.dart';
 
 class NotificationsSettingsScreen extends StatefulWidget {
   const NotificationsSettingsScreen({super.key});
-  @override State<NotificationsSettingsScreen> createState() => _NotificationsSettingsScreenState();
+
+  @override
+  State<NotificationsSettingsScreen> createState() => _NotificationsSettingsScreenState();
 }
 
 class _NotificationsSettingsScreenState extends State<NotificationsSettingsScreen> {
-  bool _all = true;
-  bool _orders = true;
-  bool _promos = false;
-  bool _messages = true;
-  bool _email = false;
+  bool _allNotifications = true;
+  bool _orderNotifications = true;
+  bool _messageNotifications = true;
+  bool _offerNotifications = true;
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      appBar: const CustomAppBar(title: 'الإشعارات'),
+      backgroundColor: isDark ? AppTheme.darkBackground : AppTheme.lightBackground,
+      appBar: const SimpleAppBar(title: 'إعدادات الإشعارات'),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          Card(
-            color: isDark ? AppTheme.darkCard : AppTheme.lightCard,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-            child: Column(
-              children: [
-                SwitchListTile(
-                  title: const Text('جميع الإشعارات'),
-                  subtitle: const Text('تشغيل أو إيقاف الكل'),
-                  value: _all,
-                  onChanged: (v) {
-                    setState(() {
-                      _all = v;
-                      _orders = v;
-                      _promos = v;
-                      _messages = v;
-                    });
-                  },
-                  secondary: const Icon(Icons.notifications, color: AppTheme.goldColor),
-                ),
-                const Divider(),
-                SwitchListTile(
-                  title: const Text('تحديثات الطلبات'),
-                  value: _orders,
-                  onChanged: (v) => setState(() => _orders = v),
-                  secondary: const Icon(Icons.shopping_bag, color: AppTheme.goldColor),
-                ),
-                SwitchListTile(
-                  title: const Text('العروض والتخفيضات'),
-                  value: _promos,
-                  onChanged: (v) => setState(() => _promos = v),
-                  secondary: const Icon(Icons.local_offer, color: AppTheme.goldColor),
-                ),
-                SwitchListTile(
-                  title: const Text('الرسائل'),
-                  value: _messages,
-                  onChanged: (v) => setState(() => _messages = v),
-                  secondary: const Icon(Icons.chat, color: AppTheme.goldColor),
-                ),
-              ],
-            ),
+          SwitchListTile(
+            title: const Text('جميع الإشعارات', style: TextStyle(fontFamily: 'Changa')),
+            value: _allNotifications,
+            activeColor: AppTheme.goldColor,
+            onChanged: (value) => setState(() => _allNotifications = value),
           ),
-          const SizedBox(height: 16),
-          Card(
-            color: isDark ? AppTheme.darkCard : AppTheme.lightCard,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-            child: SwitchListTile(
-              title: const Text('الإشعارات عبر البريد الإلكتروني'),
-              value: _email,
-              onChanged: (v) => setState(() => _email = v),
-              secondary: const Icon(Icons.email, color: AppTheme.goldColor),
-            ),
+          SwitchListTile(
+            title: const Text('إشعارات الطلبات', style: TextStyle(fontFamily: 'Changa')),
+            value: _orderNotifications,
+            activeColor: AppTheme.goldColor,
+            onChanged: (value) => setState(() => _orderNotifications = value),
+          ),
+          SwitchListTile(
+            title: const Text('إشعارات الرسائل', style: TextStyle(fontFamily: 'Changa')),
+            value: _messageNotifications,
+            activeColor: AppTheme.goldColor,
+            onChanged: (value) => setState(() => _messageNotifications = value),
+          ),
+          SwitchListTile(
+            title: const Text('إشعارات العروض', style: TextStyle(fontFamily: 'Changa')),
+            value: _offerNotifications,
+            activeColor: AppTheme.goldColor,
+            onChanged: (value) => setState(() => _offerNotifications = value),
           ),
         ],
       ),

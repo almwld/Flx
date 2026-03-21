@@ -1,55 +1,13 @@
 workflows:
-  flx-android:
-    name: Flx Android Build
+  flex-yemen:
+    name: Flex Yemen Build
     instance_type: mac_mini_m1
-    max_build_duration: 30
     environment:
       flutter: stable
-    cache:
-      cache_paths:
-        - $FLUTTER_ROOT/.pub-cache
-        - $HOME/.gradle/caches
-    triggering:
-      events:
-        - push
-      branch_patterns:
-        - pattern: main
-          include: true
-          source: true
     scripts:
-      - name: Create fresh Android project
-        script: |
-          mkdir -p /tmp/fresh_project
-          cd /tmp/fresh_project
-          flutter create --org com.flexyemen --project-name flex_temp .
-          cd $CM_BUILD_DIR
-          rm -rf android ios
-          cp -r /tmp/fresh_project/android .
-          cp -r /tmp/fresh_project/ios .
-          rm -rf /tmp/fresh_project
-      
-      - name: Set app name
-        script: |
-          sed -i '' 's/android:label="flex_temp"/android:label="Flex Yemen Market"/g' android/app/src/main/AndroidManifest.xml
-      
-      - name: Get Flutter packages
-        script: |
-          flutter pub get
-      
-      - name: Generate launcher icons
-        script: |
-          flutter pub run flutter_launcher_icons
-      
+      - name: Get packages
+        script: flutter pub get
       - name: Build APK
-        script: |
-          flutter build apk --release --split-per-abi
-      
+        script: flutter build apk --release
     artifacts:
       - build/app/outputs/flutter-apk/*.apk
-    publishing:
-      email:
-        recipients:
-          - your-email@example.com
-        notify:
-          success: true
-          failure: true

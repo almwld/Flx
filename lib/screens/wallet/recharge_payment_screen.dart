@@ -1,7 +1,6 @@
-import 'package:flex_yemen/models/rating_model.dart';
 import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
-import '../../widgets/custom_app_bar.dart';
+import '../../widgets/simple_app_bar.dart';
 
 class RechargePaymentScreen extends StatelessWidget {
   const RechargePaymentScreen({super.key});
@@ -9,37 +8,16 @@ class RechargePaymentScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
     return Scaffold(
-      appBar: const CustomAppBar(title: 'الشحن والسداد'),
+      backgroundColor: isDark ? AppTheme.darkBackground : AppTheme.lightBackground,
+      appBar: const SimpleAppBar(title: 'شحن وسداد'),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.construction,
-              size: 80,
-              color: isDark ? AppTheme.goldColor.withOpacity(0.5) : AppTheme.goldColor.withOpacity(0.7),
-            ),
+            Icon(Icons.phone_android, size: 80, color: AppTheme.goldColor.withOpacity(0.5)),
             const SizedBox(height: 16),
-            Text(
-              'قيد التطوير',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'Changa',
-                color: isDark ? AppTheme.darkText : AppTheme.lightText,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'سيتم إضافة هذه الخدمة قريباً',
-              style: TextStyle(
-                fontSize: 14,
-                fontFamily: 'Changa',
-                color: isDark ? Colors.grey[400] : Colors.grey[600],
-              ),
-            ),
+            Text('الشحن والسداد', style: TextStyle(fontFamily: 'Changa', fontSize: 24, color: AppTheme.getTextColor(context))),
           ],
         ),
       ),

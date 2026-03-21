@@ -1,7 +1,9 @@
-name: Build Flx
+name: Build Flex Yemen
 
 on:
   push:
+    branches: [ main ]
+  pull_request:
     branches: [ main ]
 
 jobs:
@@ -9,44 +11,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
+      - uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-          cache: false
-      
-      - name: Clean project
-        run: |
-          rm -rf build .dart_tool
-          flutter clean
-      
-      - name: Create fresh Android project
-        run: |
-          mkdir -p /tmp/fresh_project
-          cd /tmp/fresh_project
-          flutter create --org com.flexyemen --project-name flex_temp .
-          cd $GITHUB_WORKSPACE
-          rm -rf android ios
-          cp -r /tmp/fresh_project/android .
-          cp -r /tmp/fresh_project/ios .
-          rm -rf /tmp/fresh_project
-      
-      - name: Set app name
-        run: |
-          sed -i 's/android:label="flex_temp"/android:label="Flex Yemen Market"/g' android/app/src/main/AndroidManifest.xml
-      
-      - name: Get dependencies
-        run: flutter pub get
-      
-      - name: Generate launcher icons
-        run: flutter pub run flutter_launcher_icons
-      
-      - name: Build APK
-        run: flutter build apk --release --split-per-abi
-      
-      - name: Upload APKs
-        uses: actions/upload-artifact@v4
+      - run: flutter pub get
+      - run: flutter build apk --release
+      - uses: actions/upload-artifact@v4
         with:
           name: app-release
           path: build/app/outputs/flutter-apk/*.apk

@@ -9,10 +9,15 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  @override void initState() {
+  @override
+  void initState() {
     super.initState();
     Timer(const Duration(seconds: 3), () {
-      if (mounted) Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const LoginScreen()));
+      if (mounted) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (_) => const LoginScreen()),
+        );
+      }
     });
   }
 
@@ -20,17 +25,74 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(gradient: LinearGradient(colors: [AppTheme.darkBackground, AppTheme.darkSurface])),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              AppTheme.darkBackground,
+              AppTheme.darkSurface,
+              AppTheme.darkCard,
+            ],
+          ),
+        ),
         child: Center(
-          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-            Container(width: 150, height: 150, decoration: BoxDecoration(gradient: const RadialGradient(colors: [AppTheme.goldColor, AppTheme.goldLight]), borderRadius: BorderRadius.circular(40)),
-              child: const Icon(Icons.shopping_bag, size: 80, color: Colors.black)),
-            const SizedBox(height: 30),
-            const Text('FLEX', style: TextStyle(fontSize: 48, fontWeight: FontWeight.bold, color: AppTheme.goldColor)),
-            const Text('YEMEN', style: TextStyle(fontSize: 24, color: AppTheme.goldLight)),
-            const SizedBox(height: 40),
-            const CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(AppTheme.goldColor)),
-          ]),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                width: 150,
+                height: 150,
+                decoration: BoxDecoration(
+                  gradient: const RadialGradient(
+                    colors: [AppTheme.goldColor, AppTheme.goldLight],
+                  ),
+                  borderRadius: BorderRadius.circular(40),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppTheme.goldColor.withOpacity(0.5),
+                      blurRadius: 40,
+                      spreadRadius: 10,
+                    ),
+                  ],
+                ),
+                child: const Icon(Icons.shopping_bag, size: 80, color: Colors.black),
+              ),
+              const SizedBox(height: 30),
+              const Column(
+                children: [
+                  Text(
+                    'FLEX',
+                    style: TextStyle(
+                      fontSize: 48,
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.goldColor,
+                      letterSpacing: 8,
+                      fontFamily: 'Changa',
+                    ),
+                  ),
+                  Text(
+                    'YEMEN',
+                    style: TextStyle(
+                      fontSize: 24,
+                      color: AppTheme.goldLight,
+                      letterSpacing: 12,
+                      fontFamily: 'Changa',
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 40),
+              const SizedBox(
+                width: 40,
+                height: 40,
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(AppTheme.goldColor),
+                  strokeWidth: 3,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -1,79 +1,36 @@
 import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
-import '../../widgets/custom_app_bar.dart';
-import '../../widgets/custom_button.dart';
+import '../../widgets/simple_app_bar.dart';
 
-class PaymentMethodsScreen extends StatefulWidget {
+class PaymentMethodsScreen extends StatelessWidget {
   const PaymentMethodsScreen({super.key});
-  @override State<PaymentMethodsScreen> createState() => _PaymentMethodsScreenState();
-}
-
-class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
-  final List<Map<String, dynamic>> _methods = [
-    {'name': 'المحفظة', 'icon': Icons.account_balance_wallet, 'balance': '125,000 ر.ي', 'selected': true},
-    {'name': 'بطاقة ائتمان', 'icon': Icons.credit_card, 'last4': '4242', 'selected': false},
-    {'name': 'تحويل بنكي', 'icon': Icons.account_balance, 'account': 'YE12 3456 7890', 'selected': false},
-  ];
-
-  void _addNewCard() {
-    // فتح صفحة إضافة بطاقة جديدة
-  }
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      appBar: const CustomAppBar(title: 'طرق الدفع'),
-      body: Column(
+      backgroundColor: isDark ? AppTheme.darkBackground : AppTheme.lightBackground,
+      appBar: const SimpleAppBar(title: 'طرق الدفع'),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
         children: [
-          Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: _methods.length,
-              itemBuilder: (_, i) {
-                final m = _methods[i];
-                return Card(
-                  margin: const EdgeInsets.only(bottom: 12),
-                  color: isDark ? AppTheme.darkCard : AppTheme.lightCard,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                  child: ListTile(
-                    leading: Icon(m['icon'] as IconData, color: AppTheme.goldColor),
-                    title: Text(m['name']),
-                    subtitle: Text(
-                      m.containsKey('balance')
-                          ? 'الرصيد: ${m['balance']}'
-                          : (m.containsKey('last4')
-                              ? '•••• ${m['last4']}'
-                              : m['account'] as String),
-                    ),
-                    trailing: m['selected'] == true
-                        ? const Icon(Icons.check_circle, color: AppTheme.goldColor)
-                        : IconButton(
-                            icon: const Icon(Icons.more_vert),
-                            onPressed: () {},
-                          ),
-                    onTap: () {
-                      setState(() {
-                        for (var method in _methods) {
-                          method['selected'] = false;
-                        }
-                        m['selected'] = true;
-                      });
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('تم اختيار ${m['name']} كطريقة دفع افتراضية')),
-                      );
-                    },
-                  ),
-                );
-              },
+          Card(
+            child: ListTile(
+              leading: const Icon(Icons.account_balance_wallet, color: AppTheme.goldColor),
+              title: Text('المحفظة الإلكترونية', style: TextStyle(fontFamily: 'Changa', color: AppTheme.getTextColor(context))),
+              subtitle: const Text('الرصيد: 125,000 ر.ي', style: TextStyle(fontFamily: 'Changa')),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: CustomButton(
-              text: 'إضافة بطاقة جديدة',
-              onPressed: _addNewCard,
-              isOutlined: true,
+          const SizedBox(height: 12),
+          Card(
+            child: ListTile(
+              leading: const Icon(Icons.credit_card, color: AppTheme.goldColor),
+              title: Text('بطاقة ائتمانية', style: TextStyle(fontFamily: 'Changa', color: AppTheme.getTextColor(context))),
+              subtitle: const Text('**** **** **** 1234', style: TextStyle(fontFamily: 'Changa')),
+              trailing: TextButton(
+                onPressed: () {},
+                child: const Text('إضافة', style: TextStyle(fontFamily: 'Changa', color: AppTheme.goldColor)),
+              ),
             ),
           ),
         ],

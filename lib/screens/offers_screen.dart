@@ -1,48 +1,37 @@
-import 'package:flex_yemen/models/rating_model.dart';
 import 'package:flutter/material.dart';
-import '../theme/app_theme.dart';
+import '../../theme/app_theme.dart';
+import '../../widgets/custom_app_bar.dart';
 
 class OffersScreen extends StatelessWidget {
   const OffersScreen({super.key});
-
-  final List<Map<String, dynamic>> offers = const [
-    {'title': 'خصم 20% على الإلكترونيات', 'code': 'ELECTRO20', 'expiry': '30 مارس 2026'},
-    {'title': 'شحن مجاني للطلبات فوق 200 ريال', 'code': 'FREESHIP', 'expiry': '15 أبريل 2026'},
-    {'title': 'وفر 50 ريال على أول عملية شراء', 'code': 'NEW50', 'expiry': '1 مايو 2026'},
-  ];
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      appBar: AppBar(title: const Text('العروض والتخفيضات', style: TextStyle(fontFamily: 'Changa'))),
-      body: ListView.builder(
+      backgroundColor: isDark ? AppTheme.darkBackground : AppTheme.lightBackground,
+      appBar: const CustomAppBar(title: 'العروض'),
+      body: GridView.builder(
         padding: const EdgeInsets.all(16),
-        itemCount: offers.length,
-        itemBuilder: (ctx, i) {
-          final o = offers[i];
-          return Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(o['title'], style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      const Icon(Icons.local_offer, size: 16, color: AppTheme.goldColor),
-                      const SizedBox(width: 4),
-                      Text('كود العرض: ${o['code']}', style: const TextStyle(color: AppTheme.goldColor)),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  Text('صلاحية حتى: ${o['expiry']}', style: TextStyle(color: Colors.grey[600])),
-                ],
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, childAspectRatio: 0.75),
+        itemCount: 6,
+        itemBuilder: (context, index) => Card(
+          child: Column(
+            children: [
+              Expanded(child: Container(color: AppTheme.goldColor.withOpacity(0.1), child: const Icon(Icons.local_offer, color: AppTheme.goldColor))),
+              Padding(
+                padding: const EdgeInsets.all(8),
+                child: Column(
+                  children: [
+                    Text('عرض ${index + 1}', style: TextStyle(fontFamily: 'Changa', color: AppTheme.getTextColor(context))),
+                    const SizedBox(height: 4),
+                    Container(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: AppTheme.error.withOpacity(0.1), borderRadius: BorderRadius.circular(8)), child: const Text('-20%', style: TextStyle(fontFamily: 'Changa', color: AppTheme.error))),
+                  ],
+                ),
               ),
-            ),
-          );
-        },
+            ],
+          ),
+        ),
       ),
     );
   }

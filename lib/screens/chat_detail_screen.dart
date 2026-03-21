@@ -1,117 +1,65 @@
 import 'package:flutter/material.dart';
-import '../theme/app_theme.dart';
-import '../services/supabase_service.dart';
+import '../../theme/app_theme.dart';
 
-class ChatDetailScreen extends StatefulWidget {
-  final String otherUserId;
-  final String userName;
-  const ChatDetailScreen({super.key, required this.otherUserId, required this.userName});
-  @override State<ChatDetailScreen> createState() => _ChatDetailScreenState();
-}
-
-class _ChatDetailScreenState extends State<ChatDetailScreen> {
-  final TextEditingController _controller = TextEditingController();
-  List<Map<String, dynamic>> _messages = [];
-  bool _isLoading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadMessages();
-  }
-
-  Future<void> _loadMessages() async {
-    setState(() => _isLoading = true);
-    _messages = await SupabaseService.getMessages(widget.otherUserId);
-    setState(() => _isLoading = false);
-  }
-
-  Future<void> _sendMessage() async {
-    if (_controller.text.trim().isEmpty) return;
-    final text = _controller.text.trim();
-    _controller.clear();
-    await SupabaseService.sendMessage(widget.otherUserId, text);
-    _loadMessages(); // تحديث الرسائل بعد الإرسال
-  }
+class ChatDetailScreen extends StatelessWidget {
+  const ChatDetailScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
+      backgroundColor: isDark ? AppTheme.darkBackground : AppTheme.lightBackground,
       appBar: AppBar(
-        title: Row(
+        title: const Row(
           children: [
-            CircleAvatar(
-              backgroundColor: AppTheme.goldColor.withOpacity(0.2),
-              child: Text(widget.userName[0], style: const TextStyle(color: AppTheme.goldColor)),
-            ),
-            const SizedBox(width: 12),
-            Text(widget.userName),
+            CircleAvatar(backgroundColor: AppTheme.goldColor, child: Icon(Icons.person, color: Colors.white)),
+            SizedBox(width: 12),
+            Text('محمد أحمد', style: TextStyle(fontFamily: 'Changa')),
           ],
         ),
       ),
       body: Column(
         children: [
           Expanded(
-            child: _isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : ListView.builder(
-                    reverse: true,
-                    padding: const EdgeInsets.all(16),
-                    itemCount: _messages.length,
-                    itemBuilder: (_, i) {
-                      final msg = _messages[_messages.length - 1 - i];
-                      final isMe = msg['sender_id'] == SupabaseService.currentUser!.id;
-                      return Align(
-                        alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
-                        child: Container(
-                          margin: const EdgeInsets.symmetric(vertical: 4),
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                          constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.7),
-                          decoration: BoxDecoration(
-                            color: isMe ? AppTheme.goldColor : (isDark ? Colors.grey[800] : Colors.grey[200]),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Text(
-                            msg['message_text'] ?? '',
-                            style: TextStyle(color: isMe ? Colors.black : null),
-                          ),
-                        ),
-                      );
-                    },
+            child: ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: 5,
+              itemBuilder: (context, index) {
+                final isMe = index % 2 == 0;
+                return Align(
+                  alignment: isMe ? Alignment.centerLeft : Alignment.centerRight,
+                  child: Container(
+                    margin: const EdgeInsets.only(bottom: 12),
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: isMe ? AppTheme.goldColor : AppTheme.getCardColor(context),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Text(
+                      isMe ? 'مرحباً، هل المنتج متوفر؟' : 'نعم، المنتج متوفر',
+                      style: TextStyle(fontFamily: 'Changa', color: isMe ? AppTheme.darkText : AppTheme.getTextColor(context)),
+                    ),
                   ),
-          ),
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: isDark ? AppTheme.darkSurface : AppTheme.lightSurface,
-              border: Border(top: BorderSide(color: isDark ? Colors.grey[800]! : Colors.grey[300]!)),
+                );
+              },
             ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16),
             child: Row(
               children: [
+                IconButton(icon: const Icon(Icons.attach_file), onPressed: () {}),
                 Expanded(
                   child: TextField(
-                    controller: _controller,
                     decoration: InputDecoration(
-                      hintText: 'اكتب رسالة...',
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(24), borderSide: BorderSide.none),
+                      hintText: 'اكتب رسالتك...',
                       filled: true,
-                      fillColor: isDark ? AppTheme.darkCard : AppTheme.lightCard,
+                      fillColor: AppTheme.getCardColor(context),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(24), borderSide: BorderSide.none),
                     ),
                   ),
                 ),
-                const SizedBox(width: 8),
-                GestureDetector(
-                  onTap: _sendMessage,
-                  child: Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: const BoxDecoration(
-                      gradient: LinearGradient(colors: [AppTheme.goldColor, AppTheme.goldLight]),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(Icons.send, color: Colors.black, size: 20),
-                  ),
-                ),
+                IconButton(icon: const Icon(Icons.send, color: AppTheme.goldColor), onPressed: () {}),
               ],
             ),
           ),

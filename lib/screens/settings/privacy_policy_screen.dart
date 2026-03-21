@@ -1,91 +1,36 @@
 import 'package:flutter/material.dart';
-import '../../widgets/custom_app_bar.dart';
+import '../../theme/app_theme.dart';
+import '../../widgets/simple_app_bar.dart';
 
 class PrivacyPolicyScreen extends StatelessWidget {
   const PrivacyPolicyScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      appBar: const CustomAppBar(title: 'سياسة الخصوصية'),
+      backgroundColor: isDark ? AppTheme.darkBackground : AppTheme.lightBackground,
+      appBar: const SimpleAppBar(title: 'سياسة الخصوصية'),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'آخر تحديث: 21 مارس 2026',
-              style: TextStyle(color: Colors.grey),
-            ),
+            Text('سياسة الخصوصية', style: TextStyle(fontFamily: 'Changa', fontSize: 24, fontWeight: FontWeight.bold, color: AppTheme.getTextColor(context))),
             const SizedBox(height: 16),
-            const Text(
-              'نحن في Flex Yemen نلتزم بحماية خصوصيتك. توضح هذه السياسة كيفية جمع واستخدام وحماية معلوماتك الشخصية.',
-              style: TextStyle(fontSize: 16),
-            ),
-            const SizedBox(height: 24),
-            const Text(
-              'المعلومات التي نجمعها:',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
+            Text('نحن نحترم خصوصيتك ونلتزم بحماية بياناتك الشخصية.', style: TextStyle(fontFamily: 'Changa', color: AppTheme.getTextColor(context))),
+            const SizedBox(height: 16),
+            Text('1. جمع المعلومات', style: TextStyle(fontFamily: 'Changa', fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.getTextColor(context))),
             const SizedBox(height: 8),
-            const Text(
-              '• الاسم، البريد الإلكتروني، رقم الهاتف\n'
-              '• معلومات الدفع (نحن لا نخزن تفاصيل البطاقة)\n'
-              '• بيانات الموقع (اختياري)\n'
-              '• سجل التصفح والإعلانات',
-              style: TextStyle(height: 1.5),
-            ),
-            const SizedBox(height: 24),
-            const Text(
-              'كيف نستخدم معلوماتك:',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
+            Text('نقوم بجمع المعلومات اللازمة فقط لتقديم خدماتنا بشكل أفضل.', style: TextStyle(fontFamily: 'Changa', color: AppTheme.getSecondaryTextColor(context))),
+            const SizedBox(height: 16),
+            Text('2. استخدام المعلومات', style: TextStyle(fontFamily: 'Changa', fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.getTextColor(context))),
             const SizedBox(height: 8),
-            const Text(
-              '• لتقديم الخدمات وتحسين تجربتك\n'
-              '• للتواصل معك بشأن طلباتك\n'
-              '• لإرسال العروض (يمكنك إلغاء الاشتراك)\n'
-              '• لتحسين أمان التطبيق',
-              style: TextStyle(height: 1.5),
-            ),
-            const SizedBox(height: 24),
-            const Text(
-              'مشاركة المعلومات:',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
+            Text('نستخدم معلوماتك فقط لأغراض تقديم الخدمة وتحسين تجربتك.', style: TextStyle(fontFamily: 'Changa', color: AppTheme.getSecondaryTextColor(context))),
+            const SizedBox(height: 16),
+            Text('3. حماية المعلومات', style: TextStyle(fontFamily: 'Changa', fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.getTextColor(context))),
             const SizedBox(height: 8),
-            const Text(
-              'نحن لا نبيع أو نشارك معلوماتك الشخصية مع أطراف ثالثة، إلا عند الضرورة لتقديم الخدمات (مثل شركات الشحن) أو بموجب القانون.',
-              style: TextStyle(height: 1.5),
-            ),
-            const SizedBox(height: 24),
-            const Text(
-              'حماية معلوماتك:',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'نستخدم إجراءات أمنية لحماية معلوماتك من الوصول غير المصرح به أو التعديل أو الإفصاح.',
-              style: TextStyle(height: 1.5),
-            ),
-            const SizedBox(height: 24),
-            const Text(
-              'حقوقك:',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              '• الوصول إلى بياناتك الشخصية\n'
-              '• تصحيح بياناتك غير الدقيقة\n'
-              '• حذف حسابك\n'
-              '• إلغاء الاشتراك من الرسائل التسويقية',
-              style: TextStyle(height: 1.5),
-            ),
-            const SizedBox(height: 24),
-            const Text(
-              'للتواصل: support@flexyemen.com',
-              style: TextStyle(color: Color(0xFFD4AF37)),
-            ),
+            Text('نستخدم تقنيات أمان متقدمة لحماية بياناتك.', style: TextStyle(fontFamily: 'Changa', color: AppTheme.getSecondaryTextColor(context))),
           ],
         ),
       ),
