@@ -1,3 +1,4 @@
+import '../models/dummy_data.dart';
 import 'dart:io';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../config/app_config.dart';
@@ -70,7 +71,7 @@ class SupabaseService {
       }).toList();
     } catch (e) {
       print('Error fetching products: $e');
-      return [];
+      return DummyData.getProducts();
     }
   }
 
@@ -108,7 +109,7 @@ class SupabaseService {
       }).toList();
     } catch (e) {
       print('Error fetching featured products: $e');
-      return [];
+      return DummyData.getProducts();
     }
   }
 
@@ -129,7 +130,7 @@ class SupabaseService {
       }).toList();
     } catch (e) {
       print('Error fetching latest products: $e');
-      return [];
+      return DummyData.getProducts();
     }
   }
 
@@ -143,7 +144,7 @@ class SupabaseService {
       return (response as List).map((json) => ProductModel.fromJson(json)).toList();
     } catch (e) {
       print('Error fetching seller products: $e');
-      return [];
+      return DummyData.getProducts();
     }
   }
 
@@ -175,7 +176,7 @@ class SupabaseService {
       return List<Map<String, dynamic>>.from(response);
     } catch (e) {
       print('Error fetching orders: $e');
-      return [];
+      return DummyData.getProducts();
     }
   }
 
@@ -202,7 +203,7 @@ class SupabaseService {
       return (response as List).map((json) => ProductModel.fromJson(json['products'] ?? {})).toList();
     } catch (e) {
       print('Error fetching favorites: $e');
-      return [];
+      return DummyData.getProducts();
     }
   }
 
@@ -236,7 +237,7 @@ class SupabaseService {
       })).toList();
     } catch (e) {
       print('Error fetching ratings: $e');
-      return [];
+      return DummyData.getProducts();
     }
   }
 
@@ -319,7 +320,7 @@ class SupabaseService {
       return List<Map<String, dynamic>>.from(response);
     } catch (e) {
       print('Error fetching chats: $e');
-      return [];
+      return DummyData.getProducts();
     }
   }
 
@@ -333,7 +334,7 @@ class SupabaseService {
       return (response as List).map((json) => MessageModel.fromJson(json)).toList();
     } catch (e) {
       print('Error fetching messages: $e');
-      return [];
+      return DummyData.getProducts();
     }
   }
 

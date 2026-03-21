@@ -5,6 +5,7 @@ import 'products_screen.dart';
 
 class CategoriesScreen extends StatelessWidget {
   const CategoriesScreen({super.key});
+
   final List<Map<String, dynamic>> _categories = const [
     {'name': 'إلكترونيات', 'icon': Icons.phone_android, 'color': Colors.blue},
     {'name': 'سيارات', 'icon': Icons.directions_car, 'color': Colors.red},
@@ -14,8 +15,6 @@ class CategoriesScreen extends StatelessWidget {
     {'name': 'مطاعم', 'icon': Icons.restaurant, 'color': Colors.orange},
     {'name': 'خدمات', 'icon': Icons.build, 'color': Colors.teal},
     {'name': 'ألعاب', 'icon': Icons.sports_esports, 'color': Colors.pink},
-    {'name': 'صحة', 'icon': Icons.health_and_safety, 'color': Colors.green},
-    {'name': 'جمال', 'icon': Icons.face, 'color': Colors.pink},
   ];
 
   @override
@@ -35,7 +34,10 @@ class CategoriesScreen extends StatelessWidget {
         itemBuilder: (_, i) {
           final cat = _categories[i];
           return GestureDetector(
-            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ProductsScreen(category: cat['name']))),
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => ProductsScreen(category: cat['name'])),
+            ),
             child: Container(
               decoration: BoxDecoration(
                 color: isDark ? AppTheme.darkCard : AppTheme.lightCard,
@@ -55,10 +57,7 @@ class CategoriesScreen extends StatelessWidget {
                     child: Icon(cat['icon'] as IconData, color: cat['color']),
                   ),
                   const SizedBox(height: 8),
-                  Text(
-                    cat['name'],
-                    style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-                  ),
+                  Text(cat['name'], style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
                 ],
               ),
             ),
