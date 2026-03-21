@@ -14,20 +14,28 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-          cache: false
 
-      - name: Clean and get dependencies
+      - name: Create fresh Android project
         run: |
-          flutter clean
-          flutter pub get
+          mkdir -p /tmp/new
+          cd /tmp/new
+          flutter create --org com.flexyemen --project-name flex .
+          cd $GITHUB_WORKSPACE
+          rm -rf android ios
+          cp -r /tmp/new/android .
+          cp -r /tmp/new/ios .
+          rm -rf /tmp/new
 
-      - name: Analyze code (to see errors)
-        run: flutter analyze || true
+      - name: Set app name
+        run: sed -i 's/android:label="flex"/android:label="Flex Yemen Market"/g' android/app/src/main/AndroidManifest.xml
 
-      - name: Build APK with verbose output
-        run: flutter build apk --release --split-per-abi --verbose
+      - name: Get dependencies
+        run: flutter pub get
 
-      - name: Upload APKs
+      - name: Build APK
+        run: flutter build apk --release
+
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: app-release
